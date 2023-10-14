@@ -16,9 +16,20 @@ repositories {
     mavenCentral()
 }
 
+configurations {
+    compileOnly {
+        extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
 dependencies {
     // Dependencias de Spring Web for HTML Apps y Rest
     implementation("org.springframework.boot:spring-boot-starter-web")
+
+    // Lombok
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
+
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
