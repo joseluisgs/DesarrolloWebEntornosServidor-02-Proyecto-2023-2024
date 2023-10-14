@@ -23,6 +23,18 @@
 							"path": [
 								"v1",
 								"productos"
+							],
+							"query": [
+								{
+									"key": "marca",
+									"value": "nike",
+									"disabled": true
+								},
+								{
+									"key": "categoria",
+									"value": "OTROS",
+									"disabled": true
+								}
 							]
 						}
 					},
@@ -34,7 +46,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/productos/2",
+							"raw": "localhost:3000/v1/productos/3",
 							"host": [
 								"localhost"
 							],
@@ -42,7 +54,7 @@
 							"path": [
 								"v1",
 								"productos",
-								"2"
+								"3"
 							]
 						}
 					},
@@ -55,7 +67,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"{{$randomInt}}\",\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descipcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\":\"{{$randomInt}}\",\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -83,7 +95,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"{{$randomInt}}\",\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descipcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descipcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -112,7 +124,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"descipcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"stock\": \"{{$randomInt}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
