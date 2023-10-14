@@ -1,15 +1,15 @@
-package dev.joseluisgs.tiendaapispring;
+package dev.joseluisgs.tiendaapispringboot;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class TiendaApiSpringApplication implements CommandLineRunner {
+public class TiendaApiSpringBootApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
         // Iniciamos la aplicación de Spring Boot
-        SpringApplication.run(TiendaApiSpringApplication.class, args);
+        SpringApplication.run(TiendaApiSpringBootApplication.class, args);
     }
 
     @Override
