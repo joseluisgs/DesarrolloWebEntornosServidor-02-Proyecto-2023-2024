@@ -28,9 +28,9 @@ public class ProductosRepositoryImpl implements ProductosRepository {
     }
 
     @Override
-    public List<Producto> findAllByNombre(String nombre) {
+    public List<Producto> findAllByMarca(String marca) {
         return productos.values().stream()
-                .filter(producto -> producto.getMarca().toLowerCase().contains(nombre.toLowerCase()))
+                .filter(producto -> producto.getMarca().toLowerCase().contains(marca.toLowerCase()))
                 .toList();
     }
 

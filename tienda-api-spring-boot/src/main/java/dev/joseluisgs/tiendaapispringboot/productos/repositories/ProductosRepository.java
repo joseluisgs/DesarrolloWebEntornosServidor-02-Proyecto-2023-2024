@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface ProductosRepository {
     List<Producto> findAll();
 
-    List<Producto> findAllByNombre(String nombre);
+    List<Producto> findAllByMarca(String marca);
 
     Optional<Producto> findById(Long id);
 

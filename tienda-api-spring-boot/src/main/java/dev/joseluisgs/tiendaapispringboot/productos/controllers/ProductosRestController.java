@@ -30,11 +30,28 @@ public class ProductosRestController {
         this.productosRepository = productosRepository;
     }
 
+    /**
+     * Obtiene todos los productos
+     *
+     * @param marca, si se quiere filtrar por marca se pasa como parámetro de consulta en la URL ?marca=valor y se filtra, no es obligatorio
+     *               Si no se pasa, se devuelven todos los productos
+     * @return Lista de productos
+     */
     @GetMapping()
-    public ResponseEntity<List<Producto>> getAllProducts() {
-        return ResponseEntity.ok(productosRepository.findAll());
+    public ResponseEntity<List<Producto>> getAllProducts(@RequestParam(required = false) String marca) {
+        if (marca != null) {
+            return ResponseEntity.ok(productosRepository.findAllByMarca(marca));
+        } else {
+            return ResponseEntity.ok(productosRepository.findAll());
+        }
     }
 
+    /**
+     * Obtiene un producto por su id
+     *
+     * @param id del producto, se pasa como parámetro de la URL /{id}
+     * @return Producto si existe, si no, Not Found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductById(@PathVariable Long id) {
         return productosRepository.findById(id)
@@ -42,12 +59,25 @@ public class ProductosRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Crear un producto
+     *
+     * @param producto a crear
+     * @return Producto creado
+     */
     @PostMapping()
     public ResponseEntity<Producto> createProduct(@RequestBody Producto producto) {
         var saved = productosRepository.save(producto);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    /**
+     * Actualizar un producto
+     *
+     * @param id       del producto a actualizar, se pasa como parámetro de la URL /{id}
+     * @param producto a actualizar
+     * @return Producto actualizado
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @RequestBody Producto producto) {
         // Lo buscamos, si existe lo actualizamos, si no devolvemos Not Found
@@ -59,6 +89,13 @@ public class ProductosRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Actualizar un producto parcial
+     *
+     * @param id       del producto a actualizar, se pasa como parámetro de la URL /{id}
+     * @param producto a actualizar
+     * @return Producto actualizado
+     */
     @PatchMapping("/{id}")
     public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @RequestBody Producto producto) {
         // Lo buscamos, si existe lo actualizamos, si no devolvemos Not Found
@@ -70,6 +107,12 @@ public class ProductosRestController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * Borrar un producto
+     *
+     * @param id del producto, se pasa como parámetro de la URL /{id}
+     * @return No Content si se ha borrado, si no, Not Found
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         // Lo buscamos, si existe lo borramos, si no devolvemos Not Found
