@@ -7,6 +7,10 @@ import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosReposi
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -14,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@CacheConfig(cacheNames = {"productos"})
 public class ProductoServiceImpl implements ProductosService {
     private final Logger logger = LoggerFactory.getLogger(ProductoServiceImpl.class);
     private final ProductosRepository productosRepository;
@@ -46,12 +51,14 @@ public class ProductoServiceImpl implements ProductosService {
     }
 
     @Override
+    @Cacheable
     public Producto findById(Long id) {
         logger.info("Buscando producto por id: " + id);
         return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
     }
 
     @Override
+    @Cacheable
     public Producto findbyUuid(String uuid) {
         logger.info("Buscando producto por uuid: " + uuid);
         try {
@@ -63,6 +70,7 @@ public class ProductoServiceImpl implements ProductosService {
     }
 
     @Override
+    @CachePut
     public Producto save(Producto producto) {
         logger.info("Guardando producto: " + producto);
         // obtenemos el id de producto
@@ -76,6 +84,7 @@ public class ProductoServiceImpl implements ProductosService {
     }
 
     @Override
+    @CachePut
     public Producto update(Long id, Producto producto) {
         logger.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -101,6 +110,7 @@ public class ProductoServiceImpl implements ProductosService {
     }
 
     @Override
+    @CacheEvict
     public void deleteById(Long id) {
         logger.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes

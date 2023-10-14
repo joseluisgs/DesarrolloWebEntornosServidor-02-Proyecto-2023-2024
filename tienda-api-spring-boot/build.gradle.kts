@@ -25,6 +25,8 @@ configurations {
 dependencies {
     // Dependencias de Spring Web for HTML Apps y Rest
     implementation("org.springframework.boot:spring-boot-starter-web")
+    // Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
