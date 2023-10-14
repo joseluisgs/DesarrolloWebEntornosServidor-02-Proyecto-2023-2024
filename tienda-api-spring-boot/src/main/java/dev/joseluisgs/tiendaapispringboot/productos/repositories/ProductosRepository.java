@@ -11,6 +11,10 @@ public interface ProductosRepository {
 
     List<Producto> findAllByMarca(String marca);
 
+    List<Producto> findAllByCategoria(String categoria);
+
+    List<Producto> findAllByMarcaAndCategoria(String marca, String categoria);
+
     Optional<Producto> findById(Long id);
 
     Optional<Producto> findByUuid(UUID uuid);
@@ -25,4 +29,5 @@ public interface ProductosRepository {
 
     void deleteByUuid(UUID uuid);
 
+    Long nextId();
 }
