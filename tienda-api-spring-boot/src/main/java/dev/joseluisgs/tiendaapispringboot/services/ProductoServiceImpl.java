@@ -1,7 +1,10 @@
 package dev.joseluisgs.tiendaapispringboot.services;
 
+import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoBadUuid;
 import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoNotFound;
+import dev.joseluisgs.tiendaapispringboot.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import org.slf4j.Logger;
@@ -13,7 +16,6 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,10 +24,12 @@ import java.util.UUID;
 public class ProductoServiceImpl implements ProductosService {
     private final Logger logger = LoggerFactory.getLogger(ProductoServiceImpl.class);
     private final ProductosRepository productosRepository;
+    private final ProductoMapper productoMapper;
 
     @Autowired
-    public ProductoServiceImpl(ProductosRepository productosRepository) {
+    public ProductoServiceImpl(ProductosRepository productosRepository, ProductoMapper productoMapper) {
         this.productosRepository = productosRepository;
+        this.productoMapper = productoMapper;
     }
 
     @Override
@@ -71,40 +75,24 @@ public class ProductoServiceImpl implements ProductosService {
 
     @Override
     @CachePut
-    public Producto save(Producto producto) {
-        logger.info("Guardando producto: " + producto);
+    public Producto save(ProductoCreateDto productoCreateDto) {
+        logger.info("Guardando producto: " + productoCreateDto);
         // obtenemos el id de producto
         Long id = productosRepository.nextId();
-        // Creamos el producto nuevo con los datos que nos vienen
-        Producto nuevoProducto = new Producto(id, producto.getMarca(), producto.getModelo(), producto.getDescripcion(), producto.getPrecio(), producto.getImagen(),
-                producto.getCategoria(), producto.getStock(), LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID()
-        );
+        // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
+        Producto nuevoProducto = productoMapper.toProduct(id, productoCreateDto);
         // Lo guardamos en el repositorio
         return productosRepository.save(nuevoProducto);
     }
 
     @Override
     @CachePut
-    public Producto update(Long id, Producto producto) {
+    public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
         logger.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
-
-        // Creamos el producto actualizado con los campos que nos llegan actualizando el updateAt y si son null no se actualizan y se quedan los anteriores
-        Producto productoActualizado = new Producto(
-                productoActual.getId(),
-                producto.getMarca() != null ? producto.getMarca() : productoActual.getMarca(),
-                producto.getModelo() != null ? producto.getModelo() : productoActual.getModelo(),
-                producto.getDescripcion() != null ? producto.getDescripcion() : productoActual.getDescripcion(),
-                producto.getPrecio() != null ? producto.getPrecio() : productoActual.getPrecio(),
-                producto.getImagen() != null ? producto.getImagen() : productoActual.getImagen(),
-                producto.getCategoria() != null ? producto.getCategoria() : productoActual.getCategoria(),
-                producto.getStock() != null ? producto.getStock() : productoActual.getStock(),
-                productoActual.getCreatedAt(),
-                LocalDateTime.now(),
-                productoActual.getUuid()
-        );
-
+        // Actualizamos el producto con los datos que nos vienen del dto, podríamos usar el mapper
+        Producto productoActualizado = productoMapper.toProduct(productoUpdateDto, productoActual);
         // Lo guardamos en el repositorio
         return productosRepository.save(productoActualizado);
     }

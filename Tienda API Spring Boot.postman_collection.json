@@ -46,7 +46,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/productos/3",
+							"raw": "localhost:3000/v1/productos/1",
 							"host": [
 								"localhost"
 							],
@@ -54,7 +54,7 @@
 							"path": [
 								"v1",
 								"productos",
-								"3"
+								"1"
 							]
 						}
 					},

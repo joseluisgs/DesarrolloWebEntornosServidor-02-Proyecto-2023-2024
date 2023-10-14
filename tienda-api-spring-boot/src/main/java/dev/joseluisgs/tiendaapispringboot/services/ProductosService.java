@@ -1,5 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.services;
 
+import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 
 import java.util.List;
@@ -11,9 +13,9 @@ public interface ProductosService {
 
     Producto findbyUuid(String uuid);
 
-    Producto save(Producto producto);
+    Producto save(ProductoCreateDto productoCreateDto);
 
-    Producto update(Long id, Producto producto);
+    Producto update(Long id, ProductoUpdateDto productoUpdateDto);
 
     void deleteById(Long id);
 }
