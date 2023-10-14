@@ -95,7 +95,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 2,\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descipcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

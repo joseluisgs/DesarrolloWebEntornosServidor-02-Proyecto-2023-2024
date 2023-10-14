@@ -27,6 +27,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
+    // Validación
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")

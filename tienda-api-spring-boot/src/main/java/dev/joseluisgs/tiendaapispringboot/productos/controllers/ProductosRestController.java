@@ -6,14 +6,19 @@ import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoBadRequest;
 import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.services.ProductosService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Controlador de productos del tipo RestController
@@ -73,7 +78,7 @@ public class ProductosRestController {
      * @throws ProductoBadRequest si el producto no es correcto (400)
      */
     @PostMapping()
-    public ResponseEntity<Producto> createProduct(@RequestBody ProductoCreateDto productoCreateDto) {
+    public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateDto productoCreateDto) {
         logger.info("Creando producto: " + productoCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateDto));
     }
@@ -88,7 +93,7 @@ public class ProductosRestController {
      * @throws ProductoBadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @RequestBody ProductoUpdateDto productoUpdateDto) {
+    public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
         logger.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
@@ -96,14 +101,14 @@ public class ProductosRestController {
     /**
      * Actualizar un producto parcial
      *
-     * @param id       del producto a actualizar, se pasa como parámetro de la URL /{id}
-     * @param producto a actualizar
+     * @param id                del producto a actualizar, se pasa como parámetro de la URL /{id}
+     * @param productoUpdateDto a actualizar
      * @return Producto actualizado
      * @throws ProductoNotFound   si no existe el producto (404)
      * @throws ProductoBadRequest si el producto no es correcto (400)
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @RequestBody ProductoUpdateDto productoUpdateDto) {
+    public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
         logger.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
@@ -120,5 +125,24 @@ public class ProductosRestController {
         logger.info("Borrando producto por id: " + id);
         productosService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * Manejador de excepciones de Validación: 400 Bad Request
+     *
+     * @param ex excepción
+     * @return Mapa de errores de validación con el campo y el mensaje
+     */
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public Map<String, String> handleValidationExceptions(
+            MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return errors;
     }
 }
