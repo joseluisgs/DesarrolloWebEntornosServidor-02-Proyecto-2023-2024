@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.productos.controllers.models;
+package dev.joseluisgs.tiendaapispringboot.productos.models;
 
 import lombok.Data;
 
@@ -15,8 +15,8 @@ public class Producto {
     private final String imagen;
     private final String categoria;
     private final Integer stock;
-    private final LocalDateTime createdAt = LocalDateTime.now();
-    private final LocalDateTime updatedAt = LocalDateTime.now();
-    private final UUID uuid = UUID.randomUUID();
+    private final LocalDateTime createdAt;
+    private final LocalDateTime updatedAt;
+    private final UUID uuid;
 
 }

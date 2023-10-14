@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
-import dev.joseluisgs.tiendaapispringboot.productos.controllers.models.Producto;
+import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +12,7 @@ import java.util.List;
  * // Fijamos la ruta de acceso a este controlador
  */
 @RestController // Es un controlador Rest
+
 @RequestMapping("${api.version}/productos") // Es la ruta del controlador
 public class ProductosRestController {
 
