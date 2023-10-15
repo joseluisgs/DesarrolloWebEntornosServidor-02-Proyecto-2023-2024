@@ -1,8 +1,8 @@
-package dev.joseluisgs.tiendaapispringboot.mappers;
+package dev.joseluisgs.tiendaapispringboot.productos.mappers;
 
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoResponseDto;
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoResponseDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.stereotype.Component;
 

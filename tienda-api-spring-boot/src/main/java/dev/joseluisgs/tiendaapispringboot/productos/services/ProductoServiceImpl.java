@@ -1,10 +1,10 @@
-package dev.joseluisgs.tiendaapispringboot.services;
+package dev.joseluisgs.tiendaapispringboot.productos.services;
 
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
-import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoBadUuid;
-import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoNotFound;
-import dev.joseluisgs.tiendaapispringboot.mappers.ProductoMapper;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
+import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import org.slf4j.Logger;
