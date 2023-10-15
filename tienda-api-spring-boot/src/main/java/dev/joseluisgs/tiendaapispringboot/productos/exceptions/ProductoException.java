@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.exceptions;
+package dev.joseluisgs.tiendaapispringboot.productos.exceptions;
 
 public abstract class ProductoException extends RuntimeException {
     public ProductoException(String message) {

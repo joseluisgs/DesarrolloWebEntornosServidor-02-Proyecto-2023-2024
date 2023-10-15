@@ -1,11 +1,11 @@
 package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
-import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoBadRequest;
-import dev.joseluisgs.tiendaapispringboot.exceptions.ProductoNotFound;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
-import dev.joseluisgs.tiendaapispringboot.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

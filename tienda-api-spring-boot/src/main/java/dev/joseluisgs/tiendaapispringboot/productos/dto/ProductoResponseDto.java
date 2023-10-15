@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.dto;
+package dev.joseluisgs.tiendaapispringboot.productos.dto;
 
 import lombok.Data;
 

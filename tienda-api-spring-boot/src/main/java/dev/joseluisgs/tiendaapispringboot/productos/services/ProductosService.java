@@ -1,7 +1,7 @@
-package dev.joseluisgs.tiendaapispringboot.services;
+package dev.joseluisgs.tiendaapispringboot.productos.services;
 
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 
 import java.util.List;

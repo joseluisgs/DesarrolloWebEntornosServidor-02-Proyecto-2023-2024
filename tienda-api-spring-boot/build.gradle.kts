@@ -37,6 +37,8 @@ dependencies {
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // Para testear con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 tasks.withType<Test> {
