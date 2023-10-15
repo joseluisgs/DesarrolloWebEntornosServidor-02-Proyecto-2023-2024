@@ -19,6 +19,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Implementación de nuestro servicio de productos
+ * Aquí implementamos la lógica de negocio
+ * Además es cacheable
+ */
 @Service
 @CacheConfig(cacheNames = {"productos"})
 public class ProductoServiceImpl implements ProductosService {
@@ -32,6 +37,13 @@ public class ProductoServiceImpl implements ProductosService {
         this.productoMapper = productoMapper;
     }
 
+    /**
+     * Busca todos los productos
+     *
+     * @param marca     Marca del producto
+     * @param categoria Categoría del producto
+     * @return Lista de productos
+     */
     @Override
     public List<Producto> findAll(String marca, String categoria) {
         // Si todo está vacío o nulo, devolvemos todos los productos
@@ -54,6 +66,13 @@ public class ProductoServiceImpl implements ProductosService {
         return productosRepository.findAllByMarcaAndCategoria(marca, categoria);
     }
 
+    /**
+     * Busca un producto por su id
+     *
+     * @param id Id del producto
+     * @return Producto encontrado
+     * @throws ProductoNotFound Si no lo encuentra
+     */
     @Override
     @Cacheable
     public Producto findById(Long id) {
@@ -61,6 +80,14 @@ public class ProductoServiceImpl implements ProductosService {
         return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
     }
 
+    /**
+     * Busca un producto por su uuid
+     *
+     * @param uuid Uuid del producto en formato string
+     * @return Producto encontrado
+     * @throws ProductoNotFound Si no lo encuentra
+     * @throws ProductoBadUuid  Si el uuid no es válido
+     */
     @Override
     @Cacheable
     public Producto findbyUuid(String uuid) {
@@ -73,6 +100,12 @@ public class ProductoServiceImpl implements ProductosService {
         }
     }
 
+    /**
+     * Guarda un producto
+     *
+     * @param productoCreateDto Producto a guardar
+     * @return Producto guardado
+     */
     @Override
     @CachePut
     public Producto save(ProductoCreateDto productoCreateDto) {
@@ -85,6 +118,14 @@ public class ProductoServiceImpl implements ProductosService {
         return productosRepository.save(nuevoProducto);
     }
 
+    /**
+     * Actualiza un producto
+     *
+     * @param id                Id del producto a actualizar
+     * @param productoUpdateDto Producto a actualizar
+     * @return Producto actualizado
+     * @throws ProductoNotFound Si no lo encuentra
+     */
     @Override
     @CachePut
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
@@ -97,6 +138,12 @@ public class ProductoServiceImpl implements ProductosService {
         return productosRepository.save(productoActualizado);
     }
 
+    /**
+     * Borra un producto
+     *
+     * @param id Id del producto a borrar
+     * @throws ProductoNotFound Si no lo encuentra
+     */
     @Override
     @CacheEvict
     public void deleteById(Long id) {
