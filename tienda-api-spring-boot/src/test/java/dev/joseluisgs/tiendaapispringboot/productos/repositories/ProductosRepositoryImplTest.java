@@ -3,7 +3,6 @@ package dev.joseluisgs.tiendaapispringboot.productos.repositories;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
+
 class ProductosRepositoryImplTest {
 
     private final Producto producto1 = new Producto(

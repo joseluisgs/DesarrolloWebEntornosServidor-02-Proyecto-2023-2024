@@ -4,8 +4,6 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,12 +11,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
 class ProductoMapperTest {
 
     // Inyectamos el mapper
-    @Autowired
-    private ProductoMapper productoMapper;
+    private final ProductoMapper productoMapper = new ProductoMapper();
 
     @Test
     void toProduct() {
