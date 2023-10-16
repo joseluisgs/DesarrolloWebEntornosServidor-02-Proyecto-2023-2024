@@ -42,7 +42,7 @@ public class ProductoMapper {
                 producto.getCreatedAt(),
                 LocalDateTime.now(),
                 producto.getUuid(),
-                producto.getIsDeleted()
+                dto.getIsDeleted() != null ? dto.getIsDeleted() : producto.getIsDeleted()
         );
     }
 

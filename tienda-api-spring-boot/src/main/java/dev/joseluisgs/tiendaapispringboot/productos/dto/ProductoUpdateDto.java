@@ -17,5 +17,6 @@ public class ProductoUpdateDto {
     private final String categoria;
     @Min(value = 0, message = "El stock no puede ser negativo")
     private final Integer stock;
+    private final Boolean isDeleted;
 }
 
