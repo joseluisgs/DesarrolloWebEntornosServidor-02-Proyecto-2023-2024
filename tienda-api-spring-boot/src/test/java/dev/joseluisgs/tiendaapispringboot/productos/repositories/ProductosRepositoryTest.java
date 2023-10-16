@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 // Vamos a probar el repositorio, pero moqueamos la base de datos JPA
 @DataJpaTest
-class ProductosRepositoryImplTest {
+class ProductosRepositoryTest {
 
     private final Producto producto1 = new Producto(
             null, "Adidas", "Zapatillas", "Zapatillas de deporte",
