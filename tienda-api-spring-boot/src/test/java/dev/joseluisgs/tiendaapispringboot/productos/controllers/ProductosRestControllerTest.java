@@ -38,12 +38,14 @@ class ProductosRestControllerTest {
     private final Producto producto1 = new Producto(
             1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "OTROS", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
+            false
     );
     private final Producto producto2 = new Producto(
             2L, "Nike", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "DEPORTE", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
+            false
     );
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired

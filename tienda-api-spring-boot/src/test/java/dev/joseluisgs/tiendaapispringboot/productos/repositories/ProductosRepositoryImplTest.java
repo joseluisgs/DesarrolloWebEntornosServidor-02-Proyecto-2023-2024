@@ -3,6 +3,9 @@ package dev.joseluisgs.tiendaapispringboot.productos.repositories;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -11,27 +14,33 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
+// Vamos a probar el repositorio, pero moqueamos la base de datos JPA
+@DataJpaTest
 class ProductosRepositoryImplTest {
 
     private final Producto producto1 = new Producto(
-            1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
+            null, "Adidas", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "OTROS", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
+            false
     );
     private final Producto producto2 = new Producto(
-            2L, "Nike", "Zapatillas", "Zapatillas de deporte",
+            null, "Nike", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "DEPORTE", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
+            false
     );
-    private ProductosRepositoryImpl repository;
+    @Autowired
+    private ProductosRepository repository;
+    @Autowired
+    private TestEntityManager entityManager; // EntityManager para hacer las pruebas
 
     @BeforeEach
     void setUp() {
-        repository = new ProductosRepositoryImpl();
         // Vamos a salvar dos productos
-        repository.save(producto1);
-        repository.save(producto2);
+        entityManager.merge(producto1);
+        entityManager.merge(producto2);
+        entityManager.flush();
     }
 
     @Test
@@ -39,10 +48,13 @@ class ProductosRepositoryImplTest {
         // Act
         List<Producto> productos = repository.findAll();
 
+        // Ten cuidado si estas usando datos en el script de test, ya que si no se borran, se acumulan
+
         // Assert
         assertAll("findAll",
                 () -> assertNotNull(productos),
-                () -> assertEquals(2, productos.size())
+                () -> assertFalse(productos.isEmpty()),
+                () -> assertTrue(productos.size() >= 2)
         );
     }
 
@@ -50,12 +62,12 @@ class ProductosRepositoryImplTest {
     void findAllByMarca() {
         // Act
         String marca = "Nike";
-        List<Producto> productos = repository.findAllByMarca(marca);
+        List<Producto> productos = repository.findByMarcaContainsIgnoreCase(marca);
 
         // Assert
         assertAll("findAllByMarca",
                 () -> assertNotNull(productos),
-                () -> assertEquals(1, productos.size()),
+                () -> assertFalse(productos.isEmpty()),
                 () -> assertEquals(marca, productos.get(0).getMarca())
         );
     }
@@ -64,12 +76,12 @@ class ProductosRepositoryImplTest {
     void findAllByCategoria() {
         // Act
         String categoria = "DEPORTE";
-        List<Producto> productos = repository.findAllByCategoria(categoria);
+        List<Producto> productos = repository.findByCategoriaContainsIgnoreCase(categoria);
 
         // Assert
         assertAll("findAllByCategoria",
                 () -> assertNotNull(productos),
-                () -> assertEquals(1, productos.size()),
+                () -> assertFalse(productos.isEmpty()),
                 () -> assertEquals(categoria, productos.get(0).getCategoria())
         );
     }
@@ -79,12 +91,12 @@ class ProductosRepositoryImplTest {
         // Act
         String marca = "Nike";
         String categoria = "DEPORTE";
-        List<Producto> productos = repository.findAllByMarcaAndCategoria(marca, categoria);
+        List<Producto> productos = repository.findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(marca, categoria);
 
         // Assert
         assertAll("findAllByMarcaAndCategoria",
                 () -> assertNotNull(productos),
-                () -> assertEquals(1, productos.size()),
+                () -> assertFalse(productos.isEmpty()),
                 () -> assertEquals(marca, productos.get(0).getMarca()),
                 () -> assertEquals(categoria, productos.get(0).getCategoria())
         );
@@ -122,6 +134,8 @@ class ProductosRepositoryImplTest {
         // Act
         UUID uuid = UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821");
         Optional<Producto> optionalProducto = repository.findByUuid(uuid);
+
+        var res = repository.findAll();
 
         // Assert
         assertAll("findByUuid_existingUuid_returnsOptionalWithProducto",
@@ -164,25 +178,6 @@ class ProductosRepositoryImplTest {
         assertFalse(exists);
     }
 
-    @Test
-    void existsByUuid_existingUuid_returnsTrue() {
-        // Act
-        UUID uuid = UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821");
-        boolean exists = repository.existsByUuid(uuid);
-
-        // Assert
-        assertTrue(exists);
-    }
-
-    @Test
-    void existsByUuid_nonExistingUuid_returnsFalse() {
-        // Act
-        UUID uuid = UUID.fromString("98bb49a6-3ae5-4e50-a606-db397a8772b2");
-        boolean exists = repository.existsByUuid(uuid);
-
-        // Assert
-        assertFalse(exists);
-    }
 
     @Test
     void saveButNotExists() {
@@ -190,7 +185,8 @@ class ProductosRepositoryImplTest {
         Producto producto = new Producto(
                 3L, "New Brand", "New Model", "New Description",
                 200.0, "http://placeimg.com/640/480/people", "NEW", 5,
-                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID()
+                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(),
+                false
         );
 
         // Act
@@ -201,7 +197,7 @@ class ProductosRepositoryImplTest {
         assertAll("save",
                 () -> assertNotNull(savedProducto),
                 () -> assertEquals(producto, savedProducto),
-                () -> assertEquals(3, all.size())
+                () -> assertTrue(all.size() >= 2)
         );
     }
 
@@ -211,7 +207,7 @@ class ProductosRepositoryImplTest {
         Producto producto = new Producto(
                 1L, "New Brand", "New Model", "New Description",
                 200.0, "http://placeimg.com/640/480/people", "NEW", 5,
-                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID()
+                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), false
         );
 
         // Act
@@ -222,7 +218,8 @@ class ProductosRepositoryImplTest {
         assertAll("save",
                 () -> assertNotNull(savedProducto),
                 () -> assertEquals(producto, savedProducto),
-                () -> assertEquals(2, all.size())
+                () -> assertTrue(repository.existsById(1L)),
+                () -> assertTrue(all.size() >= 2)
         );
     }
 
@@ -235,35 +232,8 @@ class ProductosRepositoryImplTest {
 
         // Assert
         assertAll("deleteById_existingId",
-                () -> assertEquals(1, all.size()),
-                () -> assertFalse(repository.existsById(id))
-        );
-    }
-
-    @Test
-    void deleteByUuid_existingUuid() {
-        // Act
-        UUID uuid = UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821");
-        repository.deleteByUuid(uuid);
-        var all = repository.findAll();
-
-        // Assert
-        assertAll("deleteByUuid_existingUuid",
-                () -> assertEquals(1, all.size()),
-                () -> assertFalse(repository.existsByUuid(uuid))
-        );
-    }
-
-    @Test
-    void nextId() {
-        // Act
-        Long nextId = repository.nextId();
-        var all = repository.findAll();
-
-        // Assert
-        assertAll("nextId",
-                () -> assertEquals(3L, nextId),
-                () -> assertEquals(2, all.size())
+                () -> assertFalse(repository.existsById(id)),
+                () -> assertFalse(all.isEmpty())
         );
     }
 }
