@@ -2,6 +2,7 @@ package dev.joseluisgs.tiendaapispringboot.productos.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -34,8 +35,6 @@ public class Producto {
     private final Double precio;
     @Column(columnDefinition = "TEXT default 'https://via.placeholder.com/150'")
     private final String imagen;
-    @NotBlank(message = "La categoría no puede estar vacía")
-    private final String categoria;
     @Min(value = 0, message = "El stock no puede ser negativo")
     private final Integer stock;
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -46,6 +45,10 @@ public class Producto {
     private final UUID uuid;
     @Column(columnDefinition = "boolean default false")
     private final Boolean isDeleted;
+    // Relación con categoría, muchos productos pueden tener una categoría
+    @ManyToOne
+    @JoinColumn(name = "categoria_id") // Así la vamos a llamar en la BB.DD
+    private Categoria categoria;
 
 
     // Esto lo ponemos para que Jackson sepa como crear el objeto (TEST)
@@ -57,7 +60,7 @@ public class Producto {
             @JsonProperty("descripcion") String descripcion,
             @JsonProperty("precio") Double precio,
             @JsonProperty("imagen") String imagen,
-            @JsonProperty("categoria") String categoria,
+            @JsonProperty("categoria") Categoria categoria,
             @JsonProperty("stock") Integer stock
     ) {
         // Inicializar los atributos con los valores proporcionados
