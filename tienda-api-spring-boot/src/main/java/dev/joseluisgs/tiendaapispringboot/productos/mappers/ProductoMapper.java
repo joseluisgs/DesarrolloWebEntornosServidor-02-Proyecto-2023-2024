@@ -11,9 +11,9 @@ import java.util.UUID;
 
 @Component
 public class ProductoMapper {
-    public Producto toProduct(Long id, ProductoCreateDto dto) {
+    public Producto toProduct(ProductoCreateDto dto) {
         return new Producto(
-                id,
+                null,
                 dto.getMarca(),
                 dto.getModelo(),
                 dto.getDescripcion(),
@@ -23,7 +23,8 @@ public class ProductoMapper {
                 dto.getStock(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                false
         );
     }
 
@@ -40,7 +41,8 @@ public class ProductoMapper {
                 dto.getStock() != null ? dto.getStock() : producto.getStock(),
                 producto.getCreatedAt(),
                 LocalDateTime.now(),
-                producto.getUuid()
+                producto.getUuid(),
+                producto.getIsDeleted()
         );
     }
 
