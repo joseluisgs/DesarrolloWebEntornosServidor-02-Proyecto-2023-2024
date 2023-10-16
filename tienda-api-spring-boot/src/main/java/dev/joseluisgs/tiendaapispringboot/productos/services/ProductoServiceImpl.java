@@ -56,8 +56,18 @@ public class ProductoServiceImpl implements ProductosService {
             return productosRepository.findAll();
         }
         // Si la marca no está vacía, pero la categoría si, buscamos por marca
-        logger.info("Buscando productos por marca: " + marca);
-        return productosRepository.findByMarcaContainsIgnoreCase(marca);
+        if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
+            logger.info("Buscando productos por marca: " + marca);
+            return productosRepository.findByMarcaContainsIgnoreCase(marca.toLowerCase());
+        }
+        // Si la marca está vacía, pero la categoría no, buscamos por categoría
+        if ((categoria != null && !categoria.isEmpty()) && (marca == null || marca.isEmpty())) {
+            logger.info("Buscando productos por categoría: " + categoria);
+            return productosRepository.findByCategoriaContainsIgnoreCase(categoria.toLowerCase());
+        }
+        // Si la marca y la categoría no están vacías, buscamos por ambas
+        logger.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
+        return productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca.toLowerCase(), categoria.toLowerCase());
     }
 
     /**

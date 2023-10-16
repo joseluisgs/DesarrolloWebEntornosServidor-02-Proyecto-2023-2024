@@ -93,6 +93,7 @@ public class CategoriasRestController {
      * @param id del categoria, se pasa como parámetro de la URL /{id}
      * @return No Content si se ha borrado
      * @throws CategoriaNotFound si no existe el producto (404)
+     * @throws CategoriaConflict si no se puede borrar porque tiene productos asociados (409)
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {

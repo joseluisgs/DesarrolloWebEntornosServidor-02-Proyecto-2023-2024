@@ -1,6 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.services;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.mappers.CategoriasMapper;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -79,7 +80,14 @@ public class CategoriasServiceImpl implements CategoriasService {
         //categoriasRepository.deleteById(id);
         // O lo marcamos como borrado, para evitar problemas de cascada, no podemos borrar categorías con productos!!!
         // La otra forma es que comprobaramos si hay productos para borrarlos antes
-        categoriasRepository.updateIsDeletedToTrueById(id);
+        // categoriasRepository.updateIsDeletedToTrueById(id);
+        // Otra forma es que comprobaramos si hay productos para borrarlos antes
+        if (categoriasRepository.existsProductoById(id)) {
+            logger.warn("No se puede borrar la categoría con id: " + id + " porque tiene productos asociados");
+            throw new CategoriaConflict("No se puede borrar la categoría con id " + id + " porque tiene productos asociados");
+        } else {
+            categoriasRepository.deleteById(id);
+        }
 
     }
 }

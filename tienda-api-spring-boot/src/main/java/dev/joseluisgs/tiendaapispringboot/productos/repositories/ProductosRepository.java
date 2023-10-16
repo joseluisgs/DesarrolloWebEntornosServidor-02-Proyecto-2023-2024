@@ -15,10 +15,12 @@ public interface ProductosRepository extends JpaRepository<Producto, Long> {
     // Otras consultas que voy a tener a parte de las básicas
 
     // Por categoría
-    // List<Producto> findByCategoriaContainsIgnoreCase(String categoria);
+    @Query("SELECT p FROM Producto p WHERE LOWER(p.categoria.nombre) LIKE %:categoria%")
+    List<Producto> findByCategoriaContainsIgnoreCase(String categoria);
 
     // Por categoria y que deleted sea false
-    // List<Producto> findByCategoriaContainsIgnoreCaseAndIsDeletedFalse(String categoria);
+    @Query("SELECT p FROM Producto p WHERE LOWER(p.categoria.nombre) LIKE %:categoria% AND p.isDeleted = false")
+    List<Producto> findByCategoriaContainsIgnoreCaseAndIsDeletedFalse(String categoria);
 
     // Por marca
     List<Producto> findByMarcaContainsIgnoreCase(String marca);
@@ -27,10 +29,12 @@ public interface ProductosRepository extends JpaRepository<Producto, Long> {
     List<Producto> findByMarcaContainsIgnoreCaseAndIsDeletedFalse(String marca);
 
     // Por marca y categoría
-    // List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(String marca, String categoria);
+    @Query("SELECT p FROM Producto p WHERE LOWER(p.marca) LIKE %:marca% AND LOWER(p.categoria.nombre) LIKE %:categoria%")
+    List<Producto> findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(String marca, String categoria);
 
-    // Por marca y categoría y que deleted sea false
-    // List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCaseAndIsDeletedFalse(String marca, String categoria);
+    // Por marca y categoría
+    @Query("SELECT p FROM Producto p WHERE LOWER(p.marca) LIKE %:marca% AND LOWER(p.categoria.nombre) LIKE %:categoria% AND p.isDeleted = false")
+    List<Producto> findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCaseAndIsDeletedFalse(String marca, String categoria);
 
     // Por UUID
     Optional<Producto> findByUuid(UUID uuid);

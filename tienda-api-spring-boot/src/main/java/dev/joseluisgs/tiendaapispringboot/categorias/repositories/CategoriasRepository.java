@@ -32,4 +32,8 @@ public interface CategoriasRepository extends JpaRepository<Categoria, Long> {
     // Consulta de actualización
     void updateIsDeletedToTrueById(Long id);
 
+    // Obtienes si existe un producto con el id de la categoría
+    @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Producto p WHERE p.categoria.id = :id")
+    Boolean existsProductoById(Long id);
+
 }
