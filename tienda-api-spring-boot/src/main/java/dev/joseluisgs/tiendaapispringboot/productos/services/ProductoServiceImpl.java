@@ -1,5 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.productos.services;
 
+import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
+import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
@@ -29,11 +31,13 @@ import java.util.UUID;
 public class ProductoServiceImpl implements ProductosService {
     private final Logger logger = LoggerFactory.getLogger(ProductoServiceImpl.class);
     private final ProductosRepository productosRepository;
+    private final CategoriasService categoriaService;
     private final ProductoMapper productosMapper;
 
     @Autowired
-    public ProductoServiceImpl(ProductosRepository productosRepository, ProductoMapper productoMapper) {
+    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasService categoriaService, ProductoMapper productoMapper) {
         this.productosRepository = productosRepository;
+        this.categoriaService = categoriaService;
         this.productosMapper = productoMapper;
     }
 
@@ -52,18 +56,8 @@ public class ProductoServiceImpl implements ProductosService {
             return productosRepository.findAll();
         }
         // Si la marca no está vacía, pero la categoría si, buscamos por marca
-        if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            logger.info("Buscando productos por marca: " + marca);
-            return productosRepository.findByMarcaContainsIgnoreCase(marca);
-        }
-        // Si la marca está vacía, pero la categoría no, buscamos por categoría
-        if (marca == null || marca.isEmpty()) {
-            logger.info("Buscando productos por categoría: " + categoria);
-            return productosRepository.findByCategoriaContainsIgnoreCase(categoria);
-        }
-        // Si la marca y la categoría no están vacías, buscamos por ambas
-        logger.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
-        return productosRepository.findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(marca, categoria);
+        logger.info("Buscando productos por marca: " + marca);
+        return productosRepository.findByMarcaContainsIgnoreCase(marca);
     }
 
     /**
@@ -110,9 +104,11 @@ public class ProductoServiceImpl implements ProductosService {
     @CachePut
     public Producto save(ProductoCreateDto productoCreateDto) {
         logger.info("Guardando producto: " + productoCreateDto);
+        // Buscamos la categoría por su nombre
+        var categoria = categoriaService.findByNombre(productoCreateDto.getCategoria());
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        return productosRepository.save(productosMapper.toProduct(productoCreateDto));
+        return productosRepository.save(productosMapper.toProduct(productoCreateDto, categoria));
     }
 
     /**
@@ -129,9 +125,17 @@ public class ProductoServiceImpl implements ProductosService {
         logger.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
+        // Buscamos la categoría por su nombre
+        // Si no tenemos categoría, no la actualizamos
+        Categoria categoria = null;
+        if (productoUpdateDto.getCategoria() != null && !productoUpdateDto.getCategoria().isEmpty()) {
+            categoria = categoriaService.findByNombre(productoUpdateDto.getCategoria());
+        } else {
+            categoria = productoActual.getCategoria();
+        }
         // Actualizamos el producto con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        return productosRepository.save(productosMapper.toProduct(productoUpdateDto, productoActual));
+        return productosRepository.save(productosMapper.toProduct(productoUpdateDto, productoActual, categoria));
     }
 
     /**

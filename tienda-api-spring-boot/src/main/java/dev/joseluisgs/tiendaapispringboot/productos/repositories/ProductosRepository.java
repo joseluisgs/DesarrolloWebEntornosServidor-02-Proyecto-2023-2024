@@ -15,10 +15,10 @@ public interface ProductosRepository extends JpaRepository<Producto, Long> {
     // Otras consultas que voy a tener a parte de las básicas
 
     // Por categoría
-    List<Producto> findByCategoriaContainsIgnoreCase(String categoria);
+    // List<Producto> findByCategoriaContainsIgnoreCase(String categoria);
 
     // Por categoria y que deleted sea false
-    List<Producto> findByCategoriaContainsIgnoreCaseAndIsDeletedFalse(String categoria);
+    // List<Producto> findByCategoriaContainsIgnoreCaseAndIsDeletedFalse(String categoria);
 
     // Por marca
     List<Producto> findByMarcaContainsIgnoreCase(String marca);
@@ -27,10 +27,10 @@ public interface ProductosRepository extends JpaRepository<Producto, Long> {
     List<Producto> findByMarcaContainsIgnoreCaseAndIsDeletedFalse(String marca);
 
     // Por marca y categoría
-    List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(String marca, String categoria);
+    // List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(String marca, String categoria);
 
     // Por marca y categoría y que deleted sea false
-    List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCaseAndIsDeletedFalse(String marca, String categoria);
+    // List<Producto> findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCaseAndIsDeletedFalse(String marca, String categoria);
 
     // Por UUID
     Optional<Producto> findByUuid(UUID uuid);
