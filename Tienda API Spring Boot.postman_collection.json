@@ -147,7 +147,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias/2",
+							"raw": "localhost:3000/v1/categorias/1",
 							"host": [
 								"localhost"
 							],
@@ -155,7 +155,7 @@
 							"path": [
 								"v1",
 								"categorias",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -224,7 +224,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"{{$randomInt}}\",\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\":\"{{$randomInt}}\",\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"DEPORTES\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -252,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 2,\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"{{$randomWord}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"OTROS\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
