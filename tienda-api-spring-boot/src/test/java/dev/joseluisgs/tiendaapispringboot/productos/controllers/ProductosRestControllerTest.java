@@ -289,7 +289,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
@@ -320,7 +320,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenThrow(new ProductoNotFound(1L));
@@ -343,7 +343,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Ad", "", "Zapatillas de deporte",
-                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5);
+                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5, false);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -370,7 +370,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", null, null,
-                null, "http://placeimg.com/640/480/people", "OTROS", 5);
+                null, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);

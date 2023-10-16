@@ -204,7 +204,7 @@ class ProductoServiceImplTest {
     void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
         Producto existingProduct = producto1;
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
@@ -226,7 +226,7 @@ class ProductoServiceImplTest {
     void update_ShouldThrowProductoNotFound_WhenInvalidIdProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
         when(productosRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert

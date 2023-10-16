@@ -55,7 +55,8 @@ class ProductoMapperTest {
                 1000.0,
                 "https://www.samsung.com/es_es/smartphones/galaxy-s20/",
                 "Celulares",
-                10
+                10,
+                false
         );
 
         Producto producto = new Producto(
