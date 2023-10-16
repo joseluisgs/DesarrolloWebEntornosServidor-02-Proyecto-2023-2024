@@ -2,6 +2,7 @@ package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
@@ -35,17 +36,18 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class ProductosRestControllerTest {
     private final String myEndpoint = "/v1/productos";
 
+    private final Categoria categoria = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
     private final Producto producto1 = new Producto(
             1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", "OTROS", 5,
+            100.0, "http://placeimg.com/640/480/people", 5,
             LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
-            false
+            false, categoria
     );
     private final Producto producto2 = new Producto(
             2L, "Nike", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", "DEPORTE", 5,
+            100.0, "http://placeimg.com/640/480/people", 5,
             LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
-            false
+            false, categoria
     );
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
@@ -289,7 +291,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
@@ -320,7 +322,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenThrow(new ProductoNotFound(1L));
@@ -343,7 +345,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Ad", "", "Zapatillas de deporte",
-                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5);
+                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5, false);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -370,7 +372,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = new ProductoUpdateDto(
                 "Adidas", null, null,
-                null, "http://placeimg.com/640/480/people", "OTROS", 5);
+                null, "http://placeimg.com/640/480/people", "OTROS", 5, false);
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
