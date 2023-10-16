@@ -7,6 +7,163 @@
 	},
 	"item": [
 		{
+			"name": "Categorias",
+			"item": [
+				{
+					"name": "GET All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/categorias",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias"
+							],
+							"query": [
+								{
+									"key": "nombre",
+									"value": "dep",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/categorias/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST and create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"{{$randomProductName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/v1/categorias",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PUT and update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"{{$randomProductName}}\",\r\n    \"isDeleted\": false\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/v1/categorias/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "PATCH and update partial",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"isDeleted\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "localhost:3000/v1/categorias/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/categorias/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Productos",
 			"item": [
 				{
@@ -89,7 +246,7 @@
 					"response": []
 				},
 				{
-					"name": "PUT and unpdate",
+					"name": "PUT and update",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -124,7 +281,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 2,\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"stock\": \"{{$randomInt}}\"\r\n}",
+							"raw": "{\r\n    \"id\": 2,\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"isDeleted\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
