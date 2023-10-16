@@ -30,12 +30,14 @@ class ProductoServiceImplTest {
     private final Producto producto1 = new Producto(
             1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "OTROS", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
+            false
     );
     private final Producto producto2 = new Producto(
             2L, "Nike", "Zapatillas", "Zapatillas de deporte",
             100.0, "http://placeimg.com/640/480/people", "DEPORTE", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821")
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
+            false
     );
 
     @Mock
@@ -68,7 +70,7 @@ class ProductoServiceImplTest {
         // Arrange
         String marca = "Nike";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByMarca(marca)).thenReturn(expectedProducts);
+        when(productosRepository.findByMarcaContainsIgnoreCase(marca)).thenReturn(expectedProducts);
 
         // Act
         List<Producto> actualProducts = productoService.findAll(marca, null);
@@ -77,7 +79,7 @@ class ProductoServiceImplTest {
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByMarca(marca);
+        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCase(marca);
     }
 
     @Test
@@ -85,7 +87,7 @@ class ProductoServiceImplTest {
         // Arrange
         String categoria = "DEPORTE";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByCategoria(categoria)).thenReturn(expectedProducts);
+        when(productosRepository.findByCategoriaContainsIgnoreCase(categoria)).thenReturn(expectedProducts);
 
         // Act
         List<Producto> actualProducts = productoService.findAll(null, categoria);
@@ -94,7 +96,7 @@ class ProductoServiceImplTest {
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByCategoria(categoria);
+        verify(productosRepository, times(1)).findByCategoriaContainsIgnoreCase(categoria);
     }
 
     @Test
@@ -103,7 +105,7 @@ class ProductoServiceImplTest {
         String marca = "Nike";
         String categoria = "DEPORTE";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByMarcaAndCategoria(marca, categoria)).thenReturn(expectedProducts);
+        when(productosRepository.findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(marca, categoria)).thenReturn(expectedProducts);
 
         // Act
         List<Producto> actualProducts = productoService.findAll(marca, categoria);
@@ -112,7 +114,7 @@ class ProductoServiceImplTest {
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByMarcaAndCategoria(marca, categoria);
+        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(marca, categoria);
     }
 
     @Test
@@ -182,10 +184,9 @@ class ProductoServiceImplTest {
         ProductoCreateDto productoCreateDto = new ProductoCreateDto(
                 "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5
         );
-        Producto expectedProduct = new Producto(1L, "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
+        Producto expectedProduct = new Producto(1L, "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), false);
 
-        when(productosRepository.nextId()).thenReturn(1L);
-        when(productoMapper.toProduct(1L, productoCreateDto)).thenReturn(expectedProduct);
+        when(productoMapper.toProduct(productoCreateDto)).thenReturn(expectedProduct);
         when(productosRepository.save(expectedProduct)).thenReturn(expectedProduct);
 
         // Act
@@ -195,9 +196,8 @@ class ProductoServiceImplTest {
         assertEquals(expectedProduct, actualProduct);
 
         // Verify
-        verify(productosRepository, times(1)).nextId();
         verify(productosRepository, times(1)).save(productoCaptor.capture());
-        verify(productoMapper, times(1)).toProduct(1L, productoCreateDto);
+        verify(productoMapper, times(1)).toProduct(productoCreateDto);
     }
 
     @Test

@@ -19,7 +19,6 @@ class ProductoMapperTest {
     @Test
     void toProduct() {
         // Arrange
-        Long id = 1L;
         ProductoCreateDto productoCreateDto = new ProductoCreateDto(
                 "Samsung",
                 "S20",
@@ -31,11 +30,10 @@ class ProductoMapperTest {
         );
 
         // Act
-        var res = productoMapper.toProduct(id, productoCreateDto);
+        var res = productoMapper.toProduct(productoCreateDto);
 
         // Assert
         assertAll(
-                () -> assertEquals(id, res.getId()),
                 () -> assertEquals(productoCreateDto.getMarca(), res.getMarca()),
                 () -> assertEquals(productoCreateDto.getModelo(), res.getModelo()),
                 () -> assertEquals(productoCreateDto.getDescripcion(), res.getDescripcion()),
@@ -71,7 +69,8 @@ class ProductoMapperTest {
                 productoUpdateDto.getStock(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                false
         );
 
         // Act
@@ -104,7 +103,8 @@ class ProductoMapperTest {
                 10,
                 LocalDateTime.now(),
                 LocalDateTime.now(),
-                UUID.randomUUID()
+                UUID.randomUUID(),
+                false
         );
 
         // Act

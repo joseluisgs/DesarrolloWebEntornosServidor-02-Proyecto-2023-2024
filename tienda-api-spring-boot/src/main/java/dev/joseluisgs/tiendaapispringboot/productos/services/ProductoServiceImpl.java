@@ -54,16 +54,16 @@ public class ProductoServiceImpl implements ProductosService {
         // Si la marca no está vacía, pero la categoría si, buscamos por marca
         if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
             logger.info("Buscando productos por marca: " + marca);
-            return productosRepository.findAllByMarca(marca);
+            return productosRepository.findByMarcaContainsIgnoreCase(marca);
         }
         // Si la marca está vacía, pero la categoría no, buscamos por categoría
         if (marca == null || marca.isEmpty()) {
             logger.info("Buscando productos por categoría: " + categoria);
-            return productosRepository.findAllByCategoria(categoria);
+            return productosRepository.findByCategoriaContainsIgnoreCase(categoria);
         }
         // Si la marca y la categoría no están vacías, buscamos por ambas
         logger.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
-        return productosRepository.findAllByMarcaAndCategoria(marca, categoria);
+        return productosRepository.findByMarcaContainsIgnoreCaseAndAndCategoriaIgnoreCase(marca, categoria);
     }
 
     /**
@@ -110,10 +110,8 @@ public class ProductoServiceImpl implements ProductosService {
     @CachePut
     public Producto save(ProductoCreateDto productoCreateDto) {
         logger.info("Guardando producto: " + productoCreateDto);
-        // obtenemos el id de producto
-        Long id = productosRepository.nextId();
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
-        Producto nuevoProducto = productoMapper.toProduct(id, productoCreateDto);
+        Producto nuevoProducto = productoMapper.toProduct(productoCreateDto);
         // Lo guardamos en el repositorio
         return productosRepository.save(nuevoProducto);
     }
@@ -146,12 +144,15 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CacheEvict
+    // @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         logger.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         this.findById(id);
         // Lo borramos del repositorio
         productosRepository.deleteById(id);
+        // O lo marcamos como borrado
+        //productosRepository.updateIsDeletedToTrueById(id);
 
     }
 }
