@@ -1,5 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.productos.services;
 
+import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
+import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
@@ -27,19 +29,25 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProductoServiceImplTest {
 
+    private final Categoria categoria = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
+
     private final Producto producto1 = new Producto(
             1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", "OTROS", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c")
+            100.0, "http://placeimg.com/640/480/people", 5,
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
+            false, categoria
     );
     private final Producto producto2 = new Producto(
             2L, "Nike", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", "DEPORTE", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821")
+            100.0, "http://placeimg.com/640/480/people", 5,
+            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
+            false, categoria
     );
 
     @Mock
     private ProductosRepository productosRepository;
+    @Mock
+    private CategoriasService categoriaService;
     @Mock
     private ProductoMapper productoMapper;
     @InjectMocks
@@ -66,9 +74,9 @@ class ProductoServiceImplTest {
     @Test
     void findAll_ShouldReturnProductsByMarca_WhenMarcaParameterProvided() {
         // Arrange
-        String marca = "Nike";
+        String marca = "nike";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByMarca(marca)).thenReturn(expectedProducts);
+        when(productosRepository.findByMarcaContainsIgnoreCase(marca)).thenReturn(expectedProducts);
 
         // Act
         List<Producto> actualProducts = productoService.findAll(marca, null);
@@ -77,42 +85,42 @@ class ProductoServiceImplTest {
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByMarca(marca);
+        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCase(marca);
     }
 
     @Test
     void findAll_ShouldReturnProductsByCategoria_WhenCategoriaParameterProvided() {
         // Arrange
-        String categoria = "DEPORTE";
+        String categoriaNombre = "deportes";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByCategoria(categoria)).thenReturn(expectedProducts);
+        when(productosRepository.findByCategoriaContainsIgnoreCase(categoriaNombre)).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, categoria);
+        List<Producto> actualProducts = productoService.findAll(null, categoriaNombre);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByCategoria(categoria);
+        verify(productosRepository, times(1)).findByCategoriaContainsIgnoreCase(categoriaNombre);
     }
 
     @Test
     void findAll_ShouldReturnProductsByMarcaAndCategoria_WhenBothParametersProvided() {
         // Arrange
-        String marca = "Nike";
-        String categoria = "DEPORTE";
+        String marca = "nike";
+        String categoriaNombre = "deportes";
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findAllByMarcaAndCategoria(marca, categoria)).thenReturn(expectedProducts);
+        when(productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre)).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, categoria);
+        List<Producto> actualProducts = productoService.findAll(marca, categoriaNombre);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findAllByMarcaAndCategoria(marca, categoria);
+        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre);
     }
 
     @Test
@@ -182,10 +190,10 @@ class ProductoServiceImplTest {
         ProductoCreateDto productoCreateDto = new ProductoCreateDto(
                 "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5
         );
-        Producto expectedProduct = new Producto(1L, "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID());
+        Producto expectedProduct = new Producto(1L, "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", 5, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), false, categoria);
 
-        when(productosRepository.nextId()).thenReturn(1L);
-        when(productoMapper.toProduct(1L, productoCreateDto)).thenReturn(expectedProduct);
+        when(categoriaService.findByNombre(productoCreateDto.getCategoria())).thenReturn(categoria);
+        when(productoMapper.toProduct(productoCreateDto, categoria)).thenReturn(expectedProduct);
         when(productosRepository.save(expectedProduct)).thenReturn(expectedProduct);
 
         // Act
@@ -195,20 +203,21 @@ class ProductoServiceImplTest {
         assertEquals(expectedProduct, actualProduct);
 
         // Verify
-        verify(productosRepository, times(1)).nextId();
+        verify(categoriaService, times(1)).findByNombre(productoCreateDto.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
-        verify(productoMapper, times(1)).toProduct(1L, productoCreateDto);
+        verify(productoMapper, times(1)).toProduct(productoCreateDto, categoria);
     }
 
     @Test
     void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
         Producto existingProduct = producto1;
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
+        when(categoriaService.findByNombre(productoUpdateDto.getCategoria())).thenReturn(categoria);
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
-        when(productoMapper.toProduct(productoUpdateDto, producto1)).thenReturn(existingProduct);
+        when(productoMapper.toProduct(productoUpdateDto, producto1, categoria)).thenReturn(existingProduct);
 
         // Act
         Producto actualProduct = productoService.update(id, productoUpdateDto);
@@ -218,15 +227,16 @@ class ProductoServiceImplTest {
 
         // Verify
         verify(productosRepository, times(1)).findById(id);
+        verify(categoriaService, times(1)).findByNombre(productoUpdateDto.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
-        verify(productoMapper, times(1)).toProduct(productoUpdateDto, producto1);
+        verify(productoMapper, times(1)).toProduct(productoUpdateDto, producto1, categoria);
     }
 
     @Test
     void update_ShouldThrowProductoNotFound_WhenInvalidIdProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
         when(productosRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert

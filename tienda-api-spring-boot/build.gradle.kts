@@ -25,6 +25,8 @@ configurations {
 dependencies {
     // Dependencias de Spring Web for HTML Apps y Rest
     implementation("org.springframework.boot:spring-boot-starter-web")
+    // Spring Data JPA
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     // Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
     // Validación
@@ -34,11 +36,14 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
+    // H2 Database
+    runtimeOnly("com.h2database:h2")
+
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     // Para testear con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 }
 
 tasks.withType<Test> {

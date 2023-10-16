@@ -2,7 +2,6 @@ package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
@@ -15,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
 import java.util.List;
@@ -75,7 +75,7 @@ public class ProductosRestController {
      *
      * @param productoCreateDto a crear
      * @return Producto creado
-     * @throws ProductoBadRequest si el producto no es correcto (400)
+     * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PostMapping()
     public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateDto productoCreateDto) {
@@ -89,8 +89,8 @@ public class ProductosRestController {
      * @param id                del producto a actualizar, se pasa como parámetro de la URL /{id}
      * @param productoUpdateDto a actualizar
      * @return Producto actualizado
-     * @throws ProductoNotFound   si no existe el producto (404)
-     * @throws ProductoBadRequest si el producto no es correcto (400)
+     * @throws ProductoNotFound                    si no existe el producto (404)
+     * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
     public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
@@ -104,8 +104,8 @@ public class ProductosRestController {
      * @param id                del producto a actualizar, se pasa como parámetro de la URL /{id}
      * @param productoUpdateDto a actualizar
      * @return Producto actualizado
-     * @throws ProductoNotFound   si no existe el producto (404)
-     * @throws ProductoBadRequest si el producto no es correcto (400)
+     * @throws ProductoNotFound                    si no existe el producto (404)
+     * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
