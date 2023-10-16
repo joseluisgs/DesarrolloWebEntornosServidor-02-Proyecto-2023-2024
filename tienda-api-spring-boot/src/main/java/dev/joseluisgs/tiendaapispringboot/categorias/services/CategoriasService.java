@@ -8,6 +8,8 @@ import java.util.List;
 public interface CategoriasService {
     List<Categoria> findAll(String nombre);
 
+    Categoria findByNombre(String nombre);
+
     Categoria findById(Long id);
 
     Categoria save(CategoriaDto categoriaDto);

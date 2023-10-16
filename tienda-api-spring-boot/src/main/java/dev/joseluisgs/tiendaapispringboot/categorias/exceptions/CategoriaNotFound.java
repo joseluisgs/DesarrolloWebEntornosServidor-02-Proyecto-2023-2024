@@ -13,4 +13,7 @@ public class CategoriaNotFound extends CategoriaException {
         super("Categoría con id " + id + " no encontrada");
     }
 
+    public CategoriaNotFound(String categoria) {
+        super("Categoría " + categoria + " no encontrada");
+    }
 }

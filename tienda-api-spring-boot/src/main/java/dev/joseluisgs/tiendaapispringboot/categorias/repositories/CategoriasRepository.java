@@ -7,16 +7,23 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CategoriasRepository extends JpaRepository<Categoria, Long> {
-    // Encontrar por nombre
-    List<Categoria> findByNombreContainingIgnoreCase(String nombre);
+    // Encontrar por nombre exacto
+    Optional<Categoria> findByNombreEqualsIgnoreCase(String nombre);
+
+    // Encontrar por nombre exacto y no borrado
+    Optional<Categoria> findByNombreEqualsIgnoreCaseAndIsDeletedFalse(String nombre);
+
+    // Categorias por nombre
+    List<Categoria> findAllByNombreContainingIgnoreCase(String nombre);
 
     // Categorias activas
-    Categoria findByNombreContainingIgnoreCaseAndIsDeletedFalse(String nombre);
+    List<Categoria> findAllByNombreContainingIgnoreCaseAndIsDeletedFalse(String nombre);
 
-    // Si está borrado
+    // Si están borradas
     List<Categoria> findByIsDeleted(Boolean isDeleted);
 
     // Actualizar el producto con isDeleted a true

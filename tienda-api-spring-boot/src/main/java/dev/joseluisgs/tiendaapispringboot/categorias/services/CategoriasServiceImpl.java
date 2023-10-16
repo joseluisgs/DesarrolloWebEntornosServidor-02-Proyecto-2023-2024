@@ -5,6 +5,7 @@ import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFoun
 import dev.joseluisgs.tiendaapispringboot.categorias.mappers.CategoriasMapper;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.repositories.CategoriasRepository;
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,9 +36,16 @@ public class CategoriasServiceImpl implements CategoriasService {
         if (nombre == null || nombre.isEmpty()) {
             return categoriasRepository.findAll();
         } else {
-            return categoriasRepository.findByNombreContainingIgnoreCase(nombre);
+            return categoriasRepository.findAllByNombreContainingIgnoreCase(nombre);
         }
     }
+
+    @Override
+    public Categoria findByNombre(String nombre) {
+        logger.info("Buscando categoría por nombre: " + nombre);
+        return categoriasRepository.findByNombreEqualsIgnoreCase(nombre).orElseThrow(() -> new CategoriaNotFound(nombre));
+    }
+
 
     @Override
     @Cacheable
@@ -64,13 +72,14 @@ public class CategoriasServiceImpl implements CategoriasService {
 
     @Override
     @CacheEvict
-    // @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
+    @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         logger.info("Borrando categoría por id: " + id);
         Categoria categoria = findById(id);
-        categoriasRepository.deleteById(id);
+        //categoriasRepository.deleteById(id);
         // O lo marcamos como borrado, para evitar problemas de cascada, no podemos borrar categorías con productos!!!
-        //categoriasRepository.updateIsDeletedToTrueById(id);
+        // La otra forma es que comprobaramos si hay productos para borrarlos antes
+        categoriasRepository.updateIsDeletedToTrueById(id);
 
     }
 }
