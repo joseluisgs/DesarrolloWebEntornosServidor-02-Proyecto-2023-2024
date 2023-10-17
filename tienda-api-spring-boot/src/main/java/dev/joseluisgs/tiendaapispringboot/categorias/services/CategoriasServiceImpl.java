@@ -59,6 +59,10 @@ public class CategoriasServiceImpl implements CategoriasService {
     @CachePut
     public Categoria save(CategoriaDto categoriaDto) {
         logger.info("Guardando categoría: " + categoriaDto);
+        // No debe existir una con el mismo nombre
+        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaDto.getNombre()).ifPresent(c -> {
+            throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre());
+        });
         return categoriasRepository.save(categoriasMapper.toCategoria(categoriaDto));
     }
 
@@ -67,6 +71,12 @@ public class CategoriasServiceImpl implements CategoriasService {
     public Categoria update(Long id, CategoriaDto categoriaDto) {
         logger.info("Actualizando categoría: " + categoriaDto);
         Categoria categoriaActual = findById(id);
+        // No debe existir una con el mismo nombre, y si existe soy yo mismo
+        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaDto.getNombre()).ifPresent(c -> {
+            if (!c.getId().equals(id)) {
+                throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre());
+            }
+        });
         // Actualizamos los datos
         return categoriasRepository.save(categoriasMapper.toCategoria(categoriaDto, categoriaActual));
     }
