@@ -49,12 +49,12 @@ public class FileSystemStorageService implements StorageService {
 
     /**
      * Método que almacena un fichero en el almacenamiento secundario
-     * desde un objeto de tipo  MultipartFile
-     * <p>
-     * Modificamos el original del ejemplo de Spring para cambiar el nombre
-     * del fichero a almacenar. Como lo asociamos al objeto a subir usaremos el ID de
-     * dicho objeto como nombre de fichero.
-     * Usamos una huella de tiempo para evitar colisiones.
+     *
+     * @param file fichero a almacenar
+     * @return nombre del fichero almacenado
+     * @throws StorageBadRequest si el fichero está vacío
+     * @throws StorageInternal   si hay un error al almacenar el fichero
+     * @throws StorageBadRequest si el fichero contiene caracteres no permitidos
      */
     @Override
     public String store(MultipartFile file) {

@@ -33,7 +33,7 @@ public class Producto {
     private final String descripcion;
     @Min(value = 0, message = "El precio no puede ser negativo")
     private final Double precio;
-    @Column(columnDefinition = "TEXT default 'https://via.placeholder.com/150'")
+    @Column(columnDefinition = "TEXT default 'https://via.placeholder.com/150'") // Por defecto una imagen
     private final String imagen;
     @Min(value = 0, message = "El stock no puede ser negativo")
     private final Integer stock;

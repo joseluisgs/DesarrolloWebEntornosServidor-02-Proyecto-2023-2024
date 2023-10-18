@@ -19,6 +19,8 @@ public class TiendaApiSpringBootApplication implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // Aquí podemos ejecutar código al arrancar la aplicación
+        // Este mensaje simplemente es para que lo veas en la consola,
+        // no es necesario hacer este método si no lo vas a usar
         System.out.println("🟢 Servidor arrancado 🚀");
     }
 }

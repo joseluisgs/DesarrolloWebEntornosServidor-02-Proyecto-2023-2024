@@ -3,6 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.productos.services;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface ProductosService {
     Producto update(Long id, ProductoUpdateDto productoUpdateDto);
 
     void deleteById(Long id);
+
+    Producto updateImage(Long id, MultipartFile image);
 }

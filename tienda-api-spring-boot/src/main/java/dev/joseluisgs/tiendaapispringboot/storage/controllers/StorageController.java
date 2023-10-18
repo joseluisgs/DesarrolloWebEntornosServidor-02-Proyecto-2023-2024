@@ -9,11 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.util.Map;
 
 @RestController
 @Slf4j
@@ -47,7 +45,7 @@ public class StorageController {
                 .body(file);
     }
 
-    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+   /* @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // Aunque no es obligatorio, podemos indicar que se consume multipart/form-data
     // Para ficheros usamos, Resuqest part, porque lo tenemos dividido en partes
     public ResponseEntity<Map<String, Object>> uploadFile(
@@ -64,7 +62,7 @@ public class StorageController {
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede subir un fichero vacío");
         }
-    }
+    }*/
 
     // Implementar el resto de metodos del servicio que nos interesen...
     // Delete file, listar ficheros, etc....
