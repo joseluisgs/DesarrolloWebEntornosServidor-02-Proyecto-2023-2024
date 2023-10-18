@@ -9,8 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -28,8 +27,8 @@ import java.util.UUID;
  */
 @Service
 @CacheConfig(cacheNames = {"productos"})
+@Slf4j
 public class ProductoServiceImpl implements ProductosService {
-    private final Logger logger = LoggerFactory.getLogger(ProductoServiceImpl.class);
     private final ProductosRepository productosRepository;
     private final CategoriasService categoriaService;
     private final ProductoMapper productosMapper;
@@ -52,21 +51,21 @@ public class ProductoServiceImpl implements ProductosService {
     public List<Producto> findAll(String marca, String categoria) {
         // Si todo está vacío o nulo, devolvemos todos los productos
         if ((marca == null || marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            logger.info("Buscando todos los productos");
+            log.info("Buscando todos los productos");
             return productosRepository.findAll();
         }
         // Si la marca no está vacía, pero la categoría si, buscamos por marca
         if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            logger.info("Buscando productos por marca: " + marca);
+            log.info("Buscando productos por marca: " + marca);
             return productosRepository.findByMarcaContainsIgnoreCase(marca.toLowerCase());
         }
         // Si la marca está vacía, pero la categoría no, buscamos por categoría
         if ((categoria != null && !categoria.isEmpty()) && (marca == null || marca.isEmpty())) {
-            logger.info("Buscando productos por categoría: " + categoria);
+            log.info("Buscando productos por categoría: " + categoria);
             return productosRepository.findByCategoriaContainsIgnoreCase(categoria.toLowerCase());
         }
         // Si la marca y la categoría no están vacías, buscamos por ambas
-        logger.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
+        log.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
         return productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca.toLowerCase(), categoria.toLowerCase());
     }
 
@@ -80,7 +79,7 @@ public class ProductoServiceImpl implements ProductosService {
     @Override
     @Cacheable
     public Producto findById(Long id) {
-        logger.info("Buscando producto por id: " + id);
+        log.info("Buscando producto por id: " + id);
         return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
     }
 
@@ -95,7 +94,7 @@ public class ProductoServiceImpl implements ProductosService {
     @Override
     @Cacheable
     public Producto findbyUuid(String uuid) {
-        logger.info("Buscando producto por uuid: " + uuid);
+        log.info("Buscando producto por uuid: " + uuid);
         try {
             var myUUID = UUID.fromString(uuid);
             return productosRepository.findByUuid(myUUID).orElseThrow(() -> new ProductoNotFound(myUUID));
@@ -113,7 +112,7 @@ public class ProductoServiceImpl implements ProductosService {
     @Override
     @CachePut
     public Producto save(ProductoCreateDto productoCreateDto) {
-        logger.info("Guardando producto: " + productoCreateDto);
+        log.info("Guardando producto: " + productoCreateDto);
         // Buscamos la categoría por su nombre
         var categoria = categoriaService.findByNombre(productoCreateDto.getCategoria());
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
@@ -132,7 +131,7 @@ public class ProductoServiceImpl implements ProductosService {
     @Override
     @CachePut
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
-        logger.info("Actualizando producto por id: " + id);
+        log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
         // Buscamos la categoría por su nombre
@@ -158,7 +157,7 @@ public class ProductoServiceImpl implements ProductosService {
     @CacheEvict
     // @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
-        logger.debug("Borrando producto por id: " + id);
+        log.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         this.findById(id);
         // Lo borramos del repositorio

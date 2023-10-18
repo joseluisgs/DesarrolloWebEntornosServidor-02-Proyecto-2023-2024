@@ -6,8 +6,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,12 +28,11 @@ import java.util.Map;
  * y que se encuentren en nuestro contenedor de Spring.
  */
 @RestController // Es un controlador Rest
-
+@Slf4j
 @RequestMapping("${api.version}/productos") // Es la ruta del controlador
 public class ProductosRestController {
     // Repositorio de productos
     private final ProductosService productosService;
-    private final Logger logger = LoggerFactory.getLogger(ProductosRestController.class);
 
     @Autowired
     public ProductosRestController(ProductosService productosService) {
@@ -53,7 +51,7 @@ public class ProductosRestController {
             @RequestParam(required = false) String marca,
             @RequestParam(required = false) String categoria
     ) {
-        logger.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria);
+        log.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria);
         return ResponseEntity.ok(productosService.findAll(marca, categoria));
     }
 
@@ -66,7 +64,7 @@ public class ProductosRestController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductById(@PathVariable Long id) {
-        logger.info("Buscando producto por id: " + id);
+        log.info("Buscando producto por id: " + id);
         return ResponseEntity.ok(productosService.findById(id));
     }
 
@@ -79,7 +77,7 @@ public class ProductosRestController {
      */
     @PostMapping()
     public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateDto productoCreateDto) {
-        logger.info("Creando producto: " + productoCreateDto);
+        log.info("Creando producto: " + productoCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateDto));
     }
 
@@ -94,7 +92,7 @@ public class ProductosRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        logger.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
+        log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
 
@@ -109,7 +107,7 @@ public class ProductosRestController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        logger.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
+        log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
 
@@ -122,7 +120,7 @@ public class ProductosRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        logger.info("Borrando producto por id: " + id);
+        log.info("Borrando producto por id: " + id);
         productosService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
