@@ -62,6 +62,7 @@ public class FileSystemStorageService implements StorageService {
         String extension = StringUtils.getFilenameExtension(filename);
         String justFilename = filename.replace("." + extension, "");
         String storedFilename = System.currentTimeMillis() + "_" + justFilename + "." + extension;
+
         try {
             if (file.isEmpty()) {
                 throw new StorageBadRequest("Fichero vacío " + filename);
@@ -74,6 +75,7 @@ public class FileSystemStorageService implements StorageService {
             }
 
             try (InputStream inputStream = file.getInputStream()) {
+                log.info("Almacenando fichero " + filename + " como " + storedFilename);
                 Files.copy(inputStream, this.rootLocation.resolve(storedFilename),
                         StandardCopyOption.REPLACE_EXISTING);
                 return storedFilename;
@@ -91,6 +93,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public Stream<Path> loadAll() {
+        log.info("Cargando todos los ficheros almacenados");
         try {
             return Files.walk(this.rootLocation, 1)
                     .filter(path -> !path.equals(this.rootLocation))
@@ -107,6 +110,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public Path load(String filename) {
+        log.info("Cargando fichero " + filename);
         return rootLocation.resolve(filename);
     }
 
@@ -117,6 +121,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public Resource loadAsResource(String filename) {
+        log.info("Cargando fichero " + filename);
         try {
             Path file = load(filename);
             Resource resource = new UrlResource(file.toUri());
@@ -137,6 +142,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public void deleteAll() {
+        log.info("Eliminando todos los ficheros almacenados");
         FileSystemUtils.deleteRecursively(rootLocation.toFile());
     }
 
@@ -146,6 +152,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public void init() {
+        log.info("Inicializando almacenamiento");
         try {
             Files.createDirectories(rootLocation);
         } catch (IOException e) {
@@ -158,6 +165,7 @@ public class FileSystemStorageService implements StorageService {
     public void delete(String filename) {
         String justFilename = StringUtils.getFilename(filename);
         try {
+            log.info("Eliminando fichero " + filename);
             Path file = load(justFilename);
             Files.deleteIfExists(file);
         } catch (IOException e) {
@@ -172,6 +180,7 @@ public class FileSystemStorageService implements StorageService {
      */
     @Override
     public String getUrl(String filename) {
+        log.info("Obteniendo URL del fichero " + filename);
         return MvcUriComponentsBuilder
                 // El segundo argumento es necesario solo cuando queremos obtener la imagen
                 // En este caso tan solo necesitamos obtener la URL

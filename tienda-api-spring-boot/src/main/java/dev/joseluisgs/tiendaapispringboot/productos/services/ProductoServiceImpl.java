@@ -164,19 +164,23 @@ public class ProductoServiceImpl implements ProductosService {
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
-        this.findById(id);
+        var prod = this.findById(id);
         // Lo borramos del repositorio
         productosRepository.deleteById(id);
         // O lo marcamos como borrado, para evitar problemas de cascada, no podemos borrar productos en pedidos!!!
         //productosRepository.updateIsDeletedToTrueById(id);
+        // Borramos la imagen del producto si existe y es distinta a la por defecto
+        if (prod.getImagen() != null && !prod.getImagen().equals(Producto.IMAGE_DEFAULT)) {
+            storageService.delete(prod.getImagen());
+        }
 
     }
 
     /**
      * Actualiza la imagen de un producto
      *
-     * @param id       Id del producto a actualizar
-     * @param imageUrl Imagen a actualizar
+     * @param id    Id del producto a actualizar
+     * @param image Imagen a actualizar del producto en formato Multipart
      * @return Producto actualizado
      * @throws ProductoNotFound Si no lo encuentra
      */
