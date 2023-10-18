@@ -19,7 +19,9 @@ import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -440,6 +442,44 @@ class ProductosRestControllerTest {
 
         // Verify
         verify(productosService, times(1)).deleteById(anyLong());
+    }
+
+    @Test
+    void updateProductImage() throws Exception {
+        var myLocalEndpoint = myEndpoint + "/imagen/1";
+
+        // Arrange
+        when(productosService.updateImage(anyLong(), any(MultipartFile.class))).thenReturn(producto1);
+
+        // Crear un archivo simulado
+        MockMultipartFile file = new MockMultipartFile(
+                "file", // Nombre del parámetro del archivo en el controlador
+                "filename.jpg", // Nombre del archivo
+                MediaType.IMAGE_JPEG_VALUE, // Tipo de contenido del archivo
+                "contenido del archivo".getBytes() // Contenido del archivo
+        );
+
+        // Crear una solicitud PATCH multipart con el fichero simulado
+        MockHttpServletResponse response = mockMvc.perform(
+                multipart(myLocalEndpoint)
+                        .file(file)
+                        .with(req -> {
+                            req.setMethod("PATCH");
+                            return req;
+                        })
+        ).andReturn().getResponse();
+
+
+        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+
+        // Assert
+        assertAll(
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(producto1, res)
+        );
+
+        // Verify
+        verify(productosService, times(1)).updateImage(anyLong(), any(MultipartFile.class));
     }
 
 }

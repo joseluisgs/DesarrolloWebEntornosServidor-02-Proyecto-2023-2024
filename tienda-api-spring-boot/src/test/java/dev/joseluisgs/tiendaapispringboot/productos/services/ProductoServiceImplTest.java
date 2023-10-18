@@ -9,6 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
+import dev.joseluisgs.tiendaapispringboot.storage.StorageService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -46,6 +47,9 @@ class ProductoServiceImplTest {
 
     @Mock
     private ProductosRepository productosRepository;
+
+    @Mock
+    private StorageService storageService;
     @Mock
     private CategoriasService categoriaService;
     @Mock
