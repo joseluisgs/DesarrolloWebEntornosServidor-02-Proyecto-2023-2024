@@ -20,6 +20,7 @@ import java.util.UUID;
 @Entity // Para que sea una entidad de JPA
 @Table(name = "PRODUCTOS") // Para indicar la tabla de la BD, si no coge el nombre de la clase
 public class Producto {
+    public static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
     @Id // Indicamos que es el ID de la tabla
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     // Indicamos que es autoincremental y sobre todo por el script de datos
@@ -33,7 +34,7 @@ public class Producto {
     private final String descripcion;
     @Min(value = 0, message = "El precio no puede ser negativo")
     private final Double precio;
-    @Column(columnDefinition = "TEXT default 'https://via.placeholder.com/150'")
+    @Column(columnDefinition = "TEXT default '" + IMAGE_DEFAULT + "'") // Por defecto una imagen
     private final String imagen;
     @Min(value = 0, message = "El stock no puede ser negativo")
     private final Integer stock;
