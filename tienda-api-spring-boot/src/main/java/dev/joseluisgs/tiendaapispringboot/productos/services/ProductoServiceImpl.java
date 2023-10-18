@@ -190,6 +190,10 @@ public class ProductoServiceImpl implements ProductosService {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
+        // Borramos la imagen anterior si existe y no es la de por defecto
+        if (productoActual.getImagen() != null && !productoActual.getImagen().equals(Producto.IMAGE_DEFAULT)) {
+            storageService.delete(productoActual.getImagen());
+        }
         String imageStored = storageService.store(image);
         String imageUrl = imageStored; //storageService.getUrl(imageStored); // Si quiero la url completa
         // Clonamos el producto con la nueva imagen, porque inmutabilidad de los objetos
