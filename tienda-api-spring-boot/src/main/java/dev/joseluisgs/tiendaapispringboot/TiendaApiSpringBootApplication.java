@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
 
 @SpringBootApplication
-@EnableCaching // Habilitamos el caché
+@EnableCaching // Habilitamos el caché a nivel de aplicación
 @Slf4j
 public class TiendaApiSpringBootApplication implements CommandLineRunner {
 

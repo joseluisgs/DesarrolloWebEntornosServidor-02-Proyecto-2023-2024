@@ -7,6 +7,9 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuración de almacenamiento
+ */
 @Configuration
 @Slf4j
 public class StorageConfig {
@@ -16,12 +19,10 @@ public class StorageConfig {
         return args -> {
             // Inicializamos el servicio de ficheros
             // Leemos de application.properties si necesitamos borrar todo o no
-
             if (deleteAll.equals("true")) {
                 log.info("Borrando ficheros de almacenamiento...");
                 storageService.deleteAll();
             }
-
             storageService.init(); // inicializamos
         };
     }
