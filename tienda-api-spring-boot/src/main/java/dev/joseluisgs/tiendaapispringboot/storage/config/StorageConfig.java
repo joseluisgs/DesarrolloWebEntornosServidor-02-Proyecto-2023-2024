@@ -15,20 +15,6 @@ import org.springframework.context.annotation.Configuration;
 public class StorageConfig {
     @Autowired
     private StorageService storageService;
-
-<<<<<<< HEAD
-    @Bean
-    public CommandLineRunner init(StorageService storageService, @Value("${upload.delete}") String deleteAll) {
-        return args -> {
-            // Inicializamos el servicio de ficheros
-            // Leemos de application.properties si necesitamos borrar todo o no
-            if (deleteAll.equals("true")) {
-                log.info("Borrando ficheros de almacenamiento...");
-                storageService.deleteAll();
-            }
-            storageService.init(); // inicializamos
-        };
-=======
     @Value("${upload.delete}")
     private String deleteAll;
 
@@ -40,6 +26,5 @@ public class StorageConfig {
         }
 
         storageService.init(); // inicializamos
->>>>>>> ficheros
     }
 }
