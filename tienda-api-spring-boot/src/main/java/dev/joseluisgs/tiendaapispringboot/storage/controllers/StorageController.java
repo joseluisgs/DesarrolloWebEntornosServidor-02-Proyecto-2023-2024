@@ -24,6 +24,12 @@ public class StorageController {
         this.storageService = storageService;
     }
 
+    /**
+     * Obtiene un fichero del sistema de almacenamiento
+     *
+     * @param filename Nombre del fichero a obtener
+     * @return Fichero
+     */
     @GetMapping(value = "{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename, HttpServletRequest request) {

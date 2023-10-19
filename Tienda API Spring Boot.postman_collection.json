@@ -203,7 +203,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/productos/1",
+							"raw": "localhost:3000/v1/productos/2",
 							"host": [
 								"localhost"
 							],
@@ -211,7 +211,7 @@
 							"path": [
 								"v1",
 								"productos",
-								"1"
+								"2"
 							]
 						}
 					},
@@ -275,7 +275,7 @@
 					"response": []
 				},
 				{
-					"name": "PATCH and update partial",
+					"name": "PATCH and update partial info",
 					"request": {
 						"method": "PATCH",
 						"header": [],
@@ -304,6 +304,44 @@
 					"response": []
 				},
 				{
+					"name": "PATCH Solo Image",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/joseluisgs/Projects/DesarrolloWebEntornosServidor-02-Proyecto-2023-2024/image-demo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/v1/productos/imagen/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"productos",
+								"imagen",
+								"2"
+							],
+							"query": [
+								{
+									"key": "file",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE",
 					"request": {
 						"method": "DELETE",
@@ -318,6 +356,32 @@
 								"v1",
 								"productos",
 								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Storage",
+			"item": [
+				{
+					"name": "Get Image",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/v1/storage/1697626472771_image-demo.png",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"storage",
+								"1697626472771_image-demo.png"
 							]
 						}
 					},
