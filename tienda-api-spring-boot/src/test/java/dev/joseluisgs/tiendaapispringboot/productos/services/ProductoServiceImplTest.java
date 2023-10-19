@@ -2,6 +2,8 @@ package dev.joseluisgs.tiendaapispringboot.productos.services;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
+import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
@@ -47,13 +49,16 @@ class ProductoServiceImplTest {
 
     @Mock
     private ProductosRepository productosRepository;
-
     @Mock
     private StorageService storageService;
     @Mock
     private CategoriasService categoriaService;
     @Mock
     private ProductoMapper productoMapper;
+    @Mock
+    private WebSocketConfig webSocketConfig;
+    @Mock
+    private ProductoNotificationMapper productoNotificationMapper;
     @InjectMocks
     private ProductoServiceImpl productoService;
     @Captor // Captor de argumentos
