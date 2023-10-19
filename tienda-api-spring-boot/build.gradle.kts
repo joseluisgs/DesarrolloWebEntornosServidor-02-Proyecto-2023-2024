@@ -31,6 +31,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     // Validación
     implementation("org.springframework.boot:spring-boot-starter-validation")
+    // Websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -39,11 +41,14 @@ dependencies {
     // H2 Database
     runtimeOnly("com.h2database:h2")
 
+    // Para usar con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
+    // Lo podemos usar en el test o en el controlador, si hiciese falta, por eso está aquí
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    // Para testear con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
-    testImplementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
 }
 
 tasks.withType<Test> {
