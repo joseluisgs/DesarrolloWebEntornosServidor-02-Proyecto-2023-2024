@@ -43,7 +43,6 @@ public class ProductoServiceImpl implements ProductosService {
     private final CategoriasService categoriaService;
     private final ProductoMapper productosMapper;
     private final StorageService storageService;
-    private final WebSocketConfig webSocketConfig; // Para enviar mensajes a los clientes ws normales
     private final WebSocketHandler webSocketService;
     private final ObjectMapper mapper;
     private final ProductoNotificationMapper productoNotificationMapper;
@@ -54,7 +53,6 @@ public class ProductoServiceImpl implements ProductosService {
         this.categoriaService = categoriaService;
         this.productosMapper = productoMapper;
         this.storageService = storageService;
-        this.webSocketConfig = webSocketConfig;
         // Para enviar mensajes a los clientes ws normales
         webSocketService = webSocketConfig.webSocketRaquetasHandler();
         mapper = new ObjectMapper();

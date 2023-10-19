@@ -67,7 +67,7 @@ public class WebSocketHandler extends TextWebSocketHandler implements SubProtoco
         // Enviamos el mensaje a todos los clientes conectados
         for (WebSocketSession session : sessions) {
             if (session.isOpen()) {
-                log.info("Servidor envía: " + message);
+                log.info("Servidor WS envía: " + message);
                 session.sendMessage(new TextMessage(message));
             }
         }
