@@ -43,9 +43,11 @@ public class ProductoServiceImpl implements ProductosService {
     private final CategoriasService categoriaService;
     private final ProductoMapper productosMapper;
     private final StorageService storageService;
-    private final WebSocketHandler webSocketService;
+
+    private final WebSocketConfig webSocketConfig;
     private final ObjectMapper mapper;
     private final ProductoNotificationMapper productoNotificationMapper;
+    private WebSocketHandler webSocketService;
 
     @Autowired
     public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasService categoriaService, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
@@ -53,6 +55,7 @@ public class ProductoServiceImpl implements ProductosService {
         this.categoriaService = categoriaService;
         this.productosMapper = productoMapper;
         this.storageService = storageService;
+        this.webSocketConfig = webSocketConfig;
         // Para enviar mensajes a los clientes ws normales
         webSocketService = webSocketConfig.webSocketRaquetasHandler();
         mapper = new ObjectMapper();
@@ -243,8 +246,13 @@ public class ProductoServiceImpl implements ProductosService {
         return productoUpdated;
     }
 
-    public void onChange(Notificacion.Tipo tipo, Producto data) {
+    void onChange(Notificacion.Tipo tipo, Producto data) {
         log.debug("Servicio de productos onChange con tipo: " + tipo + " y datos: " + data);
+
+        if (webSocketService == null) {
+            log.warn("No se ha podido enviar la notificación a los clientes ws, no se ha encontrado el servicio");
+            webSocketService = this.webSocketConfig.webSocketRaquetasHandler();
+        }
 
         try {
             Notificacion<ProductoNotificationDto> notificacion = new Notificacion<>(
@@ -270,5 +278,10 @@ public class ProductoServiceImpl implements ProductosService {
         } catch (JsonProcessingException e) {
             log.error("Error al convertir la notificación a JSON", e);
         }
+    }
+
+    // Para los test
+    public void setWebSocketService(WebSocketHandler webSocketHandlerMock) {
+        this.webSocketService = webSocketHandlerMock;
     }
 }
