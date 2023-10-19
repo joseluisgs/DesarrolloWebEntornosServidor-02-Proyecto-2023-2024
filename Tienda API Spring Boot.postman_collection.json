@@ -304,6 +304,44 @@
 					"response": []
 				},
 				{
+					"name": "PATCH Solo Image",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/joseluisgs/Projects/DesarrolloWebEntornosServidor-02-Proyecto-2023-2024/image-demo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "localhost:3000/v1/productos/imagen/2",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"productos",
+								"imagen",
+								"2"
+							],
+							"query": [
+								{
+									"key": "file",
+									"value": null,
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "DELETE",
 					"request": {
 						"method": "DELETE",

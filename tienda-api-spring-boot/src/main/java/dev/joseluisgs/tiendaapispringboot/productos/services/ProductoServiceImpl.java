@@ -1,7 +1,14 @@
 package dev.joseluisgs.tiendaapispringboot.productos.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
+import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
+import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationDto;
+import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
+import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
@@ -37,12 +44,23 @@ public class ProductoServiceImpl implements ProductosService {
     private final ProductoMapper productosMapper;
     private final StorageService storageService;
 
+    private final WebSocketConfig webSocketConfig;
+    private final ObjectMapper mapper;
+    private final ProductoNotificationMapper productoNotificationMapper;
+    private WebSocketHandler webSocketService;
+
     @Autowired
-    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasService categoriaService, ProductoMapper productoMapper, StorageService storageService) {
+    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasService categoriaService, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
         this.productosRepository = productosRepository;
         this.categoriaService = categoriaService;
         this.productosMapper = productoMapper;
         this.storageService = storageService;
+        this.webSocketConfig = webSocketConfig;
+        // Para enviar mensajes a los clientes ws normales
+        webSocketService = webSocketConfig.webSocketRaquetasHandler();
+        mapper = new ObjectMapper();
+        this.productoNotificationMapper = productoNotificationMapper;
+        // mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
     }
 
     /**
@@ -122,7 +140,11 @@ public class ProductoServiceImpl implements ProductosService {
         var categoria = categoriaService.findByNombre(productoCreateDto.getCategoria());
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        return productosRepository.save(productosMapper.toProduct(productoCreateDto, categoria));
+        var productoSaved = productosRepository.save(productosMapper.toProduct(productoCreateDto, categoria));
+        // Enviamos la notificación a los clientes ws
+        onChange(Notificacion.Tipo.CREATE, productoSaved);
+        // Devolvemos el producto guardado
+        return productoSaved;
     }
 
     /**
@@ -149,7 +171,11 @@ public class ProductoServiceImpl implements ProductosService {
         }
         // Actualizamos el producto con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        return productosRepository.save(productosMapper.toProduct(productoUpdateDto, productoActual, categoria));
+        var productoUpdated = productosRepository.save(productosMapper.toProduct(productoUpdateDto, productoActual, categoria));
+        // Enviamos la notificación a los clientes ws
+        onChange(Notificacion.Tipo.UPDATE, productoUpdated);
+        // Devolvemos el producto actualizado
+        return productoUpdated;
     }
 
     /**
@@ -173,7 +199,8 @@ public class ProductoServiceImpl implements ProductosService {
         if (prod.getImagen() != null && !prod.getImagen().equals(Producto.IMAGE_DEFAULT)) {
             storageService.delete(prod.getImagen());
         }
-
+        // Enviamos la notificación a los clientes ws
+        onChange(Notificacion.Tipo.DELETE, prod);
     }
 
     /**
@@ -211,6 +238,50 @@ public class ProductoServiceImpl implements ProductosService {
                 productoActual.getIsDeleted(),
                 productoActual.getCategoria()
         );
-        return productosRepository.save(productoActualizado);
+        // Lo guardamos en el repositorio
+        var productoUpdated = productosRepository.save(productoActualizado);
+        // Enviamos la notificación a los clientes ws
+        onChange(Notificacion.Tipo.UPDATE, productoUpdated);
+        // Devolvemos el producto actualizado
+        return productoUpdated;
+    }
+
+    void onChange(Notificacion.Tipo tipo, Producto data) {
+        log.debug("Servicio de productos onChange con tipo: " + tipo + " y datos: " + data);
+
+        if (webSocketService == null) {
+            log.warn("No se ha podido enviar la notificación a los clientes ws, no se ha encontrado el servicio");
+            webSocketService = this.webSocketConfig.webSocketRaquetasHandler();
+        }
+
+        try {
+            Notificacion<ProductoNotificationDto> notificacion = new Notificacion<>(
+                    "PRODUCTOS",
+                    tipo,
+                    productoNotificationMapper.toProductNotificationDto(data),
+                    LocalDateTime.now().toString()
+            );
+
+            String json = mapper.writeValueAsString((notificacion));
+
+            log.info("Enviando mensaje a los clientes ws");
+            // Enviamos el mensaje a los clientes ws con un hilo, si hay muchos clientes, puede tardar
+            // no bloqueamos el hilo principal que atiende las peticiones http
+            Thread senderThread = new Thread(() -> {
+                try {
+                    webSocketService.sendMessage(json);
+                } catch (Exception e) {
+                    log.error("Error al enviar el mensaje a través del servicio WebSocket", e);
+                }
+            });
+            senderThread.start();
+        } catch (JsonProcessingException e) {
+            log.error("Error al convertir la notificación a JSON", e);
+        }
+    }
+
+    // Para los test
+    public void setWebSocketService(WebSocketHandler webSocketHandlerMock) {
+        this.webSocketService = webSocketHandlerMock;
     }
 }
