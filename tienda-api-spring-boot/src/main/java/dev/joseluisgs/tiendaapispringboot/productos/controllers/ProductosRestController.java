@@ -5,20 +5,26 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controlador de productos del tipo RestController
@@ -29,12 +35,12 @@ import java.util.Map;
  * y que se encuentren en nuestro contenedor de Spring.
  */
 @RestController // Es un controlador Rest
-
+@Slf4j
 @RequestMapping("${api.version}/productos") // Es la ruta del controlador
 public class ProductosRestController {
     // Repositorio de productos
     private final ProductosService productosService;
-    private final Logger logger = LoggerFactory.getLogger(ProductosRestController.class);
+
 
     @Autowired
     public ProductosRestController(ProductosService productosService) {
@@ -46,15 +52,31 @@ public class ProductosRestController {
      *
      * @param marca     Marca del producto
      * @param categoria Categoria del producto
-     * @return Lista de productos
+     * @param modelo    Modelo del producto
+     * @param isDeleted Si está borrado o no
+     * @param precioMax Precio máximo del producto
+     * @param stockMin  Stock mínimo del producto
+     * @return Pagina de productos
      */
     @GetMapping()
-    public ResponseEntity<List<Producto>> getAllProducts(
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String categoria
+    public ResponseEntity<PageResponse<Producto>> getAllProducts(
+            @RequestParam(required = false) Optional<String> marca,
+            @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<String> modelo,
+            @RequestParam(required = false) Optional<Boolean> isDeleted,
+            @RequestParam(required = false) Optional<Double> precioMax,
+            @RequestParam(required = false) Optional<Double> stockMin,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        logger.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria));
+        log.info("Buscando todos los productos con las siguientes opciones: " + marca + " " + categoria + " " + modelo + " " + isDeleted + " " + precioMax + " " + stockMin);
+        // Creamos el objeto de ordenación
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(PageResponse.of(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable), sortBy, direction));
     }
 
     /**
@@ -66,7 +88,7 @@ public class ProductosRestController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Producto> getProductById(@PathVariable Long id) {
-        logger.info("Buscando producto por id: " + id);
+        log.info("Buscando producto por id: " + id);
         return ResponseEntity.ok(productosService.findById(id));
     }
 
@@ -79,7 +101,7 @@ public class ProductosRestController {
      */
     @PostMapping()
     public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateDto productoCreateDto) {
-        logger.info("Creando producto: " + productoCreateDto);
+        log.info("Creando producto: " + productoCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateDto));
     }
 
@@ -94,7 +116,7 @@ public class ProductosRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        logger.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
+        log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
 
@@ -109,7 +131,7 @@ public class ProductosRestController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        logger.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
+        log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
         return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
     }
 
@@ -122,7 +144,7 @@ public class ProductosRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        logger.info("Borrando producto por id: " + id);
+        log.info("Borrando producto por id: " + id);
         productosService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -144,5 +166,36 @@ public class ProductosRestController {
             errors.put(fieldName, errorMessage);
         });
         return errors;
+    }
+
+
+    /**
+     * Actualiza la imagen de un producto en el servidor /imagen/{id}
+     * consumes = MediaType.MULTIPART_FORM_DATA_VALUE: Indica que el parámetro de la función es un parámetro del cuerpo de la petición HTTP
+     *
+     * @param id   Identificador del producto
+     * @param file Fichero a subir
+     * @return Producto actualizado
+     * @throws ProductoNotFound                              Si no existe el producto
+     * @throws HttpClientErrorException.BadRequest           Si no se ha enviado una imagen o esta está vacía
+     * @throws HttpClientErrorException.UnsupportedMediaType Si no se ha enviado una imagen
+     * @PathVariable: Indica que el parámetro de la función es un parámetro de la URL en este caso {id}
+     * @RequestPart: Indica que el parámetro de la función es un parámetro del cuerpo de la petición HTTP
+     */
+    @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<Producto> nuevoProducto(
+            @PathVariable Long id,
+            @RequestPart("file") MultipartFile file) {
+
+        log.info("Actualizando imagen de producto por id: " + id);
+
+        // Buscamos la raqueta
+        if (!file.isEmpty()) {
+            // Actualizamos el producto
+            return ResponseEntity.ok(productosService.updateImage(id, file));
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");
+        }
     }
 }

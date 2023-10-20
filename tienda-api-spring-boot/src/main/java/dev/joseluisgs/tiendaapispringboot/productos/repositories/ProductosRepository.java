@@ -2,6 +2,7 @@ package dev.joseluisgs.tiendaapispringboot.productos.repositories;
 
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,31 +11,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Creamos el repositorio extendéndolo de JPA, siguiendo DAO
+ * Con ello ya tenemos las operaciones básicas de CRUD y Paginación
+ * extiende de JpaSpecificationExecutor para tener las opciones de Specificación y busqueda con Criteria
+ */
 @Repository
-public interface ProductosRepository extends JpaRepository<Producto, Long> {
-    // Otras consultas que voy a tener a parte de las básicas
-
-    // Por categoría
-    @Query("SELECT p FROM Producto p WHERE LOWER(p.categoria.nombre) LIKE %:categoria%")
-    List<Producto> findByCategoriaContainsIgnoreCase(String categoria);
-
-    // Por categoria y que deleted sea false
-    @Query("SELECT p FROM Producto p WHERE LOWER(p.categoria.nombre) LIKE %:categoria% AND p.isDeleted = false")
-    List<Producto> findByCategoriaContainsIgnoreCaseAndIsDeletedFalse(String categoria);
-
-    // Por marca
-    List<Producto> findByMarcaContainsIgnoreCase(String marca);
-
-    // Por marca y que deleted sea false
-    List<Producto> findByMarcaContainsIgnoreCaseAndIsDeletedFalse(String marca);
-
-    // Por marca y categoría
-    @Query("SELECT p FROM Producto p WHERE LOWER(p.marca) LIKE %:marca% AND LOWER(p.categoria.nombre) LIKE %:categoria%")
-    List<Producto> findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(String marca, String categoria);
-
-    // Por marca y categoría
-    @Query("SELECT p FROM Producto p WHERE LOWER(p.marca) LIKE %:marca% AND LOWER(p.categoria.nombre) LIKE %:categoria% AND p.isDeleted = false")
-    List<Producto> findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCaseAndIsDeletedFalse(String marca, String categoria);
+public interface ProductosRepository extends JpaRepository<Producto, Long>, JpaSpecificationExecutor<Producto> {
 
     // Por UUID
     Optional<Producto> findByUuid(UUID uuid);

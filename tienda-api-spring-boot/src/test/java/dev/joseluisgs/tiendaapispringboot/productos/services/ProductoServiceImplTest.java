@@ -2,6 +2,10 @@ package dev.joseluisgs.tiendaapispringboot.productos.services;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
+import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
+import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
+import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
@@ -9,6 +13,8 @@ import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
+import dev.joseluisgs.tiendaapispringboot.storage.StorageService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -16,7 +22,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -43,84 +53,125 @@ class ProductoServiceImplTest {
             LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
             false, categoria
     );
-
+    WebSocketHandler webSocketHandlerMock = mock(WebSocketHandler.class);
     @Mock
     private ProductosRepository productosRepository;
+    @Mock
+    private StorageService storageService;
     @Mock
     private CategoriasService categoriaService;
     @Mock
     private ProductoMapper productoMapper;
+    @Mock
+    private WebSocketConfig webSocketConfig;
+    @Mock
+    private ProductoNotificationMapper productoNotificationMapper;
     @InjectMocks
     private ProductoServiceImpl productoService;
     @Captor // Captor de argumentos
     private ArgumentCaptor<Producto> productoCaptor;
 
+
+    @BeforeEach
+    void setUp() {
+        productoService.setWebSocketService(webSocketHandlerMock);
+    }
+
     @Test
     void findAll_ShouldReturnAllProducts_WhenNoParametersProvided() {
         // Arrange
         List<Producto> expectedProducts = Arrays.asList(producto1, producto2);
-        when(productosRepository.findAll()).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending()); // ejemplo de creación de un objeto Pageable
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, null);
+        Page<Producto> actualPage = productoService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
-        assertIterableEquals(expectedProducts, actualProducts);
+        assertAll("findAll",
+                () -> assertNotNull(actualPage),
+                () -> assertFalse(actualPage.isEmpty()),
+                () -> assertEquals(expectedPage, actualPage)
+        );
 
         // Verify
-        verify(productosRepository, times(1)).findAll();
+        verify(productosRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
     void findAll_ShouldReturnProductsByMarca_WhenMarcaParameterProvided() {
         // Arrange
-        String marca = "nike";
+        Optional<String> marca = Optional.of("nike");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByMarcaContainsIgnoreCase(marca)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, null);
+        Page<Producto> actualPage = productoService.findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
-        assertIterableEquals(expectedProducts, actualProducts);
+        assertAll("findAllWithMarca",
+                () -> assertNotNull(actualPage),
+                () -> assertFalse(actualPage.isEmpty()),
+                () -> assertEquals(expectedPage, actualPage)
+        );
 
         // Verify
-        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCase(marca);
+        verify(productosRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
     void findAll_ShouldReturnProductsByCategoria_WhenCategoriaParameterProvided() {
         // Arrange
-        String categoriaNombre = "deportes";
+        Optional<String> categoriaNombre = Optional.of("deportes");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByCategoriaContainsIgnoreCase(categoriaNombre)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
+
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, categoriaNombre);
+        Page<Producto> actualPage = productoService.findAll(Optional.empty(), categoriaNombre, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
-        assertIterableEquals(expectedProducts, actualProducts);
+        assertAll("findAllWithCategoria",
+                () -> assertNotNull(actualPage),
+                () -> assertFalse(actualPage.isEmpty()),
+                () -> assertEquals(expectedPage, actualPage)
+        );
 
         // Verify
-        verify(productosRepository, times(1)).findByCategoriaContainsIgnoreCase(categoriaNombre);
+        verify(productosRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
     void findAll_ShouldReturnProductsByMarcaAndCategoria_WhenBothParametersProvided() {
         // Arrange
-        String marca = "nike";
-        String categoriaNombre = "deportes";
+        Optional<String> marca = Optional.of("nike");
+        Optional<String> categoriaNombre = Optional.of("deportes");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(expectedPage);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, categoriaNombre);
+        Page<Producto> actualPage = productoService.findAll(marca, categoriaNombre, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
-        assertIterableEquals(expectedProducts, actualProducts);
+        assertAll("findAllWithMarcaAndCategoria",
+                () -> assertNotNull(actualPage),
+                () -> assertFalse(actualPage.isEmpty()),
+                () -> assertEquals(expectedPage, actualPage)
+        );
 
         // Verify
-        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre);
+        verify(productosRepository, times(1)).findAll(any(Specification.class), any(Pageable.class));
     }
 
     @Test
@@ -185,7 +236,7 @@ class ProductoServiceImplTest {
     }
 
     @Test
-    void save_ShouldReturnSavedProduct_WhenValidProductCreateDtoProvided() {
+    void save_ShouldReturnSavedProduct_WhenValidProductCreateDtoProvided() throws IOException {
         // Arrange
         ProductoCreateDto productoCreateDto = new ProductoCreateDto(
                 "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5
@@ -195,6 +246,7 @@ class ProductoServiceImplTest {
         when(categoriaService.findByNombre(productoCreateDto.getCategoria())).thenReturn(categoria);
         when(productoMapper.toProduct(productoCreateDto, categoria)).thenReturn(expectedProduct);
         when(productosRepository.save(expectedProduct)).thenReturn(expectedProduct);
+        doNothing().when(webSocketHandlerMock).sendMessage(any());
 
         // Act
         Producto actualProduct = productoService.save(productoCreateDto);
@@ -209,7 +261,7 @@ class ProductoServiceImplTest {
     }
 
     @Test
-    void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() {
+    void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() throws IOException {
         // Arrange
         Long id = 1L;
         ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
@@ -218,6 +270,7 @@ class ProductoServiceImplTest {
         when(categoriaService.findByNombre(productoUpdateDto.getCategoria())).thenReturn(categoria);
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
         when(productoMapper.toProduct(productoUpdateDto, producto1, categoria)).thenReturn(existingProduct);
+        doNothing().when(webSocketHandlerMock).sendMessage(any());
 
         // Act
         Producto actualProduct = productoService.update(id, productoUpdateDto);
@@ -248,11 +301,12 @@ class ProductoServiceImplTest {
     }
 
     @Test
-    void deleteById_ShouldDeleteProduct_WhenValidIdProvided() {
+    void deleteById_ShouldDeleteProduct_WhenValidIdProvided() throws IOException {
         // Arrange
         Long id = 1L;
         Producto existingProduct = producto1;
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
+        doNothing().when(webSocketHandlerMock).sendMessage(any());
 
         // Act
         productoService.deleteById(id);
@@ -273,5 +327,36 @@ class ProductoServiceImplTest {
 
         // Verify
         verify(productosRepository, times(0)).deleteById(id);
+    }
+
+    @Test
+    void onChange_ShouldSendMessage_WhenValidDataProvided() throws IOException {
+        // Arrange
+        doNothing().when(webSocketHandlerMock).sendMessage(any(String.class));
+
+        // Act
+        productoService.onChange(Notificacion.Tipo.CREATE, any(Producto.class));
+    }
+
+    @Test
+    void updateImage_ShouldUpdateImageAndReturnProduct_WhenValidIdAndImageProvided() throws IOException {
+        // Arrange
+        String imageUrl = "http://placeimg.com/640/480/people";
+
+        MultipartFile multipartFile = mock(MultipartFile.class);
+
+        when(productosRepository.findById(producto1.getId())).thenReturn(Optional.of(producto1));
+        when(storageService.store(multipartFile)).thenReturn(imageUrl);
+        when(productosRepository.save(any(Producto.class))).thenReturn(producto1);
+        doNothing().when(webSocketHandlerMock).sendMessage(anyString());
+
+        // Act
+        Producto updatedProduct = productoService.updateImage(producto1.getId(), multipartFile);
+
+        // Assert
+        assertEquals(updatedProduct.getImagen(), imageUrl);
+        verify(productosRepository, times(1)).save(any(Producto.class));
+        verify(storageService, times(1)).delete(producto1.getImagen());
+        verify(storageService, times(1)).store(multipartFile);
     }
 }

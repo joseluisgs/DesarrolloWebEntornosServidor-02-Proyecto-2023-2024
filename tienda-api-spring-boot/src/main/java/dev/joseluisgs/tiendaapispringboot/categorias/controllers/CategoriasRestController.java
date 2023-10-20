@@ -1,13 +1,17 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,15 +20,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.version}/categorias") // Es la ruta del controlador
+@Slf4j
 public class CategoriasRestController {
     // Repositorio de productos
     private final CategoriasService categoriasService;
-    private final Logger logger = LoggerFactory.getLogger(CategoriasRestController.class);
 
     @Autowired
     public CategoriasRestController(CategoriasService categoriasService) {
@@ -34,15 +38,25 @@ public class CategoriasRestController {
     /**
      * Obtiene todas las categorias
      *
-     * @param nombre Nombre de la categoría
-     * @return Lista de categorías
+     * @param nombre    Nombre de la categoría
+     * @param isDeleted Si está borrado
+     * @return Page de categorías
      */
     @GetMapping()
-    public ResponseEntity<List<Categoria>> getAllCategories(
-            @RequestParam(required = false) String nombre
+    public ResponseEntity<PageResponse<Categoria>> getAllCategories(
+            @RequestParam(required = false) Optional<String> nombre,
+            @RequestParam(required = false) Optional<Boolean> isDeleted,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        logger.info("Buscando todos las categorias con nombre: " + nombre);
-        return ResponseEntity.ok(categoriasService.findAll(nombre));
+        log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
+        // Creamos el objeto de ordenación
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(PageResponse.of(categoriasService.findAll(nombre, isDeleted, pageable), sortBy, direction));
     }
 
     /**
@@ -54,7 +68,7 @@ public class CategoriasRestController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Categoria> getCategoryById(@PathVariable Long id) {
-        logger.info("Buscando producto por id: " + id);
+        log.info("Buscando producto por id: " + id);
         return ResponseEntity.ok(categoriasService.findById(id));
     }
 
@@ -67,7 +81,7 @@ public class CategoriasRestController {
      */
     @PostMapping()
     public ResponseEntity<Categoria> createCategory(@Valid @RequestBody CategoriaDto categoriaCreateDto) {
-        logger.info("Creando categegoría: " + categoriaCreateDto);
+        log.info("Creando categegoría: " + categoriaCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriasService.save(categoriaCreateDto));
     }
 
@@ -82,7 +96,7 @@ public class CategoriasRestController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Categoria> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriaDto categoriaUpdateDto) {
-        logger.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
+        log.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
         return ResponseEntity.ok(categoriasService.update(id, categoriaUpdateDto));
     }
 
@@ -97,7 +111,7 @@ public class CategoriasRestController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
-        logger.info("Borrando categoria por id: " + id);
+        log.info("Borrando categoria por id: " + id);
         categoriasService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
