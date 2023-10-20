@@ -72,12 +72,15 @@ public class ProductoServiceImpl implements ProductosService {
      *
      * @param marca     Marca del producto
      * @param categoria Categoría del producto
+     * @param modelo    Modelo del producto
      * @param isDeleted Si está borrado o no
+     * @param precioMax Precio máximo
+     * @param stockMin  Stock mínimo
      * @param pageable  Paginación y ordenación
      * @return Lista de productos
      */
     @Override
-    public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<Boolean> isDeleted, Pageable pageable) {
+    public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
         // Criterio de búsqueda por marca
         Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
                 marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
@@ -95,10 +98,28 @@ public class ProductoServiceImpl implements ProductosService {
                 isDeleted.map(d -> criteriaBuilder.equal(root.get("isDeleted"), d))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
+        // Criterio de búsqueda por modelo
+        Specification<Producto> specModeloProducto = (root, query, criteriaBuilder) ->
+                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por precioMax, es decir tiene que ser menor o igual
+        Specification<Producto> specPrecioMaxProducto = (root, query, criteriaBuilder) ->
+                precioMax.map(p -> criteriaBuilder.lessThanOrEqualTo(root.get("precio"), p))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por stockMin, es decir tiene que ser menor o igual
+        Specification<Producto> specStockMinProducto = (root, query, criteriaBuilder) ->
+                stockMin.map(s -> criteriaBuilder.lessThanOrEqualTo(root.get("stock"), s))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
         // Combinamos las especificaciones
         Specification<Producto> criterio = Specification.where(specMarcaProducto)
                 .and(specCategoriaProducto)
-                .and(specIsDeleted);
+                .and(specIsDeleted)
+                .and(specModeloProducto)
+                .and(specPrecioMaxProducto)
+                .and(specStockMinProducto);
         return productosRepository.findAll(criterio, pageable);
     }
 

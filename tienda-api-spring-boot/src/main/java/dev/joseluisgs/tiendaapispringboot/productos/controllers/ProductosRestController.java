@@ -58,18 +58,21 @@ public class ProductosRestController {
     public ResponseEntity<Page<Producto>> getAllProducts(
             @RequestParam(required = false) Optional<String> marca,
             @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<String> modelo,
             @RequestParam(required = false) Optional<Boolean> isDeleted,
+            @RequestParam(required = false) Optional<Double> precioMax,
+            @RequestParam(required = false) Optional<Double> stockMin,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria + " y paginación: " + page + " tamaño " + size + " y ordenacón " + sortBy + " " + direction);
+        log.info("Buscando todos los productos con las siguientes opciones: " + marca + " " + categoria + " " + modelo + " " + isDeleted + " " + precioMax + " " + stockMin);
         // Creamos el objeto de ordenación
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria, isDeleted, pageable));
+        return ResponseEntity.ok(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable));
     }
 
     /**

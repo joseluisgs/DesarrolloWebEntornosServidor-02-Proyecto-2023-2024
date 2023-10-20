@@ -10,7 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 public interface ProductosService {
-    Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<Boolean> isDeleted, Pageable pageable);
+    Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable);
 
     Producto findById(Long id);
 
