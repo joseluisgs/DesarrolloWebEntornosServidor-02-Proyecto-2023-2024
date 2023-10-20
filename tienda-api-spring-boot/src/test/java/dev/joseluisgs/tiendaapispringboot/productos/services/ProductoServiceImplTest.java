@@ -22,6 +22,10 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -79,10 +83,13 @@ class ProductoServiceImplTest {
     void findAll_ShouldReturnAllProducts_WhenNoParametersProvided() {
         // Arrange
         List<Producto> expectedProducts = Arrays.asList(producto1, producto2);
+        Pageable pageable = PageRequest.of(0, 10); // ejemplo de creación de un objeto Pageable
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
         when(productosRepository.findAll()).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, null, pageable);
+        Page<Producto> actualProducts = productoService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
@@ -94,53 +101,61 @@ class ProductoServiceImplTest {
     @Test
     void findAll_ShouldReturnProductsByMarca_WhenMarcaParameterProvided() {
         // Arrange
-        String marca = "nike";
+        Optional<String> marca = Optional.of("nike");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByMarcaContainsIgnoreCase(marca)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
 
+        when(productosRepository.findAll()).thenReturn(List.of(producto1, producto2));
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, null, pageable);
+        Page<Producto> actualProducts = productoService.findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCase(marca);
+        verify(productosRepository, times(1)).findAll();
     }
 
     @Test
     void findAll_ShouldReturnProductsByCategoria_WhenCategoriaParameterProvided() {
         // Arrange
-        String categoriaNombre = "deportes";
+        Optional<String> categoriaNombre = Optional.of("deportes");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByCategoriaContainsIgnoreCase(categoriaNombre)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll()).thenReturn(List.of(producto1, producto2));
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, categoriaNombre, pageable);
+        Page<Producto> actualProducts = productoService.findAll(Optional.empty(), categoriaNombre, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findByCategoriaContainsIgnoreCase(categoriaNombre);
+        verify(productosRepository, times(1)).findAll();
     }
 
     @Test
     void findAll_ShouldReturnProductsByMarcaAndCategoria_WhenBothParametersProvided() {
         // Arrange
-        String marca = "nike";
-        String categoriaNombre = "deportes";
+        Optional<String> marca = Optional.of("nike");
+        Optional<String> categoriaNombre = Optional.of("deportes");
         List<Producto> expectedProducts = List.of(producto2);
-        when(productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre)).thenReturn(expectedProducts);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<Producto> expectedPage = new PageImpl<>(expectedProducts);
+
+        when(productosRepository.findAll()).thenReturn(List.of(producto1, producto2));
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, categoriaNombre, pageable);
+        Page<Producto> actualProducts = productoService.findAll(marca, categoriaNombre, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
 
         // Verify
-        verify(productosRepository, times(1)).findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre);
+        verify(productosRepository, times(1)).findAll();
     }
 
     @Test

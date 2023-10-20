@@ -17,6 +17,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,9 +74,11 @@ class ProductosRestControllerTest {
     @Test
     void getAllProducts() throws Exception {
         var productosList = List.of(producto1, producto2);
+        var pageable = PageRequest.of(0, 2);
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(null, null, pageable)).thenReturn(productosList);
+        when(productosService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -93,7 +98,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(null, null, pageable);
+        verify(productosService, times(1)).findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
 
     }
@@ -103,8 +108,12 @@ class ProductosRestControllerTest {
         var productosList = List.of(producto2);
         var localEndpoint = myEndpoint + "?marca=nike";
 
+        Optional<String> marca = Optional.of("nike");
+        var pageable = PageRequest.of(0, 2);
+        var page = new PageImpl<>(productosList);
+
         // Arrange
-        when(productosService.findAll(anyString(), isNull(), pageable)).thenReturn(productosList);
+        when(productosService.findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -123,16 +132,20 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), isNull(), pageable);
+        verify(productosService, times(1)).findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test
     void getAllProductsByCategoria() throws Exception {
         var productosList = List.of(producto2);
-        var localEndpoint = myEndpoint + "?categoria=DEPORTE";
+        var localEndpoint = myEndpoint + "?categoria=DEPORTES";
+
+        Optional<String> categoria = Optional.of("DEPORTES");
+        var pageable = PageRequest.of(0, 2);
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(isNull(), anyString(), pageable)).thenReturn(productosList);
+        when(productosService.findAll(Optional.empty(), categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -151,16 +164,21 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(isNull(), anyString(), pageable);
+        verify(productosService, times(1)).findAll(Optional.empty(), categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test
     void getAllProductsByMarcaAndCategoria() throws Exception {
         var productosList = List.of(producto2);
-        var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTE";
+        var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTES";
+
+        Optional<String> marca = Optional.of("nike");
+        Optional<String> categoria = Optional.of("DEPORTES");
+        var pageable = PageRequest.of(0, 2);
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(anyString(), anyString(), pageable)).thenReturn(productosList);
+        when(productosService.findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -179,7 +197,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), anyString(), pageable);
+        verify(productosService, times(1)).findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test

@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -35,11 +37,13 @@ public class CategoriasServiceImplTest {
 
     @Test
     public void testFindAll() {
+        Pageable pageable = PageRequest.of(0, 10); // ejemplo de creación de un objeto Pageable
         // Arrange
         when(categoriasRepository.findAll()).thenReturn(List.of(categoria));
 
+
         // Act
-        var res = categoriasService.findAll(null);
+        var res = categoriasService.findAll(Optional.empty(), Optional.empty(), pageable);
 
         // Assert
         assertAll("findAll",
