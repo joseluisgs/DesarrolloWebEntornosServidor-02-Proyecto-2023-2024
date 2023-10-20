@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
@@ -7,6 +8,7 @@ import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflic
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -71,9 +73,14 @@ class CategoriasRestControllerTest {
                 .andReturn().getResponse();
 
         // System.out.println(response.getContentAsString());
+        PageResponse<Categoria> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertEquals(200, response.getStatus());
+        assertAll("findallCategorias",
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(2, res.content().size())
+        );
 
         // Verify
         verify(categoriasService, times(1)).findAll(Optional.empty(), Optional.empty(), pageable);
@@ -98,9 +105,14 @@ class CategoriasRestControllerTest {
                         get(localEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
+        PageResponse<Categoria> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertEquals(200, response.getStatus());
+        assertAll(
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(1, res.content().size())
+        );
 
         // Verify
         verify(categoriasService, times(1)).findAll(nombre, booleano, pageable);

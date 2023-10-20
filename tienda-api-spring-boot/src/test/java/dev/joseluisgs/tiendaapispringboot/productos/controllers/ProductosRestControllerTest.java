@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -8,6 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -86,10 +88,14 @@ class ProductosRestControllerTest {
                         get(myEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertEquals(200, response.getStatus());
+        assertAll("findall",
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(2, res.content().size())
+        );
 
         // Verify
         verify(productosService, times(1)).findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
@@ -114,10 +120,14 @@ class ProductosRestControllerTest {
                         get(localEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertEquals(200, response.getStatus());
+        assertAll("findallByMarca",
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(1, res.content().size())
+        );
 
         // Verify
         verify(productosService, times(1)).findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
@@ -141,9 +151,14 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertEquals(200, response.getStatus());
+        assertAll("findallByCategoria",
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(1, res.content().size())
+        );
 
         // Verify
         verify(productosService, times(1)).findAll(Optional.empty(), categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
@@ -168,8 +183,15 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        assertEquals(200, response.getStatus());
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
+        // Assert
+        assertAll("findallByMarcaAndCategoria",
+                () -> assertEquals(200, response.getStatus()),
+                () -> assertEquals(1, res.content().size())
+        );
+        
         // Verify
         verify(productosService, times(1)).findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
