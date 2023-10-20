@@ -73,7 +73,7 @@ class ProductosRestControllerTest {
         var productosList = List.of(producto1, producto2);
 
         // Arrange
-        when(productosService.findAll(null, null)).thenReturn(productosList);
+        when(productosService.findAll(null, null, pageable)).thenReturn(productosList);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -93,7 +93,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(null, null);
+        verify(productosService, times(1)).findAll(null, null, pageable);
 
 
     }
@@ -104,7 +104,7 @@ class ProductosRestControllerTest {
         var localEndpoint = myEndpoint + "?marca=nike";
 
         // Arrange
-        when(productosService.findAll(anyString(), isNull())).thenReturn(productosList);
+        when(productosService.findAll(anyString(), isNull(), pageable)).thenReturn(productosList);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -123,7 +123,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), isNull());
+        verify(productosService, times(1)).findAll(anyString(), isNull(), pageable);
     }
 
     @Test
@@ -132,7 +132,7 @@ class ProductosRestControllerTest {
         var localEndpoint = myEndpoint + "?categoria=DEPORTE";
 
         // Arrange
-        when(productosService.findAll(isNull(), anyString())).thenReturn(productosList);
+        when(productosService.findAll(isNull(), anyString(), pageable)).thenReturn(productosList);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -151,7 +151,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(isNull(), anyString());
+        verify(productosService, times(1)).findAll(isNull(), anyString(), pageable);
     }
 
     @Test
@@ -160,7 +160,7 @@ class ProductosRestControllerTest {
         var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTE";
 
         // Arrange
-        when(productosService.findAll(anyString(), anyString())).thenReturn(productosList);
+        when(productosService.findAll(anyString(), anyString(), pageable)).thenReturn(productosList);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -179,7 +179,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), anyString());
+        verify(productosService, times(1)).findAll(anyString(), anyString(), pageable);
     }
 
     @Test

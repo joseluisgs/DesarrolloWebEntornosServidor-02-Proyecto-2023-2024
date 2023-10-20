@@ -8,6 +8,10 @@ import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,12 +54,20 @@ public class ProductosRestController {
      * @return Lista de productos
      */
     @GetMapping()
-    public ResponseEntity<List<Producto>> getAllProducts(
+    public ResponseEntity<Page<Producto>> getAllProducts(
             @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String categoria
+            @RequestParam(required = false) String categoria,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria));
+        log.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria + " y paginación: " + page + " tamaño " + size + " y ordenacón " + sortBy + " " + direction);
+        // Creamos el objeto de ordenación
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(productosService.findAll(marca, categoria, pageable));
     }
 
     /**

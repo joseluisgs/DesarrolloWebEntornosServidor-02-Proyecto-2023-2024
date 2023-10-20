@@ -82,7 +82,7 @@ class ProductoServiceImplTest {
         when(productosRepository.findAll()).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, null);
+        List<Producto> actualProducts = productoService.findAll(null, null, pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
@@ -99,7 +99,7 @@ class ProductoServiceImplTest {
         when(productosRepository.findByMarcaContainsIgnoreCase(marca)).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, null);
+        List<Producto> actualProducts = productoService.findAll(marca, null, pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
@@ -116,7 +116,7 @@ class ProductoServiceImplTest {
         when(productosRepository.findByCategoriaContainsIgnoreCase(categoriaNombre)).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(null, categoriaNombre);
+        List<Producto> actualProducts = productoService.findAll(null, categoriaNombre, pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
@@ -134,7 +134,7 @@ class ProductoServiceImplTest {
         when(productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoriaNombre)).thenReturn(expectedProducts);
 
         // Act
-        List<Producto> actualProducts = productoService.findAll(marca, categoriaNombre);
+        List<Producto> actualProducts = productoService.findAll(marca, categoriaNombre, pageable);
 
         // Assert
         assertIterableEquals(expectedProducts, actualProducts);
