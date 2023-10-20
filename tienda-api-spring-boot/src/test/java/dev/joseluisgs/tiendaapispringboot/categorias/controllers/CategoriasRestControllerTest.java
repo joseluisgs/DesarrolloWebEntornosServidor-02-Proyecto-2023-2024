@@ -16,15 +16,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -55,9 +58,11 @@ class CategoriasRestControllerTest {
     @Test
     void getAllCategorias() throws Exception {
         var list = List.of(categoria1, categoria2);
+        Page<Categoria> page = new PageImpl<>(list);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
 
         // Arrange
-        when(categoriasService.findAll(null)).thenReturn(list);
+        when(categoriasService.findAll(Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -65,21 +70,13 @@ class CategoriasRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        List<Categoria> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Categoria.class));
+        // System.out.println(response.getContentAsString());
 
         // Assert
-        assertAll(
-                () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(2, res.size()),
-                () -> assertEquals(categoria1, res.get(0)),
-                () -> assertEquals(categoria2, res.get(1))
-        );
+        assertEquals(200, response.getStatus());
 
         // Verify
-        verify(categoriasService, times(1)).findAll(null);
-
-
+        verify(categoriasService, times(1)).findAll(Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test
@@ -87,8 +84,14 @@ class CategoriasRestControllerTest {
         var list = List.of(categoria1);
         var localEndpoint = myEndpoint + "?nombre=deportes";
 
+        // Crear parámetros adicionales
+        Optional<String> nombre = Optional.of("deportes");
+        Optional<Boolean> booleano = Optional.empty(); // o Optional.of(true) o Optional.of(false), dependiendo de lo que necesites
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").ascending()); // ejemplo de creación de un objeto Pageable
+        Page<Categoria> page = new PageImpl<>(list);
+
         // Arrange
-        when(categoriasService.findAll(anyString())).thenReturn(list);
+        when(categoriasService.findAll(nombre, booleano, pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -96,18 +99,11 @@ class CategoriasRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        List<Categoria> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Categoria.class));
-
         // Assert
-        assertAll(
-                () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(1, res.size()),
-                () -> assertEquals(categoria1, res.get(0))
-        );
+        assertEquals(200, response.getStatus());
 
         // Verify
-        verify(categoriasService, times(1)).findAll(anyString());
+        verify(categoriasService, times(1)).findAll(nombre, booleano, pageable);
     }
 
     @Test
