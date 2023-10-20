@@ -170,7 +170,13 @@
 					"name": "GET All",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/xml",
+								"type": "text"
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/v1/productos",
 							"host": [
@@ -201,7 +207,14 @@
 					"name": "GET By Id",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
 						"url": {
 							"raw": "localhost:3000/v1/productos/2",
 							"host": [
