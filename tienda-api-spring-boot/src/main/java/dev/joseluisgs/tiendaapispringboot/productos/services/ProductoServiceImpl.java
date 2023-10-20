@@ -17,6 +17,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import dev.joseluisgs.tiendaapispringboot.storage.StorageService;
+import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -25,10 +26,12 @@ import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -69,29 +72,34 @@ public class ProductoServiceImpl implements ProductosService {
      *
      * @param marca     Marca del producto
      * @param categoria Categoría del producto
-     * @param pageable  Paginación
+     * @param isDeleted Si está borrado o no
+     * @param pageable  Paginación y ordenación
      * @return Lista de productos
      */
     @Override
-    public Page<Producto> findAll(String marca, String categoria, Pageable pageable) {
-        // Si todo está vacío o nulo, devolvemos todos los productos
-        if ((marca == null || marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            log.info("Buscando todos los productos");
-            return productosRepository.findAll(pageable);
-        }
-        // Si la marca no está vacía, pero la categoría si, buscamos por marca
-        if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            log.info("Buscando productos por marca: " + marca);
-            return productosRepository.findByMarcaContainsIgnoreCase(marca.toLowerCase(), pageable);
-        }
-        // Si la marca está vacía, pero la categoría no, buscamos por categoría
-        if ((categoria != null && !categoria.isEmpty()) && (marca == null || marca.isEmpty())) {
-            log.info("Buscando productos por categoría: " + categoria);
-            return productosRepository.findByCategoriaContainsIgnoreCase(categoria.toLowerCase(), pageable);
-        }
-        // Si la marca y la categoría no están vacías, buscamos por ambas
-        log.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
-        return productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca.toLowerCase(), categoria.toLowerCase(), pageable);
+    public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<Boolean> isDeleted, Pageable pageable) {
+        // Criterio de búsqueda por marca
+        Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por categoría
+        Specification<Producto> specCategoriaProducto = (root, query, criteriaBuilder) ->
+                categoria.map(c -> {
+                    Join<Producto, Categoria> categoriaJoin = root.join("categoria");
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%");
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por isDeleted
+        Specification<Producto> specIsDeleted = (root, query, criteriaBuilder) ->
+                isDeleted.map(d -> criteriaBuilder.equal(root.get("isDeleted"), d))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Combinamos las especificaciones
+        Specification<Producto> criterio = Specification.where(specMarcaProducto)
+                .and(specCategoriaProducto)
+                .and(specIsDeleted);
+        return productosRepository.findAll(criterio, pageable);
     }
 
 

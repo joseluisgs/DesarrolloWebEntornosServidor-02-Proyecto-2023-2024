@@ -7,8 +7,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 public interface ProductosService {
-    Page<Producto> findAll(String marca, String categoria, Pageable pageable);
+    Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<Boolean> isDeleted, Pageable pageable);
 
     Producto findById(Long id);
 

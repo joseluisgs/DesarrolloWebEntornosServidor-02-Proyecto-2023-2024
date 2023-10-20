@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controlador de productos del tipo RestController
@@ -55,8 +56,9 @@ public class ProductosRestController {
      */
     @GetMapping()
     public ResponseEntity<Page<Producto>> getAllProducts(
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String categoria,
+            @RequestParam(required = false) Optional<String> marca,
+            @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<Boolean> isDeleted,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
@@ -67,7 +69,7 @@ public class ProductosRestController {
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria, pageable));
+        return ResponseEntity.ok(productosService.findAll(marca, categoria, isDeleted, pageable));
     }
 
     /**
