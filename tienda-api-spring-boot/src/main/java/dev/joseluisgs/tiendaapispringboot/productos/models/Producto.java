@@ -38,8 +38,10 @@ public class Producto {
     private final String imagen;
     @Min(value = 0, message = "El stock no puede ser negativo")
     private final Integer stock;
+    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private final LocalDateTime createdAt;
+    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Column(updatable = true, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private final LocalDateTime updatedAt;
     @Column(unique = true, updatable = false, nullable = false)
