@@ -52,7 +52,11 @@ public class ProductosRestController {
      *
      * @param marca     Marca del producto
      * @param categoria Categoria del producto
-     * @return Lista de productos
+     * @param modelo    Modelo del producto
+     * @param isDeleted Si está borrado o no
+     * @param precioMax Precio máximo del producto
+     * @param stockMin  Stock mínimo del producto
+     * @return Pagina de productos
      */
     @GetMapping()
     public ResponseEntity<Page<Producto>> getAllProducts(

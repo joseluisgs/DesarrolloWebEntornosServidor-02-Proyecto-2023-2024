@@ -8,6 +8,10 @@ import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,8 +20,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("${api.version}/categorias") // Es la ruta del controlador
@@ -34,15 +38,25 @@ public class CategoriasRestController {
     /**
      * Obtiene todas las categorias
      *
-     * @param nombre Nombre de la categoría
-     * @return Lista de categorías
+     * @param nombre    Nombre de la categoría
+     * @param isDeleted Si está borrado
+     * @return Page de categorías
      */
     @GetMapping()
-    public ResponseEntity<List<Categoria>> getAllCategories(
-            @RequestParam(required = false) String nombre
+    public ResponseEntity<Page<Categoria>> getAllCategories(
+            @RequestParam(required = false) Optional<String> nombre,
+            @RequestParam(required = false) Optional<Boolean> isDeleted,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("Buscando todos las categorias con nombre: " + nombre);
-        return ResponseEntity.ok(categoriasService.findAll(nombre));
+        log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
+        // Creamos el objeto de ordenación
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(categoriasService.findAll(nombre, isDeleted, pageable));
     }
 
     /**

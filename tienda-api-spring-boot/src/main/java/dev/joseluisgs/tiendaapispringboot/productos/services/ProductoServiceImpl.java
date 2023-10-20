@@ -83,15 +83,15 @@ public class ProductoServiceImpl implements ProductosService {
     public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
         // Criterio de búsqueda por marca
         Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
-                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%"))
-                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%")) // Buscamos por marca
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay marca, no filtramos
 
         // Criterio de búsqueda por categoría
         Specification<Producto> specCategoriaProducto = (root, query, criteriaBuilder) ->
                 categoria.map(c -> {
-                    Join<Producto, Categoria> categoriaJoin = root.join("categoria");
-                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%");
-                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+                    Join<Producto, Categoria> categoriaJoin = root.join("categoria"); // Join con categoría
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%"); // Buscamos por nombre
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay categoría, no filtramos
 
         // Criterio de búsqueda por isDeleted
         Specification<Producto> specIsDeleted = (root, query, criteriaBuilder) ->

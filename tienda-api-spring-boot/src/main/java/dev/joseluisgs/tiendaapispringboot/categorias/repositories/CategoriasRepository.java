@@ -2,6 +2,7 @@ package dev.joseluisgs.tiendaapispringboot.categorias.repositories;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -9,19 +10,18 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Creamos el repositorio extendéndolo de JPA, siguiendo DAO
+ * Con ello ya tenemos las operaciones básicas de CRUD y Paginación
+ * extiende de JpaSpecificationExecutor para tener las opciones de Specificación y busqueda con Criteria
+ */
 @Repository
-public interface CategoriasRepository extends JpaRepository<Categoria, Long> {
+public interface CategoriasRepository extends JpaRepository<Categoria, Long>, JpaSpecificationExecutor<Categoria> {
     // Encontrar por nombre exacto
     Optional<Categoria> findByNombreEqualsIgnoreCase(String nombre);
 
-    // Encontrar por nombre exacto y no borrado
-    Optional<Categoria> findByNombreEqualsIgnoreCaseAndIsDeletedFalse(String nombre);
-
     // Categorias por nombre
     List<Categoria> findAllByNombreContainingIgnoreCase(String nombre);
-
-    // Categorias activas
-    List<Categoria> findAllByNombreContainingIgnoreCaseAndIsDeletedFalse(String nombre);
 
     // Si están borradas
     List<Categoria> findByIsDeleted(Boolean isDeleted);
