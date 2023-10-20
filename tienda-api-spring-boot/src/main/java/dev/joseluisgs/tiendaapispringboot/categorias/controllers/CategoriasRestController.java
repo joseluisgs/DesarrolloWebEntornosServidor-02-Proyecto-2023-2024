@@ -5,10 +5,10 @@ import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflic
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -43,7 +43,7 @@ public class CategoriasRestController {
      * @return Page de categorías
      */
     @GetMapping()
-    public ResponseEntity<Page<Categoria>> getAllCategories(
+    public ResponseEntity<PageResponse<Categoria>> getAllCategories(
             @RequestParam(required = false) Optional<String> nombre,
             @RequestParam(required = false) Optional<Boolean> isDeleted,
             @RequestParam(defaultValue = "0") int page,
@@ -56,7 +56,7 @@ public class CategoriasRestController {
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(categoriasService.findAll(nombre, isDeleted, pageable));
+        return ResponseEntity.ok(PageResponse.of(categoriasService.findAll(nombre, isDeleted, pageable), sortBy, direction));
     }
 
     /**

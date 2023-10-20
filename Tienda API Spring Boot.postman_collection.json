@@ -23,11 +23,45 @@
 							"path": [
 								"v1",
 								"categorias"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Page, Options and SortBy",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/categorias",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"categorias"
 							],
 							"query": [
 								{
 									"key": "nombre",
 									"value": "dep",
+									"disabled": true
+								},
+								{
+									"key": "isDeleted",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "100",
 									"disabled": true
 								}
 							]
@@ -174,7 +208,8 @@
 							{
 								"key": "Accept",
 								"value": "application/xml",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
@@ -186,17 +221,69 @@
 							"path": [
 								"v1",
 								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET All Page, Options and SortBy",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/xml",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "localhost:3000/v1/productos?marca=ni&categoria=depo&isDeleted=false&precioMax=300&stockMin=6&page=1&size=1&sortBy=id&direction=desc",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"productos"
 							],
 							"query": [
 								{
 									"key": "marca",
-									"value": "nike",
-									"disabled": true
+									"value": "ni"
 								},
 								{
 									"key": "categoria",
-									"value": "deportes",
-									"disabled": true
+									"value": "depo"
+								},
+								{
+									"key": "isDeleted",
+									"value": "false"
+								},
+								{
+									"key": "precioMax",
+									"value": "300"
+								},
+								{
+									"key": "stockMin",
+									"value": "6"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "size",
+									"value": "1"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "direction",
+									"value": "desc"
 								}
 							]
 						}

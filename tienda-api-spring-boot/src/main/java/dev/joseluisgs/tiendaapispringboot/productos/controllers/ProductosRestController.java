@@ -5,10 +5,10 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -59,7 +59,7 @@ public class ProductosRestController {
      * @return Pagina de productos
      */
     @GetMapping()
-    public ResponseEntity<Page<Producto>> getAllProducts(
+    public ResponseEntity<PageResponse<Producto>> getAllProducts(
             @RequestParam(required = false) Optional<String> marca,
             @RequestParam(required = false) Optional<String> categoria,
             @RequestParam(required = false) Optional<String> modelo,
@@ -76,7 +76,7 @@ public class ProductosRestController {
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable));
+        return ResponseEntity.ok(PageResponse.of(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable), sortBy, direction));
     }
 
     /**
