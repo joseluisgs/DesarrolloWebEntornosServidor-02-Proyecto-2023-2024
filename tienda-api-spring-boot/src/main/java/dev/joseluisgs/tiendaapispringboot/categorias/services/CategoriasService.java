@@ -2,11 +2,13 @@ package dev.joseluisgs.tiendaapispringboot.categorias.services;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface CategoriasService {
-    List<Categoria> findAll(String nombre);
+    Page<Categoria> findAll(Optional<String> nombre, Optional<Boolean> isDeleted, Pageable pageable);
 
     Categoria findByNombre(String nombre);
 

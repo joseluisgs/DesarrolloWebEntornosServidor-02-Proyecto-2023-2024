@@ -45,6 +45,9 @@ dependencies {
     // Lo podemos usar en el test o en el controlador, si hiciese falta, por eso está aquí
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
 
+    // Para pasar a XML los responses, negocacion de contenido
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
+
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
