@@ -81,4 +81,36 @@ public class Producto {
         this.isDeleted = false;
     }
 
+    // Método para actualizar un producto
+    public Producto updateProducto(Producto producto) {
+        // Creamos el producto actualizado con los campos que nos llegan actualizando el updateAt y si son null no se actualizan y se quedan los anteriores
+        return new Producto(
+                this.id,
+                producto.getMarca() != null ? producto.getMarca() : this.marca,
+                producto.getModelo() != null ? producto.getModelo() : this.modelo,
+                producto.getDescripcion() != null ? producto.getDescripcion() : this.descripcion,
+                producto.getPrecio() != null ? producto.getPrecio() : this.precio,
+                producto.getImagen() != null ? producto.getImagen() : this.imagen,
+                producto.getCategoria() != null ? producto.getCategoria() : this.categoria,
+                producto.getStock() != null ? producto.getStock() : this.stock
+        );
+    }
+
+    public Producto updateStock(Integer stock) {
+        // Creamos el producto actualizado con los campos que nos llegan actualizando el updateAt y si son null no se actualizan y se quedan los anteriores
+        return new Producto(
+                this.id,
+                this.marca,
+                this.modelo,
+                this.descripcion,
+                this.precio,
+                this.imagen,
+                stock,
+                this.createdAt,
+                LocalDateTime.now(),
+                this.uuid,
+                this.isDeleted,
+                this.categoria
+        );
+    }
 }

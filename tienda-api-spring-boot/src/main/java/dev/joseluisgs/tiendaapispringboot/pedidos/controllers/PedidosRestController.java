@@ -7,10 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.version}/pedidos") // Es la ruta del controlador
@@ -28,5 +27,11 @@ public class PedidosRestController {
     public ResponseEntity<Pedido> createPedido(@Valid @RequestBody Pedido pedido) {
         log.info("Creando pedido: " + pedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidosService.save(pedido));
+    }
+
+    @DeleteMapping("/{id}")
+    public void deletePedido(@PathVariable("id") UUID idPedido) {
+        log.info("Borrando pedido con id: " + idPedido);
+        pedidosService.delete(idPedido);
     }
 }

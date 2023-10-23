@@ -20,7 +20,11 @@ public class LineaPedido {
     @Min(value = 0, message = "El precio del producto no puede ser negativo")
     private final Double precioProducto;
     @Min(value = 1, message = "La cantidad del producto no puede ser negativa")
-    private final Long cantidad = 1L;
+    private final Integer cantidad = 1;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private final Double total = 0.0;
+    private Double total = 0.0;
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
 }

@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -189,6 +190,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CachePut
+    @Transactional
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
         log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -218,7 +220,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CacheEvict
-    // @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
+    @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -245,6 +247,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CachePut
+    @Transactional
     public Producto updateImage(Long id, MultipartFile image) {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
