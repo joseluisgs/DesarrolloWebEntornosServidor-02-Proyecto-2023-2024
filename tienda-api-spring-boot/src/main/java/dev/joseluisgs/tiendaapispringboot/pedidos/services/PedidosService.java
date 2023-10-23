@@ -8,4 +8,8 @@ public interface PedidosService {
     Pedido save(Pedido pedido);
 
     void delete(UUID idPedido);
+
+    Pedido findById(UUID idPedido);
+
+    Pedido update(UUID idPedido, Pedido pedido);
 }

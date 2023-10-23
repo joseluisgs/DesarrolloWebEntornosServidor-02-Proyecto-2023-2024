@@ -29,6 +29,18 @@ public class PedidosRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidosService.save(pedido));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Pedido> getPedido(@PathVariable("id") UUID idPedido) {
+        log.info("Obteniendo pedido con id: " + idPedido);
+        return ResponseEntity.ok(pedidosService.findById(idPedido));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Pedido> updatePedido(@PathVariable("id") UUID idPedido, @Valid @RequestBody Pedido pedido) {
+        log.info("Actualizando pedido con id: " + idPedido);
+        return ResponseEntity.ok(pedidosService.update(idPedido, pedido));
+    }
+
     @DeleteMapping("/{id}")
     public void deletePedido(@PathVariable("id") UUID idPedido) {
         log.info("Borrando pedido con id: " + idPedido);

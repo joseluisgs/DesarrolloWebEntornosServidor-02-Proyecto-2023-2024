@@ -30,6 +30,17 @@ public class PedidosServiceImpl implements PedidosService {
         checkPedido(pedido);
 
         // Actualizamos el stock de los productos
+        var pedidoToSave = reserveStockPedidos(pedido);
+
+        // Guardamos el pedido en la base de datos
+        // Si existe lo actualizamos, son cosas que veremos!!!
+
+        return pedidoToSave;
+    }
+
+    private Pedido reserveStockPedidos(Pedido pedido) {
+        log.info("Reservando stock del pedido: {}", pedido);
+
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
             // Si existe, comprobamos si hay stock
@@ -56,9 +67,6 @@ public class PedidosServiceImpl implements PedidosService {
         pedido.setTotal(total);
         pedido.setTotalItems(totalItems);
 
-        // Guardamos el pedido en la base de datos
-        // Si existe lo actualizamos, son cosas que veremos!!!
-
         return pedido;
     }
 
@@ -69,9 +77,19 @@ public class PedidosServiceImpl implements PedidosService {
         // Lo primero que tenemos que ver es si existe el pedido
         // Si no existe, lanzamos una excepción
         // Lo haremos luego
-        var pedido = new Pedido(); // Lo simulamos
+        var pedidoToDelete = new Pedido(); // Lo simulamos
 
         // Ahora debemos devolver el stock de los productos
+        pedidoToDelete = returnStockPedidos(pedidoToDelete);
+
+        // Borramos el pedido de la base de datos
+        // Si existe lo borramos, son cosas que veremos!!!
+
+
+    }
+
+    private Pedido returnStockPedidos(Pedido pedido) {
+        log.info("Retornando stock del pedido: {}", pedido);
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
             // Si existe, comprobamos si hay stock
@@ -81,9 +99,38 @@ public class PedidosServiceImpl implements PedidosService {
             // producto.setStock(producto.getStock() + lineaPedido.getCantidad());
             productosRepository.save(productoToUpdate);
         });
+        return pedido;
+    }
 
-        // Borramos el pedido de la base de datos
+    @Override
+    public Pedido findById(UUID idPedido) {
+        log.info("Obteniendo pedido con id: " + idPedido);
+        // Lo primero que tenemos que ver es si existe el pedido
+        // Si no existe, lanzamos una excepción
+        // Lo haremos luego
+        var pedido = new Pedido(); // Lo simulamos
+        return pedido;
+    }
 
+    @Override
+    public Pedido update(UUID idPedido, Pedido pedido) {
+        log.info("Actualizando pedido con id: " + idPedido);
+
+        // Primero lo buscamos
+        // var pedidoToUpdate = findById(idPedido);
+
+        // Devolvemos el stock de los productos
+        returnStockPedidos(pedido);
+
+        // Comprobamos el pedido y sus datos
+        checkPedido(pedido);
+
+        // Actualizamos el stock de los productos
+        var pedidoToUpdate = reserveStockPedidos(pedido);
+
+        // Actualizamos el pedido en la base de datos
+        // Si existe lo actualizamos, son cosas que veremos!!!
+        return pedidoToUpdate;
 
     }
 
