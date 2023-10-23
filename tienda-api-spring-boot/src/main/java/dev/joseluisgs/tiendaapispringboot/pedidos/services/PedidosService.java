@@ -1,15 +1,18 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
+import org.bson.types.ObjectId;
 
-import java.util.UUID;
+import java.util.List;
 
 public interface PedidosService {
+    List<Pedido> findAll();
+
+    Pedido findById(ObjectId idPedido);
+
     Pedido save(Pedido pedido);
 
-    void delete(UUID idPedido);
+    void delete(ObjectId idPedido);
 
-    Pedido findById(UUID idPedido);
-
-    Pedido update(UUID idPedido, Pedido pedido);
+    Pedido update(ObjectId idPedido, Pedido pedido);
 }

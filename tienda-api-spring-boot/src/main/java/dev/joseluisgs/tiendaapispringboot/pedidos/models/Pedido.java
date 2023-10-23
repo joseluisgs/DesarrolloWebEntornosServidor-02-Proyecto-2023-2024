@@ -1,44 +1,46 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.UUID;
 
+// Nombre de la colección en MongoDB
+@Document("pedidos")
 @Data
-@Builder
 @AllArgsConstructor
-@NoArgsConstructor(force = true) // JPA Necesita un constructor vacío
+@NoArgsConstructor
 public class Pedido {
-    // Datos del pedido
-    private final UUID id;
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private Boolean isDeleted = false;
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private LocalDateTime createdAt = LocalDateTime.now();
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private LocalDateTime updatedAt = LocalDateTime.now();
     @NotNull(message = "El id del usuario no puede ser nulo")
-    private final Long idUsuario;
+    private Long idUsuario;
     @NotNull(message = "El id del cliente no puede ser nulo")
-    private final Cliente cliente;
+    private Cliente cliente;
     @NotNull(message = "El pedido debe tener al menos una línea de pedido")
-    private final List<LineaPedido> lineasPedido;
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private final LocalDateTime createdAt = LocalDateTime.now();
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private final LocalDateTime updatedAt = LocalDateTime.now();
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private final Boolean isDeleted = false;
+    private List<LineaPedido> lineasPedido;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private Integer totalItems = 0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private Double total = 0.0;
 
-    public void setTotal(Double total) {
-        this.total = total;
-    }
+    // Id de mongo
+    @Id
+    private ObjectId id;
 
-    public void setTotalItems(Integer totalItems) {
-        this.totalItems = totalItems;
+    @JsonProperty("id")
+    public String get_id() {
+        return id.toHexString();
     }
 }

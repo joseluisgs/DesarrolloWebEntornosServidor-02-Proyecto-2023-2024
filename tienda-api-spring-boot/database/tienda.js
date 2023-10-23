@@ -21,7 +21,6 @@ db.createCollection('pedidos')
 // Insertamos los datos de la coleccion pedidos
 db.pedidos.insertMany([
     {
-        "id": "123e4567-e89b-12d3-a456-426614174000",
         "idUsuario": 1,
         "cliente": {
             "nombreCompleto": "Juan Perez",
@@ -38,19 +37,24 @@ db.pedidos.insertMany([
         },
         "lineasPedido": [
             {
-                "id": "123e4567-e89b-12d3-a456-426614174001",
-                "idPedido": "123e4567-e89b-12d3-a456-426614174000",
                 "idProducto": 2,
                 "precioProducto": 19.99,
-                "cantidad": 1
+                "cantidad": 1,
+                "total": 19.99
             },
             {
-                "id": "123e4567-e89b-12d3-a456-426614174002",
-                "idPedido": "123e4567-e89b-12d3-a456-426614174000",
                 "idProducto": 3,
                 "precioProducto": 15.99,
-                "cantidad": 2
+                "cantidad": 2,
+                "total": 31.98
             }
-        ]
+        ],
+        "createdAt": "2023-10-23T12:57:17.3411925",
+        "updatedAt": "2023-10-23T12:57:17.3411925",
+        "isDeleted": false,
+        "totalItems": 3,
+        "total": 51.97,
+        "_id": "6536518de9b0d305f193b5ef",
+        "_class": "dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido"
     }
 ])

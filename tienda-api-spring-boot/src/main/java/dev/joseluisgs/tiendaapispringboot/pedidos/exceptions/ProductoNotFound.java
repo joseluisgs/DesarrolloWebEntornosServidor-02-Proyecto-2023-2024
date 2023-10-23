@@ -10,7 +10,7 @@ import java.util.UUID;
  * Status 404
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ProductoNotFound extends PedidosException {
+public class ProductoNotFound extends PedidoException {
     public ProductoNotFound(Long id) {
         super("Producto con id " + id + " no encontrado");
     }

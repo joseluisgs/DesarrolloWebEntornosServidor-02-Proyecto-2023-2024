@@ -25,8 +25,10 @@ configurations {
 dependencies {
     // Dependencias de Spring Web for HTML Apps y Rest
     implementation("org.springframework.boot:spring-boot-starter-web")
-    // Spring Data JPA
+    // Spring Data JPA par SQL
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    // Spring Data JPA para MongoDB
+    implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     // Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
     // Validación

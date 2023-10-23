@@ -10,14 +10,14 @@ import org.hibernate.validator.constraints.Length;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(force = true) // JPA Necesita un constructor vacío
+@NoArgsConstructor
 public class Cliente {
     @Length(min = 3, message = "El nombre debe tener al menos 3 caracteres")
-    private final String nombreCompleto;
+    private String nombreCompleto;
     @Email(message = "El email debe ser válido")
-    private final String email;
+    private String email;
     @NotBlank(message = "El teléfono no puede estar vacío")
-    private final String telefono;
+    private String telefono;
     @NotNull(message = "La dirección no puede ser nula")
-    private final Direccion direccion;
+    private Direccion direccion;
 }

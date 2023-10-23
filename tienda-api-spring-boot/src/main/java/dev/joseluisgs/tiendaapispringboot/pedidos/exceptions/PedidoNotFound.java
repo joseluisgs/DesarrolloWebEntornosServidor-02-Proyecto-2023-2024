@@ -7,9 +7,10 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Excepción de producto no encontrado
  * Status 404
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ProductoNotStock extends PedidoException {
-    public ProductoNotStock(Long id) {
-        super("Producto con id " + id + " no tiene stock suficiente");
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class PedidoNotFound extends PedidoException {
+    public PedidoNotFound(String id) {
+        super("Pedido con id " + id + " no encontrado");
     }
+
 }

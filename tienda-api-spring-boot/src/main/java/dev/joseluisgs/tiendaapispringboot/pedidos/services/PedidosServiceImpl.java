@@ -1,28 +1,53 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.PedidoNotFound;
 import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoBadPrice;
 import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotStock;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.LineaPedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
+import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.UUID;
+import java.util.List;
 
 @Service
 @Slf4j
+@Cacheable("pedidos")
 public class PedidosServiceImpl implements PedidosService {
+    private final PedidosRepository pedidosRepository;
     private final ProductosRepository productosRepository;
 
-    public PedidosServiceImpl(ProductosRepository productosRepository) {
+    public PedidosServiceImpl(PedidosRepository pedidosRepository, ProductosRepository productosRepository) {
+        this.pedidosRepository = pedidosRepository;
         this.productosRepository = productosRepository;
     }
 
     @Override
+    public List<Pedido> findAll() {
+        // Podemos paginar y hacer otras cosas
+        log.info("Obteniendo todos los pedidos");
+        return pedidosRepository.findAll();
+    }
+
+    @Override
+    @Cacheable("pedidos")
+    public Pedido findById(ObjectId idPedido) {
+        log.info("Obteniendo pedido con id: " + idPedido);
+        System.out.println("Obteniendo pedido con id: " + idPedido);
+        return pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
+    }
+
+    @Override
     @Transactional
+    @CachePut("pedidos")
     public Pedido save(Pedido pedido) {
         log.info("Guardando pedido: {}", pedido);
 
@@ -35,7 +60,7 @@ public class PedidosServiceImpl implements PedidosService {
         // Guardamos el pedido en la base de datos
         // Si existe lo actualizamos, son cosas que veremos!!!
 
-        return pedidoToSave;
+        return pedidosRepository.save(pedidoToSave);
     }
 
     private Pedido reserveStockPedidos(Pedido pedido) {
@@ -72,20 +97,19 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    public void delete(UUID idPedido) {
+    @CacheEvict("pedidos")
+    public void delete(ObjectId idPedido) {
         log.info("Borrando pedido: " + idPedido);
         // Lo primero que tenemos que ver es si existe el pedido
         // Si no existe, lanzamos una excepción
         // Lo haremos luego
-        var pedidoToDelete = new Pedido(); // Lo simulamos
+        var pedidoToDelete = this.findById(idPedido);
 
         // Ahora debemos devolver el stock de los productos
-        pedidoToDelete = returnStockPedidos(pedidoToDelete);
+        returnStockPedidos(pedidoToDelete);
 
-        // Borramos el pedido de la base de datos
-        // Si existe lo borramos, son cosas que veremos!!!
-
-
+        // Borramos el pedido
+        pedidosRepository.deleteById(idPedido);
     }
 
     private Pedido returnStockPedidos(Pedido pedido) {
@@ -102,22 +126,15 @@ public class PedidosServiceImpl implements PedidosService {
         return pedido;
     }
 
-    @Override
-    public Pedido findById(UUID idPedido) {
-        log.info("Obteniendo pedido con id: " + idPedido);
-        // Lo primero que tenemos que ver es si existe el pedido
-        // Si no existe, lanzamos una excepción
-        // Lo haremos luego
-        var pedido = new Pedido(); // Lo simulamos
-        return pedido;
-    }
 
     @Override
-    public Pedido update(UUID idPedido, Pedido pedido) {
+    @Transactional
+    @CachePut("pedidos")
+    public Pedido update(ObjectId idPedido, Pedido pedido) {
         log.info("Actualizando pedido con id: " + idPedido);
 
         // Primero lo buscamos
-        // var pedidoToUpdate = findById(idPedido);
+        var pedidoToUpdate = this.findById(idPedido);
 
         // Devolvemos el stock de los productos
         returnStockPedidos(pedido);
@@ -126,11 +143,11 @@ public class PedidosServiceImpl implements PedidosService {
         checkPedido(pedido);
 
         // Actualizamos el stock de los productos
-        var pedidoToUpdate = reserveStockPedidos(pedido);
+        var pedidoToSave = reserveStockPedidos(pedido);
 
         // Actualizamos el pedido en la base de datos
         // Si existe lo actualizamos, son cosas que veremos!!!
-        return pedidoToUpdate;
+        return pedidosRepository.save(pedidoToSave);
 
     }
 

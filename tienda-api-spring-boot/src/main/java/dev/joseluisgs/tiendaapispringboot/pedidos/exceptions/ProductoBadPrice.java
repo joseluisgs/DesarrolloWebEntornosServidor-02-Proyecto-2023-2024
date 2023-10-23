@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * Status 404
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class ProductoBadPrice extends PedidosException {
+public class ProductoBadPrice extends PedidoException {
     public ProductoBadPrice(Long id) {
         super("Producto con id " + id + " no tiene un precio válido o no coincide con su precio actual");
     }

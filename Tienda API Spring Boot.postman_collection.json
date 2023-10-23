@@ -493,13 +493,52 @@
 			"name": "Pedidos",
 			"item": [
 				{
+					"name": "GET All",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/pedidos",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/pedidos/65365c274b52b604852506a8",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos",
+								"65365c274b52b604852506a8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST create",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idPedido\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idPedido\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
+							"raw": "{\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -535,7 +574,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/123e4567-e89b-12d3-a456-426614174000",
+							"raw": "localhost:3000/v1/pedidos/65365c274b52b604852506a8",
 							"host": [
 								"localhost"
 							],
@@ -543,7 +582,7 @@
 							"path": [
 								"v1",
 								"pedidos",
-								"123e4567-e89b-12d3-a456-426614174000"
+								"65365c274b52b604852506a8"
 							]
 						}
 					},
@@ -556,7 +595,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idPedido\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idPedido\": \"123e4567-e89b-12d3-a456-426614174000\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
+							"raw": "{\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -564,7 +603,7 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/123e4567-e89b-12d3-a456-426614174000",
+							"raw": "localhost:3000/v1/pedidos/65365cdd1c2d540a8765eb83",
 							"host": [
 								"localhost"
 							],
@@ -572,7 +611,7 @@
 							"path": [
 								"v1",
 								"pedidos",
-								"123e4567-e89b-12d3-a456-426614174000"
+								"65365cdd1c2d540a8765eb83"
 							]
 						}
 					},
