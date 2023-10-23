@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -8,6 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -17,6 +19,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
@@ -25,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -71,29 +77,28 @@ class ProductosRestControllerTest {
     @Test
     void getAllProducts() throws Exception {
         var productosList = List.of(producto1, producto2);
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(null, null)).thenReturn(productosList);
+        when(productosService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         get(myEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-
-        List<Producto> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Producto.class));
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertAll(
+        assertAll("findall",
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(2, res.size()),
-                () -> assertEquals(producto1, res.get(0)),
-                () -> assertEquals(producto2, res.get(1))
+                () -> assertEquals(2, res.content().size())
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(null, null);
+        verify(productosService, times(1)).findAll(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
 
 
     }
@@ -103,36 +108,42 @@ class ProductosRestControllerTest {
         var productosList = List.of(producto2);
         var localEndpoint = myEndpoint + "?marca=nike";
 
+        Optional<String> marca = Optional.of("nike");
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(productosList);
+
         // Arrange
-        when(productosService.findAll(anyString(), isNull())).thenReturn(productosList);
+        when(productosService.findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         get(localEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-
-        List<Producto> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Producto.class));
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertAll(
+        assertAll("findallByMarca",
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(1, res.size()),
-                () -> assertEquals(producto2, res.get(0))
+                () -> assertEquals(1, res.content().size())
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), isNull());
+        verify(productosService, times(1)).findAll(marca, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test
     void getAllProductsByCategoria() throws Exception {
         var productosList = List.of(producto2);
-        var localEndpoint = myEndpoint + "?categoria=DEPORTE";
+        var localEndpoint = myEndpoint + "?categoria=DEPORTES";
+
+        Optional<String> categoria = Optional.of("DEPORTES");
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(isNull(), anyString())).thenReturn(productosList);
+        when(productosService.findAll(Optional.empty(), categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -140,27 +151,31 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        List<Producto> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Producto.class));
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertAll(
+        assertAll("findallByCategoria",
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(1, res.size()),
-                () -> assertEquals(producto2, res.get(0))
+                () -> assertEquals(1, res.content().size())
         );
 
         // Verify
-        verify(productosService, times(1)).findAll(isNull(), anyString());
+        verify(productosService, times(1)).findAll(Optional.empty(), categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test
     void getAllProductsByMarcaAndCategoria() throws Exception {
         var productosList = List.of(producto2);
-        var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTE";
+        var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTES";
+
+        Optional<String> marca = Optional.of("nike");
+        Optional<String> categoria = Optional.of("DEPORTES");
+        var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
+        var page = new PageImpl<>(productosList);
 
         // Arrange
-        when(productosService.findAll(anyString(), anyString())).thenReturn(productosList);
+        when(productosService.findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable)).thenReturn(page);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -168,18 +183,17 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        List<Producto> res = mapper.readValue(response.getContentAsString(),
-                mapper.getTypeFactory().constructCollectionType(List.class, Producto.class));
+        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        });
 
         // Assert
-        assertAll(
+        assertAll("findallByMarcaAndCategoria",
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(1, res.size()),
-                () -> assertEquals(producto2, res.get(0))
+                () -> assertEquals(1, res.content().size())
         );
-
+        
         // Verify
-        verify(productosService, times(1)).findAll(anyString(), anyString());
+        verify(productosService, times(1)).findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
 
     @Test

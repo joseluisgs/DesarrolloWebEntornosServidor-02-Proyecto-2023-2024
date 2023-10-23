@@ -13,9 +13,12 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -31,13 +34,23 @@ public class CategoriasServiceImpl implements CategoriasService {
     }
 
     @Override
-    public List<Categoria> findAll(String nombre) {
-        log.info("Buscando categorías por nombre: " + nombre);
-        if (nombre == null || nombre.isEmpty()) {
-            return categoriasRepository.findAll();
-        } else {
-            return categoriasRepository.findAllByNombreContainingIgnoreCase(nombre);
-        }
+    public Page<Categoria> findAll(Optional<String> nombre, Optional<Boolean> isDeleted, Pageable pageable) {
+        log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
+        // Criterio de búsqueda por nombre
+        Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por borrado
+        Specification<Categoria> specIsDeleted = (root, query, criteriaBuilder) ->
+                isDeleted.map(m -> criteriaBuilder.equal(root.get("isDeleted"), m))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Combinamos las especificaciones
+        Specification<Categoria> criterio = Specification.where(specNombreCategoria)
+                .and(specIsDeleted);
+
+        return categoriasRepository.findAll(criterio, pageable);
     }
 
     @Override

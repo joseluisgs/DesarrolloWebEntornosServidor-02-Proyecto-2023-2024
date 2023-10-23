@@ -17,17 +17,21 @@ import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import dev.joseluisgs.tiendaapispringboot.storage.StorageService;
+import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -68,29 +72,57 @@ public class ProductoServiceImpl implements ProductosService {
      *
      * @param marca     Marca del producto
      * @param categoria Categoría del producto
+     * @param modelo    Modelo del producto
+     * @param isDeleted Si está borrado o no
+     * @param precioMax Precio máximo
+     * @param stockMin  Stock mínimo
+     * @param pageable  Paginación y ordenación
      * @return Lista de productos
      */
     @Override
-    public List<Producto> findAll(String marca, String categoria) {
-        // Si todo está vacío o nulo, devolvemos todos los productos
-        if ((marca == null || marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            log.info("Buscando todos los productos");
-            return productosRepository.findAll();
-        }
-        // Si la marca no está vacía, pero la categoría si, buscamos por marca
-        if ((marca != null && !marca.isEmpty()) && (categoria == null || categoria.isEmpty())) {
-            log.info("Buscando productos por marca: " + marca);
-            return productosRepository.findByMarcaContainsIgnoreCase(marca.toLowerCase());
-        }
-        // Si la marca está vacía, pero la categoría no, buscamos por categoría
-        if ((categoria != null && !categoria.isEmpty()) && (marca == null || marca.isEmpty())) {
-            log.info("Buscando productos por categoría: " + categoria);
-            return productosRepository.findByCategoriaContainsIgnoreCase(categoria.toLowerCase());
-        }
-        // Si la marca y la categoría no están vacías, buscamos por ambas
-        log.info("Buscando productos por marca: " + marca + " y categoría: " + categoria);
-        return productosRepository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca.toLowerCase(), categoria.toLowerCase());
+    public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
+        // Criterio de búsqueda por marca
+        Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%")) // Buscamos por marca
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay marca, no filtramos
+
+        // Criterio de búsqueda por categoría
+        Specification<Producto> specCategoriaProducto = (root, query, criteriaBuilder) ->
+                categoria.map(c -> {
+                    Join<Producto, Categoria> categoriaJoin = root.join("categoria"); // Join con categoría
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%"); // Buscamos por nombre
+                }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay categoría, no filtramos
+
+        // Criterio de búsqueda por isDeleted
+        Specification<Producto> specIsDeleted = (root, query, criteriaBuilder) ->
+                isDeleted.map(d -> criteriaBuilder.equal(root.get("isDeleted"), d))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por modelo
+        Specification<Producto> specModeloProducto = (root, query, criteriaBuilder) ->
+                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m + "%"))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por precioMax, es decir tiene que ser menor o igual
+        Specification<Producto> specPrecioMaxProducto = (root, query, criteriaBuilder) ->
+                precioMax.map(p -> criteriaBuilder.lessThanOrEqualTo(root.get("precio"), p))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Criterio de búsqueda por stockMin, es decir tiene que ser menor o igual
+        Specification<Producto> specStockMinProducto = (root, query, criteriaBuilder) ->
+                stockMin.map(s -> criteriaBuilder.lessThanOrEqualTo(root.get("stock"), s))
+                        .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
+
+        // Combinamos las especificaciones
+        Specification<Producto> criterio = Specification.where(specMarcaProducto)
+                .and(specCategoriaProducto)
+                .and(specIsDeleted)
+                .and(specModeloProducto)
+                .and(specPrecioMaxProducto)
+                .and(specStockMinProducto);
+        return productosRepository.findAll(criterio, pageable);
     }
+
 
     /**
      * Busca un producto por su id

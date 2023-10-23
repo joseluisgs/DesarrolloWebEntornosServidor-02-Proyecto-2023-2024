@@ -64,49 +64,6 @@ class ProductosRepositoryTest {
         );
     }
 
-    @Test
-    void findAllByMarca() {
-        // Act (No es case sensitive)
-        String marca = "Nike";
-        List<Producto> productos = repository.findByMarcaContainsIgnoreCase(marca);
-
-        // Assert
-        assertAll("findAllByMarca",
-                () -> assertNotNull(productos),
-                () -> assertFalse(productos.isEmpty()),
-                () -> assertEquals(marca, productos.get(0).getMarca())
-        );
-    }
-
-    @Test
-    void findAllByCategoria() {
-        // Act
-        String categoriaNombre = "deportes";
-        List<Producto> productos = repository.findByCategoriaContainsIgnoreCase(categoriaNombre);
-
-        // Assert
-        assertAll("findAllByCategoria",
-                () -> assertNotNull(productos),
-                () -> assertFalse(productos.isEmpty()),
-                () -> assertEquals(categoriaNombre.toLowerCase(), productos.get(0).getCategoria().getNombre().toLowerCase())
-        );
-    }
-
-    @Test
-    void findAllByMarcaAndCategoria() {
-        // Act (No es case sensitive)
-        String marca = "nike";
-        String categoria = "deportes";
-        List<Producto> productos = repository.findByMarcaContainsIgnoreCaseAndCategoriaIgnoreCase(marca, categoria);
-
-        // Assert
-        assertAll("findAllByMarcaAndCategoria",
-                () -> assertNotNull(productos),
-                () -> assertFalse(productos.isEmpty()),
-                () -> assertEquals(marca.toLowerCase(), productos.get(0).getMarca().toLowerCase()),
-                () -> assertEquals(categoria.toLowerCase(), productos.get(0).getCategoria().getNombre().toLowerCase())
-        );
-    }
 
     @Test
     void findById_existingId_returnsOptionalWithProducto() {

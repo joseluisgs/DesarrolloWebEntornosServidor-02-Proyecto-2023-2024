@@ -5,9 +5,13 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controlador de productos del tipo RestController
@@ -48,15 +52,31 @@ public class ProductosRestController {
      *
      * @param marca     Marca del producto
      * @param categoria Categoria del producto
-     * @return Lista de productos
+     * @param modelo    Modelo del producto
+     * @param isDeleted Si está borrado o no
+     * @param precioMax Precio máximo del producto
+     * @param stockMin  Stock mínimo del producto
+     * @return Pagina de productos
      */
     @GetMapping()
-    public ResponseEntity<List<Producto>> getAllProducts(
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String categoria
+    public ResponseEntity<PageResponse<Producto>> getAllProducts(
+            @RequestParam(required = false) Optional<String> marca,
+            @RequestParam(required = false) Optional<String> categoria,
+            @RequestParam(required = false) Optional<String> modelo,
+            @RequestParam(required = false) Optional<Boolean> isDeleted,
+            @RequestParam(required = false) Optional<Double> precioMax,
+            @RequestParam(required = false) Optional<Double> stockMin,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
     ) {
-        log.info("Buscando todos los productos con marca: " + marca + " y categoría: " + categoria);
-        return ResponseEntity.ok(productosService.findAll(marca, categoria));
+        log.info("Buscando todos los productos con las siguientes opciones: " + marca + " " + categoria + " " + modelo + " " + isDeleted + " " + precioMax + " " + stockMin);
+        // Creamos el objeto de ordenación
+        Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        // Creamos cómo va a ser la paginación
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return ResponseEntity.ok(PageResponse.of(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable), sortBy, direction));
     }
 
     /**
