@@ -16,6 +16,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,6 +57,10 @@ public class PedidosServiceImpl implements PedidosService {
 
         // Actualizamos el stock de los productos
         var pedidoToSave = reserveStockPedidos(pedido);
+
+        // Fecha de creación y actualización
+        pedidoToSave.setCreatedAt(LocalDateTime.now());
+        pedidoToSave.setUpdatedAt(LocalDateTime.now());
 
         // Guardamos el pedido en la base de datos
         // Si existe lo actualizamos, son cosas que veremos!!!
@@ -144,6 +149,9 @@ public class PedidosServiceImpl implements PedidosService {
 
         // Actualizamos el stock de los productos
         var pedidoToSave = reserveStockPedidos(pedido);
+
+        // Fecha actualización
+        pedidoToSave.setUpdatedAt(LocalDateTime.now());
 
         // Actualizamos el pedido en la base de datos
         // Si existe lo actualizamos, son cosas que veremos!!!
