@@ -14,6 +14,8 @@ import java.util.List;
 
 // Nombre de la colección en MongoDB
 @Document("pedidos")
+// Para que sepa con qué clase recuperarlo al traerlo con MongoDB y aplicar polimorfismo
+@TypeAlias("Pedido") 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
