@@ -2,12 +2,14 @@ package dev.joseluisgs.tiendaapispringboot.pedidos.models;
 
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class LineaPedido {
     @Min(value = 1, message = "La cantidad del producto no puede ser negativa")
     private Integer cantidad = 1;

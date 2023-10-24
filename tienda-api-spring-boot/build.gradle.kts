@@ -54,6 +54,9 @@ dependencies {
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 
+    // MongoDB para test, pero no es necesario, usamos sus repositorios
+    // testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring31x:4.9.3")
+
 }
 
 tasks.withType<Test> {

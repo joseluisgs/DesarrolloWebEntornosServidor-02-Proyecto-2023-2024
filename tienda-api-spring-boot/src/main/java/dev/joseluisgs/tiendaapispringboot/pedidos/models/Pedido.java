@@ -3,6 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.pedidos.models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
@@ -20,6 +21,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Pedido {
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private Boolean isDeleted = false;

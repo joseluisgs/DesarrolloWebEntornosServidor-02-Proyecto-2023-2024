@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Service
 @Slf4j
@@ -126,15 +127,17 @@ public class PedidosServiceImpl implements PedidosService {
 
     private Pedido returnStockPedidos(Pedido pedido) {
         log.info("Retornando stock del pedido: {}", pedido);
-        pedido.getLineasPedido().forEach(lineaPedido -> {
-            var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
-            // Si existe, comprobamos si hay stock
-            var productoToUpdate = producto.updateStock(
-                    producto.getStock() + lineaPedido.getCantidad()
-            );
-            // producto.setStock(producto.getStock() + lineaPedido.getCantidad());
-            productosRepository.save(productoToUpdate);
-        });
+        if (pedido.getLineasPedido() != null) {
+            pedido.getLineasPedido().forEach(lineaPedido -> {
+                var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
+                // Si existe, comprobamos si hay stock
+                var productoToUpdate = producto.updateStock(
+                        producto.getStock() + lineaPedido.getCantidad()
+                );
+                // producto.setStock(producto.getStock() + lineaPedido.getCantidad());
+                productosRepository.save(productoToUpdate);
+            });
+        }
         return pedido;
     }
 
@@ -166,13 +169,16 @@ public class PedidosServiceImpl implements PedidosService {
 
     }
 
-    private void checkPedido(Pedido pedido) {
+    void checkPedido(Pedido pedido) {
         log.info("Comprobando pedido: {}", pedido);
         // Lo primero que tenemos que hacer es ver si existe el is del usuario
         // Ahora no lo tenemos!!! (Lo veremos más adelante)
 
         // Siguiente paso, es ver si los productos existen y si hay stock
         // Si no existen, lanzamos una excepción
+        if (pedido.getLineasPedido() == null || pedido.getLineasPedido().isEmpty()) {
+            pedido.setLineasPedido(new ArrayList<LineaPedido>());
+        }
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto())
                     .orElseThrow(() -> new ProductoNotFound(lineaPedido.getIdProducto()));
