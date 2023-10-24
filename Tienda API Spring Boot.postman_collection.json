@@ -532,6 +532,27 @@
 					"response": []
 				},
 				{
+					"name": "GET by User ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "localhost:3000/v1/pedidos/usuario/1",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"pedidos",
+								"usuario",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "POST create",
 					"request": {
 						"method": "POST",
