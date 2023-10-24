@@ -37,16 +37,27 @@ public class Pedido {
     @Builder.Default()
     private Integer totalItems = 0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @Builder.Default()
     private Double total = 0.0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @Builder.Default()
     private LocalDateTime createdAt = LocalDateTime.now();
+    @Builder.Default()
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private LocalDateTime updatedAt = LocalDateTime.now();
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @Builder.Default()
     private Boolean isDeleted = false;
 
     @JsonProperty("id")
     public String get_id() {
         return id.toHexString();
+    }
+
+    // Podemos añadir los set para que calculen los campos calculados, por ejemplo con las líneas de pedido
+    public void setLineasPedido(List<LineaPedido> lineasPedido) {
+        this.lineasPedido = lineasPedido;
+        this.totalItems = lineasPedido != null ? lineasPedido.size() : 0;
+        this.total = lineasPedido != null ? lineasPedido.stream().mapToDouble(LineaPedido::getTotal).sum() : 0.0;
     }
 }

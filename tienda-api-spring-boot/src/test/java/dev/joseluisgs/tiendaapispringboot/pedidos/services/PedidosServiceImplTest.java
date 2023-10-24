@@ -1,9 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.PedidoNotFound;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoBadPrice;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotFound;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotStock;
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.*;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.LineaPedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
@@ -112,20 +109,51 @@ class PedidosServiceImplTest {
     @Test
     void testSave() {
         // Arrange
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
         Pedido pedido = new Pedido();
-        pedido.setLineasPedido(new ArrayList<>());
+        LineaPedido lineaPedido = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+        pedido.setLineasPedido(List.of(lineaPedido));
         Pedido pedidoToSave = new Pedido();
-        pedidoToSave.setLineasPedido(new ArrayList<>());
+        pedidoToSave.setLineasPedido(List.of(lineaPedido));
+
         when(pedidosRepository.save(any(Pedido.class))).thenReturn(pedidoToSave); // Utiliza any(Pedido.class) para cualquier instancia de Pedido
+        when(productosRepository.findById(anyLong())).thenReturn(Optional.of(producto));
 
         // Act
         Pedido resultPedido = pedidosService.save(pedido);
 
         // Assert
-        assertEquals(pedidoToSave, resultPedido);
+        assertAll(
+                () -> assertEquals(pedidoToSave, resultPedido),
+                () -> assertEquals(pedidoToSave.getLineasPedido(), resultPedido.getLineasPedido()),
+                () -> assertEquals(pedidoToSave.getLineasPedido().size(), resultPedido.getLineasPedido().size())
+        );
 
         // Verify
         verify(pedidosRepository).save(any(Pedido.class));
+        verify(productosRepository, times(2)).findById(anyLong());
+    }
+
+    @Test
+    void testSave_ThrowsPedidoNotItems() {
+        // Arrange
+        Pedido pedido = new Pedido();
+
+        // Act & Assert
+        assertThrows(PedidoNotItems.class, () -> pedidosService.save(pedido));
+
+        // Verify
+        verify(pedidosRepository, never()).save(any(Pedido.class));
+        verify(productosRepository, never()).findById(anyLong());
     }
 
     @Test
@@ -163,12 +191,28 @@ class PedidosServiceImplTest {
     @Test
     void testUpdate() {
         // Arrange
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
+
+        LineaPedido lineaPedido = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+
         ObjectId idPedido = new ObjectId();
         Pedido pedido = new Pedido();
+        pedido.setLineasPedido(List.of(lineaPedido));
         Pedido pedidoToUpdate = new Pedido();
-        pedidoToUpdate.setLineasPedido(new ArrayList<>()); // Inicializar la lista de líneas de pedido
+        pedidoToUpdate.setLineasPedido(List.of(lineaPedido)); // Inicializar la lista de líneas de pedido
+
         when(pedidosRepository.findById(idPedido)).thenReturn(Optional.of(pedidoToUpdate));
         when(pedidosRepository.save(any(Pedido.class))).thenReturn(pedidoToUpdate);
+        when(productosRepository.findById(anyLong())).thenReturn(Optional.of(producto));
 
         // Act
         Pedido resultPedido = pedidosService.update(idPedido, pedido);
@@ -183,6 +227,23 @@ class PedidosServiceImplTest {
         // Verify
         verify(pedidosRepository).findById(idPedido);
         verify(pedidosRepository).save(any(Pedido.class));
+        verify(productosRepository, times(3)).findById(anyLong());
+    }
+
+    @Test
+    void testUpdate_ThrowsPedidoNotFound() {
+        // Arrange
+        ObjectId idPedido = new ObjectId();
+        Pedido pedido = new Pedido();
+        when(pedidosRepository.findById(idPedido)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(PedidoNotFound.class, () -> pedidosService.update(idPedido, pedido));
+
+        // Verify
+        verify(pedidosRepository).findById(idPedido);
+        verify(pedidosRepository, never()).save(any(Pedido.class));
+        verify(productosRepository, never()).findById(anyLong());
     }
 
     @Test

@@ -2,6 +2,7 @@ plugins {
     java // Plugin de Java
     id("org.springframework.boot") version "3.1.4" // Versión de Spring Boot
     id("io.spring.dependency-management") version "1.1.3" // Gestión de dependencias
+    id("jacoco") // Plugin de Jacoco para test de cobertura
 }
 
 group = "dev.joseluisgs"
@@ -61,4 +62,20 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform() // Usamos JUnit 5
+    // finalizedBy(tasks.jacocoTestReport) // report is always generated after tests run
+}
+
+tasks.test {
+
+}
+tasks.jacocoTestReport {
+    dependsOn(tasks.test) // tests are required to run before generating the report
+}
+
+tasks.jacocoTestReport {
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir("jacocoHtml")
+    }
 }

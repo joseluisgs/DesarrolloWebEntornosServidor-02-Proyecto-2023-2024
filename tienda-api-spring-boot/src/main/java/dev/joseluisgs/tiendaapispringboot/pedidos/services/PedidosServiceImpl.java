@@ -1,9 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.PedidoNotFound;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoBadPrice;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotFound;
-import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotStock;
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.*;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.LineaPedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
@@ -19,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 
 @Service
 @Slf4j
@@ -80,7 +76,7 @@ public class PedidosServiceImpl implements PedidosService {
         log.info("Reservando stock del pedido: {}", pedido);
 
         if (pedido.getLineasPedido() == null || pedido.getLineasPedido().isEmpty()) {
-            pedido.setLineasPedido(new ArrayList<LineaPedido>());
+            throw new PedidoNotItems(pedido.getId().toHexString());
         }
 
         pedido.getLineasPedido().forEach(lineaPedido -> {
@@ -177,7 +173,7 @@ public class PedidosServiceImpl implements PedidosService {
         // Siguiente paso, es ver si los productos existen y si hay stock
         // Si no existen, lanzamos una excepción
         if (pedido.getLineasPedido() == null || pedido.getLineasPedido().isEmpty()) {
-            pedido.setLineasPedido(new ArrayList<LineaPedido>());
+            throw new PedidoNotItems(pedido.getId().toHexString());
         }
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto())
