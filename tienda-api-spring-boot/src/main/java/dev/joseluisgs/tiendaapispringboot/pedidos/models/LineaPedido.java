@@ -15,18 +15,7 @@ public class LineaPedido {
     private Integer cantidad = 1;
     private Long idProducto;
     @Min(value = 0, message = "El precio del producto no puede ser negativo")
-    private Double precioProducto;
+    private Double precioProducto = 0.0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private Double total = 0.0;
-
-    // Si queremos con un ObjectId
-    /*@JsonProperty("idPedido")
-    public String getStringId() {
-        return this.idPedido.toHexString();
-    }*/
-
-    /*@JsonProperty("idPedido")
-    public void setStringId(String id) {
-        this.idPedido = new ObjectId(id);
-    }*/
 }

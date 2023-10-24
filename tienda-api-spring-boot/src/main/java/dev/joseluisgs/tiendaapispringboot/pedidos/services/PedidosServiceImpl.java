@@ -82,11 +82,9 @@ public class PedidosServiceImpl implements PedidosService {
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
             // Si existe, comprobamos si hay stock
-            var productoToUpdate = producto.updateStock(
-                    producto.getStock() - lineaPedido.getCantidad()
-            );
+            producto.setStock(producto.getStock() - lineaPedido.getCantidad());
             // producto.setStock(producto.getStock() - lineaPedido.getCantidad());
-            productosRepository.save(productoToUpdate);
+            productosRepository.save(producto);
             // Actualizamos el total de la linea de pedido
             lineaPedido.setTotal(lineaPedido.getCantidad() * lineaPedido.getPrecioProducto());
         });
@@ -131,11 +129,9 @@ public class PedidosServiceImpl implements PedidosService {
             pedido.getLineasPedido().forEach(lineaPedido -> {
                 var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
                 // Si existe, comprobamos si hay stock
-                var productoToUpdate = producto.updateStock(
-                        producto.getStock() + lineaPedido.getCantidad()
-                );
+                producto.setStock(producto.getStock() + lineaPedido.getCantidad());
                 // producto.setStock(producto.getStock() + lineaPedido.getCantidad());
-                productosRepository.save(productoToUpdate);
+                productosRepository.save(producto);
             });
         }
         return pedido;

@@ -44,19 +44,40 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class ProductosRestControllerTest {
     private final String myEndpoint = "/v1/productos";
 
-    private final Categoria categoria = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
-    private final Producto producto1 = new Producto(
-            1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
-            false, categoria
-    );
-    private final Producto producto2 = new Producto(
-            2L, "Nike", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
-            false, categoria
-    );
+    private final Categoria categoria = Categoria.builder()
+            .id(1L)
+            .nombre("DEPORTES")
+            .build();
+    private final Producto producto1 = Producto.builder()
+            .id(1L)
+            .marca("Adidas")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .categoria(categoria)
+            .isDeleted(false)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"))
+            .build();
+
+    private final Producto producto2 = Producto.builder()
+            .id(2L)
+            .marca("Nike")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .categoria(categoria)
+            .isDeleted(false)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"))
+            .build();
+
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     MockMvc mockMvc; // Cliente MVC
@@ -191,7 +212,7 @@ class ProductosRestControllerTest {
                 () -> assertEquals(200, response.getStatus()),
                 () -> assertEquals(1, res.content().size())
         );
-        
+
         // Verify
         verify(productosService, times(1)).findAll(marca, categoria, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
     }
@@ -244,9 +265,15 @@ class ProductosRestControllerTest {
 
     @Test
     void createProduct() throws Exception {
-        var productoDto = new ProductoCreateDto(
-                "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5);
+        var productoDto = ProductoCreateDto.builder()
+                .marca("Adidas")
+                .modelo("Zapatillas")
+                .descripcion("Zapatillas de deporte")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .build();
 
         // Arrange
         when(productosService.save(any(ProductoCreateDto.class))).thenReturn(producto1);
@@ -274,10 +301,15 @@ class ProductosRestControllerTest {
 
     @Test
     void createProductWithBadRequest() throws Exception {
-        var productoDto = new ProductoCreateDto(
-                "Ad", "", "Zapatillas de deporte",
-                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5);
-
+        var productoDto = ProductoCreateDto.builder()
+                .marca("Ad")
+                .modelo("")
+                .descripcion("Zapatillas de deporte")
+                .precio(-100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(-5)
+                .build();
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -305,9 +337,16 @@ class ProductosRestControllerTest {
     @Test
     void updateProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = new ProductoUpdateDto(
-                "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
+        var productoDto = ProductoUpdateDto.builder()
+                .marca("Adidas")
+                .modelo("Zapatillas")
+                .descripcion("Zapatillas de deporte")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .isDeleted(false)
+                .build();
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
@@ -336,9 +375,16 @@ class ProductosRestControllerTest {
     @Test
     void updateProductNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = new ProductoUpdateDto(
-                "Adidas", "Zapatillas", "Zapatillas de deporte",
-                100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
+        var productoDto = ProductoUpdateDto.builder()
+                .marca("Adidas")
+                .modelo("Zapatillas")
+                .descripcion("Zapatillas de deporte")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .isDeleted(false)
+                .build();
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenThrow(new ProductoNotFound(1L));
@@ -359,9 +405,16 @@ class ProductosRestControllerTest {
     @Test
     void updateProductWithBadRequest() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = new ProductoUpdateDto(
-                "Ad", "", "Zapatillas de deporte",
-                -100.0, "http://placeimg.com/640/480/people", "OTROS", -5, false);
+        var productoDto = ProductoUpdateDto.builder()
+                .marca("Ad")
+                .modelo("")
+                .descripcion("Zapatillas de deporte")
+                .precio(-100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(-5)
+                .isDeleted(false)
+                .build();
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -386,9 +439,13 @@ class ProductosRestControllerTest {
     @Test
     void updatePartialProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = new ProductoUpdateDto(
-                "Adidas", null, null,
-                null, "http://placeimg.com/640/480/people", "OTROS", 5, false);
+        var productoDto = ProductoUpdateDto.builder()
+                .marca("Adidas")
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .isDeleted(false)
+                .build();
 
         // Arrange
         when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);

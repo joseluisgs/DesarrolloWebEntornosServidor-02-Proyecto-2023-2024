@@ -14,21 +14,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDateTime;
 import java.util.List;
 
-// Nombre de la colección en MongoDB
-@Document("pedidos")
-// Para que sepa con qué clase recuperarlo al traerlo con MongoDB y aplicar polimorfismo
 @TypeAlias("Pedido")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+// Nombre de la colección en MongoDB
+@Document("pedidos")
+// Para que sepa con qué clase recuperarlo al traerlo con MongoDB y aplicar polimorfismo
 public class Pedido {
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private Boolean isDeleted = false;
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private LocalDateTime createdAt = LocalDateTime.now();
-    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    // Id de mongo
+    @Id
+    @Builder.Default
+    private ObjectId id = new ObjectId();
     @NotNull(message = "El id del usuario no puede ser nulo")
     private Long idUsuario;
     @NotNull(message = "El id del cliente no puede ser nulo")
@@ -36,13 +34,16 @@ public class Pedido {
     @NotNull(message = "El pedido debe tener al menos una línea de pedido")
     private List<LineaPedido> lineasPedido;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @Builder.Default()
     private Integer totalItems = 0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private Double total = 0.0;
-
-    // Id de mongo
-    @Id
-    private ObjectId id;
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private LocalDateTime createdAt = LocalDateTime.now();
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private LocalDateTime updatedAt = LocalDateTime.now();
+    // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    private Boolean isDeleted = false;
 
     @JsonProperty("id")
     public String get_id() {

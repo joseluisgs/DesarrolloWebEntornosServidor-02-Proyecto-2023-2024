@@ -259,20 +259,21 @@ public class ProductoServiceImpl implements ProductosService {
         String imageStored = storageService.store(image);
         String imageUrl = imageStored; //storageService.getUrl(imageStored); // Si quiero la url completa
         // Clonamos el producto con la nueva imagen, porque inmutabilidad de los objetos
-        var productoActualizado = new Producto(
-                productoActual.getId(),
-                productoActual.getMarca(),
-                productoActual.getModelo(),
-                productoActual.getDescripcion(),
-                productoActual.getPrecio(),
-                imageUrl,
-                productoActual.getStock(),
-                productoActual.getCreatedAt(),
-                LocalDateTime.now(),
-                productoActual.getUuid(),
-                productoActual.getIsDeleted(),
-                productoActual.getCategoria()
-        );
+        var productoActualizado = Producto.builder()
+                .id(productoActual.getId())
+                .marca(productoActual.getMarca())
+                .modelo(productoActual.getModelo())
+                .descripcion(productoActual.getDescripcion())
+                .precio(productoActual.getPrecio())
+                .imagen(imageUrl)
+                .stock(productoActual.getStock())
+                .createdAt(productoActual.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .uuid(productoActual.getUuid())
+                .isDeleted(productoActual.getIsDeleted())
+                .categoria(productoActual.getCategoria())
+                .build();
+
         // Lo guardamos en el repositorio
         var productoUpdated = productosRepository.save(productoActualizado);
         // Enviamos la notificación a los clientes ws
