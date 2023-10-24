@@ -13,11 +13,12 @@ import org.bson.types.ObjectId;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Slf4j
@@ -32,18 +33,24 @@ public class PedidosServiceImpl implements PedidosService {
     }
 
     @Override
-    public List<Pedido> findAll() {
+    public Page<Pedido> findAll(Pageable pageable) {
         // Podemos paginar y hacer otras cosas
-        log.info("Obteniendo todos los pedidos");
-        return pedidosRepository.findAll();
+        log.info("Obteniendo todos los pedidos paginados y ordenados con {}", pageable);
+        return pedidosRepository.findAll(pageable);
     }
+
 
     @Override
     @Cacheable("pedidos")
     public Pedido findById(ObjectId idPedido) {
         log.info("Obteniendo pedido con id: " + idPedido);
-        System.out.println("Obteniendo pedido con id: " + idPedido);
         return pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
+    }
+
+    @Override
+    public Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable) {
+        log.info("Obteniendo pedidos del usuario con id: " + idUsuario);
+        return pedidosRepository.findByIdUsuario(idUsuario, pageable);
     }
 
     @Override

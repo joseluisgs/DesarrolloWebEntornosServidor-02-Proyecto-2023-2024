@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -15,7 +16,7 @@ import java.util.List;
 // Nombre de la colección en MongoDB
 @Document("pedidos")
 // Para que sepa con qué clase recuperarlo al traerlo con MongoDB y aplicar polimorfismo
-@TypeAlias("Pedido") 
+@TypeAlias("Pedido")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

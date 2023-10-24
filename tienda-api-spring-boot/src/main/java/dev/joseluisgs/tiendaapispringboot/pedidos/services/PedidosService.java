@@ -2,13 +2,15 @@ package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import org.bson.types.ObjectId;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface PedidosService {
-    List<Pedido> findAll();
+    Page<Pedido> findAll(Pageable pageable);
 
     Pedido findById(ObjectId idPedido);
+
+    Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable);
 
     Pedido save(Pedido pedido);
 
@@ -16,3 +18,4 @@ public interface PedidosService {
 
     Pedido update(ObjectId idPedido, Pedido pedido);
 }
+

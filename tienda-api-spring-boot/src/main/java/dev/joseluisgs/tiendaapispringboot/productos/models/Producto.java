@@ -55,6 +55,7 @@ public class Producto {
 
 
     // Esto lo ponemos para que Jackson sepa como crear el objeto (TEST)
+    //Es para decirle a Jackson como crear los objetos y casar propiedades
     @JsonCreator
     public Producto(
             @JsonProperty("id") Long id,
