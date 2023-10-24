@@ -1,8 +1,13 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.services;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.PedidoNotFound;
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoBadPrice;
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotFound;
+import dev.joseluisgs.tiendaapispringboot.pedidos.exceptions.ProductoNotStock;
+import dev.joseluisgs.tiendaapispringboot.pedidos.models.LineaPedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
+import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
@@ -90,6 +95,7 @@ class PedidosServiceImplTest {
         // Arrange
         Long idUsuario = 1L;
         Pageable pageable = mock(Pageable.class);
+        @SuppressWarnings("unchecked")
         Page<Pedido> expectedPage = mock(Page.class);
         when(pedidosRepository.findByIdUsuario(idUsuario, pageable)).thenReturn(expectedPage);
 
@@ -177,5 +183,191 @@ class PedidosServiceImplTest {
         // Verify
         verify(pedidosRepository).findById(idPedido);
         verify(pedidosRepository).save(any(Pedido.class));
+    }
+
+    @Test
+    void testReserveStockPedidos() throws PedidoNotFound, ProductoNotFound, ProductoBadPrice {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+
+        lineasPedido.add(lineaPedido1); // Agregar la línea de pedido a la lista
+
+        pedido.setLineasPedido(lineasPedido); // Asignar la lista de líneas de pedido al pedido
+
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.of(producto));
+
+        // Act
+        Pedido result = pedidosService.reserveStockPedidos(pedido);
+
+        // Assert
+        assertAll(
+                () -> assertEquals(3, producto.getStock()), // Verifica que el stock se haya actualizado correctamente
+                () -> assertEquals(20.0, lineaPedido1.getTotal()), // Verifica que el total de la línea de pedido se haya calculado correctamente
+                () -> assertEquals(20.0, result.getTotal()), // Verifica que el total del pedido se haya calculado correctamente
+                () -> assertEquals(2, result.getTotalItems()) // Verifica que el total de items del pedido se haya calculado correctamente
+        );
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
+        verify(productosRepository, times(1)).save(producto);
+    }
+
+    @Test
+    void returnStockPedidos_ShouldReturnPedidoWithUpdatedStock() {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .build();
+
+        lineasPedido.add(lineaPedido1);
+        pedido.setLineasPedido(lineasPedido);
+
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(13)
+                .build();
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.of(producto));
+        when(productosRepository.save(producto)).thenReturn(producto);
+
+        // Act
+        Pedido result = pedidosService.returnStockPedidos(pedido);
+
+        // Assert
+        assertEquals(15, producto.getStock());
+        assertEquals(pedido, result);
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
+        verify(productosRepository, times(1)).save(producto);
+    }
+
+    @Test
+    void checkPedido_ProductosExistenYHayStock_NoDebeLanzarExcepciones() {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+
+        lineasPedido.add(lineaPedido1);
+        pedido.setLineasPedido(lineasPedido);
+
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.of(producto));
+
+
+        // Act & Assert
+        assertDoesNotThrow(() -> pedidosService.checkPedido(pedido));
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void checkPedido_ProductoNoExiste_DebeLanzarProductoNotFound() {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+
+        lineasPedido.add(lineaPedido1);
+        pedido.setLineasPedido(lineasPedido);
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(ProductoNotFound.class, () -> pedidosService.checkPedido(pedido));
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void checkPedido_ProductoNoTieneSuficienteStock_DebeLanzarProductoNotStock() {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+        lineaPedido1.setIdProducto(1L);
+        lineaPedido1.setCantidad(10);
+        lineasPedido.add(lineaPedido1);
+        pedido.setLineasPedido(lineasPedido);
+
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.of(producto));
+
+        // Act & Assert
+        assertThrows(ProductoNotStock.class, () -> pedidosService.checkPedido(pedido));
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void checkPedido_PrecioProductoDiferente_DebeLanzarProductoBadPrice() {
+        // Arrange
+        Pedido pedido = new Pedido();
+        List<LineaPedido> lineasPedido = new ArrayList<>();
+        LineaPedido lineaPedido1 = LineaPedido.builder()
+                .idProducto(1L)
+                .cantidad(2)
+                .precioProducto(10.0)
+                .build();
+        lineaPedido1.setIdProducto(1L);
+        lineaPedido1.setCantidad(2);
+        lineaPedido1.setPrecioProducto(20.0); // Precio diferente al del producto
+        lineasPedido.add(lineaPedido1);
+        pedido.setLineasPedido(lineasPedido);
+
+        Producto producto = Producto.builder()
+                .id(1L)
+                .stock(5)
+                .precio(10.0)
+                .build();
+
+        when(productosRepository.findById(1L)).thenReturn(Optional.of(producto));
+
+        // Act & Assert
+        assertThrows(ProductoBadPrice.class, () -> pedidosService.checkPedido(pedido));
+
+        // Verify
+        verify(productosRepository, times(1)).findById(1L);
     }
 }

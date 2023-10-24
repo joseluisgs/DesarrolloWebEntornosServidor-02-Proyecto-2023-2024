@@ -76,8 +76,12 @@ public class PedidosServiceImpl implements PedidosService {
         return pedidosRepository.save(pedidoToSave);
     }
 
-    private Pedido reserveStockPedidos(Pedido pedido) {
+    Pedido reserveStockPedidos(Pedido pedido) {
         log.info("Reservando stock del pedido: {}", pedido);
+
+        if (pedido.getLineasPedido() == null || pedido.getLineasPedido().isEmpty()) {
+            pedido.setLineasPedido(new ArrayList<LineaPedido>());
+        }
 
         pedido.getLineasPedido().forEach(lineaPedido -> {
             var producto = productosRepository.findById(lineaPedido.getIdProducto()).get(); // Siempre existe porque ha pasado el check
@@ -123,7 +127,7 @@ public class PedidosServiceImpl implements PedidosService {
         pedidosRepository.deleteById(idPedido);
     }
 
-    private Pedido returnStockPedidos(Pedido pedido) {
+    Pedido returnStockPedidos(Pedido pedido) {
         log.info("Retornando stock del pedido: {}", pedido);
         if (pedido.getLineasPedido() != null) {
             pedido.getLineasPedido().forEach(lineaPedido -> {
