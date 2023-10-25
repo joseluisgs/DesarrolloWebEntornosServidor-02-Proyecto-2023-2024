@@ -1,6 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.web.productos;
 
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import jakarta.validation.Valid;
@@ -65,6 +66,7 @@ public class ProductosWebController {
     @GetMapping("/details/{id}")
     public String details(@PathVariable("id") Long id, Model model) {
         Producto producto = productosService.findById(id);
+        System.out.println(producto);
         model.addAttribute("producto", producto);
         return "productos/details";
     }
@@ -91,24 +93,35 @@ public class ProductosWebController {
         return "redirect:/productos/index";
     }
 
-        /*
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") Long id, Model model) {
-        Producto producto = productoService.getProductoById(id);
-        model.addAttribute("producto", producto);
-        return "update";
+        Producto producto = productosService.findById(id);
+        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+                .marca(producto.getMarca())
+                .modelo(producto.getModelo())
+                .descripcion(producto.getDescripcion())
+                .precio(producto.getPrecio())
+                .imagen(producto.getImagen())
+                .categoria(producto.getCategoria().getNombre())
+                .stock(producto.getStock())
+                .isDeleted(producto.getIsDeleted())
+                .build();
+        model.addAttribute("producto", productoUpdateDto);
+        return "productos/update";
     }
 
     @PostMapping("/update/{id}")
-    public String update(@PathVariable("id") Long id, @Valid @ModelAttribute("producto") ProductoCreateDto productoDto,
-                         BindingResult result) {
+    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute ProductoUpdateDto productoUpdateDto, BindingResult result) {
         if (result.hasErrors()) {
-            return "update";
+            return "productos/update";
         }
-        productoService.updateProducto(id, productoDto);
+        log.info("Update POST");
+        System.out.println(id);
+        System.out.println(productoUpdateDto);
+        var res = productosService.update(id, productoUpdateDto);
+        System.out.println(res);
         return "redirect:/productos/index";
     }
-    */
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
