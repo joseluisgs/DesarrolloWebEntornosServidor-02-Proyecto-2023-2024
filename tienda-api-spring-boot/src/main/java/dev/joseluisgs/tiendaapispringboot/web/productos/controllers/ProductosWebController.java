@@ -6,6 +6,8 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.web.productos.store.UserStore;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,14 +32,15 @@ import java.util.Optional;
 public class ProductosWebController {
     private final ProductosService productosService;
     private final CategoriasService categoriasService;
-
     private final MessageSource messageSource;
+    private final UserStore userSession;
 
     @Autowired
-    public ProductosWebController(ProductosService productosService, CategoriasService categoriasService, MessageSource messageSource) {
+    public ProductosWebController(ProductosService productosService, CategoriasService categoriasService, MessageSource messageSource, UserStore userSession) {
         this.productosService = productosService;
         this.categoriasService = categoriasService;
         this.messageSource = messageSource;
+        this.userSession = userSession;
     }
 
     @GetMapping
@@ -47,9 +50,15 @@ public class ProductosWebController {
     }
 
     @PostMapping
-    public String login(@RequestParam("password") String password) {
+    public String login(@RequestParam("password") String password, HttpSession session, Model model) {
         log.info("Login POST");
         if ("pass".equals(password)) {
+            // Si es correcto, creamos la sesión
+            userSession.incrementLoginCount();
+            userSession.setLastLogin(new Date());
+            session.setAttribute("userSession", userSession);
+            // Establece el tiempo de caducidad de la sesión en 1800 segundos (30 minutos)
+            session.setMaxInactiveInterval(1800);
             return "redirect:/productos/index";
         } else {
             return "productos/login";
@@ -57,7 +66,8 @@ public class ProductosWebController {
     }
 
     @GetMapping("/index")
-    public String index(Model model,
+    public String index(HttpSession session,
+                        Model model,
                         @RequestParam(value = "search", required = false) Optional<String> search,
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
@@ -71,13 +81,20 @@ public class ProductosWebController {
         Pageable pageable = PageRequest.of(page, size, sort);
         // Obtenemos la página de productos
         var productosPage = productosService.findAll(search, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
+
+        // Mensaje de bienvenida o de encabezado -- Localización
         String welcomeMessage = messageSource.getMessage("welcome.message", null, locale);
-        String localizedDate = getLocalizedDate(locale);
+        // Ejemplo de sesion
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        var numVisitas = sessionData.getLoginCount();
+        var lastLogin = sessionData.getLastLogin();
+        String localizedLastLoginDate = getLocalizedDate(lastLogin, locale);
         // Devolvemos la página
         model.addAttribute("productosPage", productosPage);
         model.addAttribute("search", search.orElse(""));
         model.addAttribute("welcomeMessage", welcomeMessage);
-        model.addAttribute("date", localizedDate);
+        model.addAttribute("numVisitas", numVisitas);
+        model.addAttribute("lastLoginDate", localizedLastLoginDate);
         return "productos/index";
     }
 
@@ -179,13 +196,10 @@ public class ProductosWebController {
         return "redirect:/productos/index";
     }
 
-    private String getLocalizedDate(Locale locale) {
-        // Obtener la fecha actual
-        Date currentDate = new Date();
-
+    private String getLocalizedDate(Date date, Locale locale) {
         // Formatear la fecha localizada en función del Locale
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-        return dateFormat.format(currentDate);
+        return dateFormat.format(date);
     }
 
 }
