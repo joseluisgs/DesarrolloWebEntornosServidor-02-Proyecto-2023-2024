@@ -36,6 +36,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     // Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    // Thyemeleaf
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
