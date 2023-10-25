@@ -520,7 +520,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/imagen/1";
 
         // Arrange
-        when(productosService.updateImage(anyLong(), any(MultipartFile.class))).thenReturn(producto1);
+        when(productosService.updateImage(anyLong(), any(MultipartFile.class), anyBoolean())).thenReturn(producto1);
 
         // Crear un archivo simulado
         MockMultipartFile file = new MockMultipartFile(
@@ -550,7 +550,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).updateImage(anyLong(), any(MultipartFile.class));
+        verify(productosService, times(1)).updateImage(anyLong(), any(MultipartFile.class), anyBoolean());
     }
 
 }
