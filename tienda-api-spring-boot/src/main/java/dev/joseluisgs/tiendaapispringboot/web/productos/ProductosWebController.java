@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.web.productos;
 
+import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,10 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -61,13 +59,14 @@ public class ProductosWebController {
         return "productos/index";
     }
 
-   /* @GetMapping("/details/{id}")
+    @GetMapping("/details/{id}")
     public String details(@PathVariable("id") Long id, Model model) {
-        Producto producto = productoService.getProductoById(id);
+        Producto producto = productosService.findById(id);
         model.addAttribute("producto", producto);
-        return "details";
+        return "productos/details";
     }
 
+    /*
     @GetMapping("/create")
     public String createForm(Model model) {
         model.addAttribute("producto", new ProductoCreateDto());
