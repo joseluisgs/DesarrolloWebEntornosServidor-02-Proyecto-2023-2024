@@ -60,6 +60,10 @@ dependencies {
     // MongoDB para test, pero no es necesario, usamos sus repositorios
     // testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring31x:4.9.3")
 
+    // Extras para web
+    // Bootstrap
+    implementation("org.webjars:bootstrap:4.0.0")
+
 }
 
 tasks.withType<Test> {
