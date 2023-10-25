@@ -15,7 +15,8 @@ import java.io.IOException;
 
 @RestController
 @Slf4j
-@RequestMapping("${api.version}/storage") // Es la ruta del controlador
+// Es la ruta del controlador, no le pongas nada mas para que genere la ruta bien
+@RequestMapping("/storage")
 public class StorageController {
     private final StorageService storageService;
 

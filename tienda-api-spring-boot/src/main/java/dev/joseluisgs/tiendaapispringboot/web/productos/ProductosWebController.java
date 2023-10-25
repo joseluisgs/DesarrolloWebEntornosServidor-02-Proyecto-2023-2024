@@ -160,9 +160,9 @@ public class ProductosWebController {
     }
 
     @PostMapping("/update-image/{id}")
-    public String updateProductImage(@PathVariable("id") Long productId, @RequestParam("imagen") MultipartFile image) {
-        // Lógica para procesar la imagen y actualizar el producto con el ID proporcionado
-        // ...
+    public String updateProductImage(@PathVariable("id") Long productId, @RequestParam("imagen") MultipartFile imagen) {
+        log.info("Update POST con imagen");
+        productosService.updateImage(productId, imagen, true);
         return "redirect:/productos/index";
     }
 

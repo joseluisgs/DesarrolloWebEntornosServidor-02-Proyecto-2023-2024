@@ -247,7 +247,7 @@ public class ProductoServiceImpl implements ProductosService {
     @Override
     @CachePut(key = "#result.id")
     @Transactional
-    public Producto updateImage(Long id, MultipartFile image) {
+    public Producto updateImage(Long id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
@@ -256,7 +256,9 @@ public class ProductoServiceImpl implements ProductosService {
             storageService.delete(productoActual.getImagen());
         }
         String imageStored = storageService.store(image);
-        String imageUrl = imageStored; //storageService.getUrl(imageStored); // Si quiero la url completa
+        // Si quiero la url completa
+        String imageUrl = !withUrl ? imageStored : storageService.getUrl(imageStored);
+        //storageService.getUrl(imageStored); // Si quiero la url completa
         // Clonamos el producto con la nueva imagen, porque inmutabilidad de los objetos
         var productoActualizado = Producto.builder()
                 .id(productoActual.getId())
