@@ -21,18 +21,34 @@ class ProductosRepositoryTest {
 
     private final Categoria categoria = new Categoria(null, "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
 
-    private final Producto producto1 = new Producto(
-            null, "Adidas", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
-            false, categoria
-    );
-    private final Producto producto2 = new Producto(
-            null, "Nike", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
-            false, categoria
-    );
+    private final Producto producto1 = Producto.builder()
+            .marca("Adidas")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"))
+            .isDeleted(false)
+            .categoria(categoria)
+            .build();
+
+    private final Producto producto2 = Producto.builder()
+            .marca("Nike")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"))
+            .isDeleted(false)
+            .categoria(categoria)
+            .build();
+
     @Autowired
     private ProductosRepository repository;
     @Autowired
@@ -143,12 +159,19 @@ class ProductosRepositoryTest {
     @Test
     void saveButNotExists() {
         // Arrange
-        Producto producto = new Producto(
-                null, "New Brand", "New Model", "New Description",
-                200.0, "http://placeimg.com/640/480/people", 5,
-                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(),
-                false, categoria
-        );
+        Producto producto = Producto.builder()
+                .marca("New Brand")
+                .modelo("New Model")
+                .descripcion("New Description")
+                .precio(200.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .stock(5)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .isDeleted(false)
+                .categoria(categoria)
+                .build();
 
         // Act
         Producto savedProducto = repository.save(producto);
@@ -165,11 +188,20 @@ class ProductosRepositoryTest {
     @Test
     void saveExists() {
         // Arrange
-        Producto producto = new Producto(
-                1L, "New Brand", "New Model", "New Description",
-                200.0, "http://placeimg.com/640/480/people", 5,
-                LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), false, categoria
-        );
+        Producto producto = Producto.builder()
+                .id(1L)
+                .marca("New Brand")
+                .modelo("New Model")
+                .descripcion("New Description")
+                .precio(200.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .stock(5)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .isDeleted(false)
+                .categoria(categoria)
+                .build();
 
         // Act
         Producto savedProducto = repository.save(producto);

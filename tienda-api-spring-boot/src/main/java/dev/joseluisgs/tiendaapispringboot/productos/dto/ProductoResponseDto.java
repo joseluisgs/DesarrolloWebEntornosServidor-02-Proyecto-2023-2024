@@ -1,11 +1,13 @@
 package dev.joseluisgs.tiendaapispringboot.productos.dto;
 
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
+@Builder
 public class ProductoResponseDto {
     private final Long id;
     private final String marca;
