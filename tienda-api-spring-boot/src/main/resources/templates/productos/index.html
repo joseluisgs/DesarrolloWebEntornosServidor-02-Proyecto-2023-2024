@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <!-- Incluir el fragmento del header -->
-    <div th:replace="productos/header.html :: header"></div>
+    <div th:replace="~{productos/header.html :: header}"></div>
 
     <h1>Productos</h1>
     <form action="/productos/index" class="mb-3" method="get">
@@ -74,7 +74,7 @@
 </div>
 
 <!-- Incluir el fragmento del footer -->
-<div th:replace="productos/footer.html :: footer"></div>
+<div th:replace="~{productos/footer.html :: footer}"></div>
 
 <script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
 </body>

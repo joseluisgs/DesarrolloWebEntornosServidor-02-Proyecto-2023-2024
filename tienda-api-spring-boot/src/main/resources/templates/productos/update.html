@@ -9,7 +9,7 @@
 <body>
 <div class="container">
     <!-- Incluir el fragmento del header -->
-    <div th:replace="productos/header.html :: header"></div>
+    <div th:replace="~{productos/header.html :: header}"></div>
 
     <h1>Actualizar Producto</h1>
     <!-- Agregando th:action="@{/productos/update/{id}(id=${id})}" en el formulario, aseguras que la ruta de acción sea
@@ -66,7 +66,7 @@
 </div>
 
 <!-- Incluir el fragmento del footer -->
-<div th:replace="productos/footer.html :: footer"></div>
+<div th:replace="~{productos/footer.html :: footer}"></div>
 
 <script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
 </body>
