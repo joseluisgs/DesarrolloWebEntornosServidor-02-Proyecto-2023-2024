@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -70,7 +71,6 @@ public class ProductosWebController {
     @GetMapping("/details/{id}")
     public String details(@PathVariable("id") Long id, Model model) {
         Producto producto = productosService.findById(id);
-        System.out.println(producto);
         model.addAttribute("producto", producto);
         return "productos/details";
     }
@@ -92,7 +92,9 @@ public class ProductosWebController {
     }
 
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute("producto") ProductoCreateDto productoDto, BindingResult result, Model model) {
+    public String create(@Valid @ModelAttribute("producto") ProductoCreateDto productoDto,
+                         BindingResult result,
+                         Model model) {
         log.info("Create POST");
         if (result.hasErrors()) {
             var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
@@ -101,7 +103,8 @@ public class ProductosWebController {
             model.addAttribute("categorias", categorias);
             return "productos/create";
         }
-        productosService.save(productoDto);
+        // Salvamos el producto
+        var producto = productosService.save(productoDto);
         return "redirect:/productos/index";
     }
 
@@ -148,4 +151,19 @@ public class ProductosWebController {
         productosService.deleteById(id);
         return "redirect:/productos/index";
     }
+
+    @GetMapping("/update-image/{id}")
+    public String showUpdateImageForm(@PathVariable("id") Long productId, Model model) {
+        Producto producto = productosService.findById(productId);
+        model.addAttribute("producto", producto);
+        return "productos/update-image";
+    }
+
+    @PostMapping("/update-image/{id}")
+    public String updateProductImage(@PathVariable("id") Long productId, @RequestParam("imagen") MultipartFile image) {
+        // Lógica para procesar la imagen y actualizar el producto con el ID proporcionado
+        // ...
+        return "redirect:/productos/index";
+    }
+
 }

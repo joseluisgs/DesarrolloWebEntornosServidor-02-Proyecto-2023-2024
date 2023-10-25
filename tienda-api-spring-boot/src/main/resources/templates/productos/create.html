@@ -37,6 +37,7 @@
         <div class="form-group">
             <label for="imagen">Imagen:</label>
             <input class="form-control" id="imagen" name="imagen" th:field="*{imagen}" type="text">
+            <small class="text-danger" th:errors="*{imagen}"></small>
         </div>
         <div class="form-group">
             <label for="stock">Stock:</label>
