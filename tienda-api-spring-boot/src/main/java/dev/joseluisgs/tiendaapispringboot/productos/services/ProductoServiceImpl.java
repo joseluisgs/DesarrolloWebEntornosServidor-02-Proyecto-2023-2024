@@ -28,6 +28,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
@@ -189,6 +190,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CachePut
+    @Transactional
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
         log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -218,7 +220,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CacheEvict
-    // @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
+    @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -245,6 +247,7 @@ public class ProductoServiceImpl implements ProductosService {
      */
     @Override
     @CachePut
+    @Transactional
     public Producto updateImage(Long id, MultipartFile image) {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
@@ -256,20 +259,21 @@ public class ProductoServiceImpl implements ProductosService {
         String imageStored = storageService.store(image);
         String imageUrl = imageStored; //storageService.getUrl(imageStored); // Si quiero la url completa
         // Clonamos el producto con la nueva imagen, porque inmutabilidad de los objetos
-        var productoActualizado = new Producto(
-                productoActual.getId(),
-                productoActual.getMarca(),
-                productoActual.getModelo(),
-                productoActual.getDescripcion(),
-                productoActual.getPrecio(),
-                imageUrl,
-                productoActual.getStock(),
-                productoActual.getCreatedAt(),
-                LocalDateTime.now(),
-                productoActual.getUuid(),
-                productoActual.getIsDeleted(),
-                productoActual.getCategoria()
-        );
+        var productoActualizado = Producto.builder()
+                .id(productoActual.getId())
+                .marca(productoActual.getMarca())
+                .modelo(productoActual.getModelo())
+                .descripcion(productoActual.getDescripcion())
+                .precio(productoActual.getPrecio())
+                .imagen(imageUrl)
+                .stock(productoActual.getStock())
+                .createdAt(productoActual.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
+                .uuid(productoActual.getUuid())
+                .isDeleted(productoActual.getIsDeleted())
+                .categoria(productoActual.getCategoria())
+                .build();
+
         // Lo guardamos en el repositorio
         var productoUpdated = productosRepository.save(productoActualizado);
         // Enviamos la notificación a los clientes ws

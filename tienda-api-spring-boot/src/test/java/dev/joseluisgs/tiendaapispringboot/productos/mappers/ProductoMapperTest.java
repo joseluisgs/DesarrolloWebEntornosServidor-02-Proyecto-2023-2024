@@ -22,15 +22,15 @@ class ProductoMapperTest {
     @Test
     void toProduct() {
         // Arrange
-        ProductoCreateDto productoCreateDto = new ProductoCreateDto(
-                "Samsung",
-                "S20",
-                "Celular",
-                1000.0,
-                "https://www.samsung.com/es_es/smartphones/galaxy-s20/",
-                categoria.getNombre(),
-                10
-        );
+        ProductoCreateDto productoCreateDto = ProductoCreateDto.builder()
+                .marca("Samsung")
+                .modelo("S20")
+                .descripcion("Móvil")
+                .precio(1000.0)
+                .imagen("https://www.samsung.com/es_es/smartphones/galaxy-s20/")
+                .categoria(categoria.getNombre())
+                .stock(10)
+                .build();
 
         // Act
         var res = productoMapper.toProduct(productoCreateDto, categoria);
@@ -51,31 +51,31 @@ class ProductoMapperTest {
     void testToProduct() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto(
-                "Samsung",
-                "S20",
-                "Celular",
-                1000.0,
-                "https://www.samsung.com/es_es/smartphones/galaxy-s20/",
-                categoria.getNombre(),
-                10,
-                false
-        );
+        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+                .marca("Samsung")
+                .modelo("S20")
+                .descripcion("Móvil")
+                .precio(1000.0)
+                .imagen("https://www.samsung.com/es_es/smartphones/galaxy-s20/")
+                .categoria(categoria.getNombre())
+                .stock(10)
+                .isDeleted(false)
+                .build();
 
-        Producto producto = new Producto(
-                id,
-                productoUpdateDto.getMarca(),
-                productoUpdateDto.getModelo(),
-                productoUpdateDto.getDescripcion(),
-                productoUpdateDto.getPrecio(),
-                productoUpdateDto.getImagen(),
-                productoUpdateDto.getStock(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                UUID.randomUUID(),
-                false,
-                categoria
-        );
+        Producto producto = Producto.builder()
+                .id(id)
+                .marca(productoUpdateDto.getMarca())
+                .modelo(productoUpdateDto.getModelo())
+                .descripcion(productoUpdateDto.getDescripcion())
+                .precio(productoUpdateDto.getPrecio())
+                .imagen(productoUpdateDto.getImagen())
+                .stock(productoUpdateDto.getStock())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .isDeleted(false)
+                .categoria(categoria)
+                .build();
 
         // Act
         var res = productoMapper.toProduct(productoUpdateDto, producto, categoria);
@@ -96,21 +96,21 @@ class ProductoMapperTest {
     @Test
     void toProductResponseDto() {
         // Arrange
-        Producto producto = new Producto(
-                1L,
-                "Samsung",
-                "S20",
-                "Celular",
-                1000.0,
-                "https://www.samsung.com/es_es/smartphones/galaxy-s20/",
-                10,
-                LocalDateTime.now(),
-                LocalDateTime.now(),
-                UUID.randomUUID(),
-                false,
-                categoria
-        );
-
+        Producto producto = Producto.builder()
+                .id(1L)
+                .marca("Samsung")
+                .modelo("S20")
+                .descripcion("Móvil")
+                .precio(1000.0)
+                .imagen("https://www.samsung.com/es_es/smartphones/galaxy-s20/")
+                .stock(10)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .isDeleted(false)
+                .categoria(categoria)
+                .build();
+        
         // Act
         var res = productoMapper.toProductResponseDto(producto);
 

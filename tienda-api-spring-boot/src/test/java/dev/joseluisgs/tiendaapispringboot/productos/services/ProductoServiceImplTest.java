@@ -41,18 +41,32 @@ class ProductoServiceImplTest {
 
     private final Categoria categoria = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
 
-    private final Producto producto1 = new Producto(
-            1L, "Adidas", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"),
-            false, categoria
-    );
-    private final Producto producto2 = new Producto(
-            2L, "Nike", "Zapatillas", "Zapatillas de deporte",
-            100.0, "http://placeimg.com/640/480/people", 5,
-            LocalDateTime.now(), LocalDateTime.now(), UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"),
-            false, categoria
-    );
+    private final Producto producto1 = Producto.builder()
+            .id(1L)
+            .marca("Adidas")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .isDeleted(false)
+            .categoria(categoria)
+            .build();
+    private final Producto producto2 = Producto.builder()
+            .id(2L)
+            .marca("Nike")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .isDeleted(false)
+            .categoria(categoria)
+            .build();
     WebSocketHandler webSocketHandlerMock = mock(WebSocketHandler.class);
     @Mock
     private ProductosRepository productosRepository;
@@ -238,10 +252,32 @@ class ProductoServiceImplTest {
     @Test
     void save_ShouldReturnSavedProduct_WhenValidProductCreateDtoProvided() throws IOException {
         // Arrange
-        ProductoCreateDto productoCreateDto = new ProductoCreateDto(
-                "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5
-        );
-        Producto expectedProduct = new Producto(1L, "Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", 5, LocalDateTime.now(), LocalDateTime.now(), UUID.randomUUID(), false, categoria);
+        ProductoCreateDto productoCreateDto = ProductoCreateDto.builder()
+                .marca("Marca1")
+                .modelo("Categoria1")
+                .descripcion("Descripción1")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .build();
+
+
+        Producto expectedProduct = Producto.builder()
+                .id(1L)
+                .marca("Marca1")
+                .modelo("Categoria1")
+                .descripcion("Descripción1")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .stock(5)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .uuid(UUID.randomUUID())
+                .isDeleted(false)
+                .categoria(categoria)
+                .build();
+
 
         when(categoriaService.findByNombre(productoCreateDto.getCategoria())).thenReturn(categoria);
         when(productoMapper.toProduct(productoCreateDto, categoria)).thenReturn(expectedProduct);
@@ -264,8 +300,19 @@ class ProductoServiceImplTest {
     void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() throws IOException {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
+        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+                .marca("Marca1")
+                .modelo("Categoria1")
+                .descripcion("Descripción1")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .isDeleted(false)
+                .build();
+
         Producto existingProduct = producto1;
+
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
         when(categoriaService.findByNombre(productoUpdateDto.getCategoria())).thenReturn(categoria);
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
@@ -289,7 +336,17 @@ class ProductoServiceImplTest {
     void update_ShouldThrowProductoNotFound_WhenInvalidIdProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = new ProductoUpdateDto("Marca1", "Categoria1", "Descripción1", 100.0, "http://placeimg.com/640/480/people", "OTROS", 5, false);
+        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+                .marca("Marca1")
+                .modelo("Categoria1")
+                .descripcion("Descripción1")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .isDeleted(false)
+                .build();
+        
         when(productosRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
