@@ -13,6 +13,6 @@ public class WelcomeWebController {
         // Añadimos un atributo al modelo, que se podrá usar en la vista
         model.addAttribute("name", "2º DAW");
         // Devolvemos la vista (welcome.html)
-        return "welcome";
+        return "welcome/welcome";
     }
 }
