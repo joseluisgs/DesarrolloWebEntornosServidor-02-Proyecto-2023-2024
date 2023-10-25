@@ -8,6 +8,9 @@
 </head>
 <body>
 <div class="container">
+    <!-- Incluir el fragmento del header -->
+    <div th:replace="productos/header.html :: header"></div>
+
     <h1>Productos</h1>
     <form action="/productos/index" class="mb-3" method="get">
         <div class="input-group">
@@ -67,13 +70,12 @@
             </li>
         </ul>
     </nav>
-    <a class="btn btn-success" href="/productos/create">Crear Producto</a>
+    <a class="btn btn-success" href="/productos/create">Nuevo Producto</a>
 </div>
-<footer class="mt-4 text-center">
-    <hr>
-    <p>CRUD de Productos - <a href="http://joseluisgs.dev" target="_blank">José Luis González Sánchez</a> - 2º DAW IEs
-        Luis Vives</p>
-</footer>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="productos/footer.html :: footer"></div>
+
 <script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
 </body>
 </html>

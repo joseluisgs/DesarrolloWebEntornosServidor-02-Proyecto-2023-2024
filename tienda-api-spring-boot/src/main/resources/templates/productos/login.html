@@ -17,11 +17,10 @@
         <button class="btn btn-primary" type="submit">Login</button>
     </form>
 </div>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="productos/footer.html :: footer"></div>
+
 <script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
-<footer class="mt-4 text-center">
-    <hr>
-    <p>CRUD de Productos - <a href="http://joseluisgs.dev" target="_blank">José Luis González Sánchez</a> - 2º DAW IEs
-        Luis Vives</p>
-</footer>
 </body>
 </html>
