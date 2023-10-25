@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.web.localizacion.config;
+package dev.joseluisgs.tiendaapispringboot.web.productos.config;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;

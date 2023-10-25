@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.web.productos;
+package dev.joseluisgs.tiendaapispringboot.web.productos.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
@@ -9,6 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +19,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 @Controller
@@ -27,10 +31,13 @@ public class ProductosWebController {
     private final ProductosService productosService;
     private final CategoriasService categoriasService;
 
+    private final MessageSource messageSource;
+
     @Autowired
-    public ProductosWebController(ProductosService productosService, CategoriasService categoriasService) {
+    public ProductosWebController(ProductosService productosService, CategoriasService categoriasService, MessageSource messageSource) {
         this.productosService = productosService;
         this.categoriasService = categoriasService;
+        this.messageSource = messageSource;
     }
 
     @GetMapping
@@ -55,7 +62,8 @@ public class ProductosWebController {
                         @RequestParam(defaultValue = "0") int page,
                         @RequestParam(defaultValue = "10") int size,
                         @RequestParam(defaultValue = "id") String sortBy,
-                        @RequestParam(defaultValue = "asc") String direction
+                        @RequestParam(defaultValue = "asc") String direction,
+                        Locale locale
     ) {
         log.info("Index GET con parámetros search: " + search + ", page: " + page + ", size: " + size);
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
@@ -63,8 +71,13 @@ public class ProductosWebController {
         Pageable pageable = PageRequest.of(page, size, sort);
         // Obtenemos la página de productos
         var productosPage = productosService.findAll(search, Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), pageable);
+        String welcomeMessage = messageSource.getMessage("welcome.message", null, locale);
+        String localizedDate = getLocalizedDate(locale);
+        // Devolvemos la página
         model.addAttribute("productosPage", productosPage);
         model.addAttribute("search", search.orElse(""));
+        model.addAttribute("welcomeMessage", welcomeMessage);
+        model.addAttribute("date", localizedDate);
         return "productos/index";
     }
 
@@ -164,6 +177,15 @@ public class ProductosWebController {
         log.info("Update POST con imagen");
         productosService.updateImage(productId, imagen, true);
         return "redirect:/productos/index";
+    }
+
+    private String getLocalizedDate(Locale locale) {
+        // Obtener la fecha actual
+        Date currentDate = new Date();
+
+        // Formatear la fecha localizada en función del Locale
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
+        return dateFormat.format(currentDate);
     }
 
 }
