@@ -1,7 +1,9 @@
 package dev.joseluisgs.tiendaapispringboot.web.productos;
 
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -66,22 +69,29 @@ public class ProductosWebController {
         return "productos/details";
     }
 
-    /*
     @GetMapping("/create")
     public String createForm(Model model) {
-        model.addAttribute("producto", new ProductoCreateDto());
-        return "create";
+        log.info("Create GET");
+        var producto = ProductoCreateDto.builder()
+                .imagen("https://via.placeholder.com/150")
+                .precio(0.0)
+                .stock(0)
+                .build();
+        model.addAttribute("producto", producto);
+        return "productos/create";
     }
 
     @PostMapping("/create")
     public String create(@Valid @ModelAttribute("producto") ProductoCreateDto productoDto, BindingResult result) {
+        log.info("Create POST");
         if (result.hasErrors()) {
-            return "create";
+            return "productos/create";
         }
-        productoService.createProducto(productoDto);
+        productosService.save(productoDto);
         return "redirect:/productos/index";
     }
 
+        /*
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") Long id, Model model) {
         Producto producto = productoService.getProductoById(id);
@@ -98,10 +108,11 @@ public class ProductosWebController {
         productoService.updateProducto(id, productoDto);
         return "redirect:/productos/index";
     }
+    */
 
     @GetMapping("/delete/{id}")
     public String delete(@PathVariable("id") Long id) {
-        productoService.deleteProducto(id);
+        productosService.deleteById(id);
         return "redirect:/productos/index";
-    }*/
+    }
 }
