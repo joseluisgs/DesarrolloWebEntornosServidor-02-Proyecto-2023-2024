@@ -506,6 +506,23 @@
 							"path": [
 								"v1",
 								"pedidos"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "sortBy",
+									"value": "asc",
+									"disabled": true
+								}
 							]
 						}
 					},
