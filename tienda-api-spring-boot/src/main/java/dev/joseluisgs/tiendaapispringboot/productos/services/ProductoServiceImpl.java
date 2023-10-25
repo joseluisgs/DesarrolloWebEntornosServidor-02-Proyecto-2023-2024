@@ -83,14 +83,14 @@ public class ProductoServiceImpl implements ProductosService {
     public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
         // Criterio de búsqueda por marca
         Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
-                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%")) // Buscamos por marca
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m.toLowerCase() + "%")) // Buscamos por marca
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay marca, no filtramos
 
         // Criterio de búsqueda por categoría
         Specification<Producto> specCategoriaProducto = (root, query, criteriaBuilder) ->
                 categoria.map(c -> {
                     Join<Producto, Categoria> categoriaJoin = root.join("categoria"); // Join con categoría
-                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%"); // Buscamos por nombre
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c.toLowerCase() + "%"); // Buscamos por nombre
                 }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay categoría, no filtramos
 
         // Criterio de búsqueda por isDeleted
@@ -100,7 +100,7 @@ public class ProductoServiceImpl implements ProductosService {
 
         // Criterio de búsqueda por modelo
         Specification<Producto> specModeloProducto = (root, query, criteriaBuilder) ->
-                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m + "%"))
+                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         // Criterio de búsqueda por precioMax, es decir tiene que ser menor o igual

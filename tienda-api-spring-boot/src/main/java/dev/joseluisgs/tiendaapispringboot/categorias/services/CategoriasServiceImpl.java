@@ -38,7 +38,7 @@ public class CategoriasServiceImpl implements CategoriasService {
         log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
         // Criterio de búsqueda por nombre
         Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
-                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m + "%"))
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         // Criterio de búsqueda por borrado
