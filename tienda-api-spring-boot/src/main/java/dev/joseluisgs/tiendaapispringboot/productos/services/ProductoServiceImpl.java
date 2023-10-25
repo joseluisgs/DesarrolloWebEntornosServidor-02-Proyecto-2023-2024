@@ -21,7 +21,6 @@ import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -133,7 +132,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Producto findById(Long id) {
         log.info("Buscando producto por id: " + id);
         return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
@@ -148,7 +147,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoBadUuid  Si el uuid no es válido
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#uuid")
     public Producto findbyUuid(String uuid) {
         log.info("Buscando producto por uuid: " + uuid);
         try {
@@ -166,7 +165,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @return Producto guardado
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Producto save(ProductoCreateDto productoCreateDto) {
         log.info("Guardando producto: " + productoCreateDto);
         // Buscamos la categoría por su nombre
@@ -189,7 +188,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     @Transactional
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
         log.info("Actualizando producto por id: " + id);
@@ -219,7 +218,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CacheEvict
+    @CachePut(key = "#id")
     @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
@@ -246,7 +245,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     @Transactional
     public Producto updateImage(Long id, MultipartFile image) {
         log.info("Actualizando imagen de producto por id: " + id);
