@@ -273,10 +273,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
@@ -306,10 +306,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         // System.out.println(response.getContentAsString());
@@ -346,10 +346,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
@@ -384,10 +384,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         // Assert
@@ -411,10 +411,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         System.out.println(response.getContentAsString());
@@ -445,10 +445,10 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         patch(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(productoDto))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
         Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
@@ -473,8 +473,8 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         delete(myLocalEndpoint)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
         // Assert
@@ -496,8 +496,8 @@ class ProductosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         delete(myLocalEndpoint)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
         // Assert

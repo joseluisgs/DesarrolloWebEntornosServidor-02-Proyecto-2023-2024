@@ -77,7 +77,6 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         get(myEndpoint)
-                                .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -182,10 +181,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         Pedido res = mapper.readValue(response.getContentAsString(), Pedido.class);
@@ -208,10 +207,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         // Assert
@@ -231,10 +230,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         // Assert
@@ -254,10 +253,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         // Assert
@@ -277,10 +276,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         // Assert
@@ -302,10 +301,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         Pedido res = mapper.readValue(response.getContentAsString(), Pedido.class);
@@ -331,10 +330,10 @@ class PedidosRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(mapper.writeValueAsString(pedido1))
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(pedido1)))
                 .andReturn().getResponse();
 
         // Assert
