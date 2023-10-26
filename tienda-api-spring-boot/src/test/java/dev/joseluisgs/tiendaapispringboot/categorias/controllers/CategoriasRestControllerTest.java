@@ -13,10 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
@@ -35,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
 class CategoriasRestControllerTest {
     private final String myEndpoint = "/v1/categorias";
@@ -47,9 +44,6 @@ class CategoriasRestControllerTest {
     MockMvc mockMvc; // Cliente MVC
     @MockBean
     private CategoriasService categoriasService;
-    // Para testear los JSON
-    @Autowired
-    private JacksonTester<CategoriaDto> jsonCategoriaDto;
 
     @Autowired
     public CategoriasRestControllerTest(CategoriasService categoriasService) {
@@ -176,7 +170,7 @@ class CategoriasRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -202,7 +196,7 @@ class CategoriasRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -228,7 +222,7 @@ class CategoriasRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -254,7 +248,7 @@ class CategoriasRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -283,7 +277,7 @@ class CategoriasRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -301,7 +295,7 @@ class CategoriasRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -328,7 +322,7 @@ class CategoriasRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
+                                .content(mapper.writeValueAsString(categoriaDto))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 

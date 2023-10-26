@@ -15,10 +15,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -38,7 +36,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
 class PedidosRestControllerTest {
     private final String myEndpoint = "/v1/pedidos";
@@ -61,9 +58,6 @@ class PedidosRestControllerTest {
     MockMvc mockMvc; // Cliente MVC
     @MockBean
     private PedidosService pedidosService;
-    // Para testear los JSON
-    @Autowired
-    private JacksonTester<Pedido> jsonPedido;
 
     @Autowired
     public PedidosRestControllerTest(PedidosService pedidosService) {
@@ -190,7 +184,7 @@ class PedidosRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -216,7 +210,7 @@ class PedidosRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -239,7 +233,7 @@ class PedidosRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -262,7 +256,7 @@ class PedidosRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -285,7 +279,7 @@ class PedidosRestControllerTest {
                         post(myEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -310,7 +304,7 @@ class PedidosRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
@@ -339,7 +333,7 @@ class PedidosRestControllerTest {
                         put(myLocalEndpoint)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonPedido.write(pedido1).getJson())
+                                .content(mapper.writeValueAsString(pedido1))
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
