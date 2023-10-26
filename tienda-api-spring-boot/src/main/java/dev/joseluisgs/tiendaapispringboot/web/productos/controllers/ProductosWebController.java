@@ -21,7 +21,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.DateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
@@ -44,8 +46,24 @@ public class ProductosWebController {
     }
 
     @GetMapping
-    public String login() {
+    public String index(HttpSession session) {
+        log.info("Index GET");
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData != null && sessionData.isLogged()) {
+            log.info("Si está logueado volvemos al index");
+            return "redirect:/productos/index";
+        }
+        return "productos/login";
+    }
+
+    @GetMapping("/login")
+    public String login(HttpSession session) {
         log.info("Login GET");
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData != null && sessionData.isLogged()) {
+            log.info("Si está logueado volvemos al index");
+            return "redirect:/productos/index";
+        }
         return "productos/login";
     }
 
@@ -54,8 +72,8 @@ public class ProductosWebController {
         log.info("Login POST");
         if ("pass".equals(password)) {
             // Si es correcto, creamos la sesión
-            userSession.incrementLoginCount();
             userSession.setLastLogin(new Date());
+            userSession.setLogged(true);
             session.setAttribute("userSession", userSession);
             // Establece el tiempo de caducidad de la sesión en 1800 segundos (30 minutos)
             session.setMaxInactiveInterval(1800);
@@ -84,11 +102,17 @@ public class ProductosWebController {
 
         // Mensaje de bienvenida o de encabezado -- Localización
         String welcomeMessage = messageSource.getMessage("welcome.message", null, locale);
-        // Ejemplo de sesion
+
+        // Comprobamos si está logueado
         UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+        sessionData.incrementLoginCount();
         var numVisitas = sessionData.getLoginCount();
         var lastLogin = sessionData.getLastLogin();
-        String localizedLastLoginDate = getLocalizedDate(lastLogin, locale);
+        var localizedLastLoginDate = getLocalizedDate(lastLogin, locale);
         // Devolvemos la página
         model.addAttribute("productosPage", productosPage);
         model.addAttribute("search", search.orElse(""));
@@ -99,15 +123,32 @@ public class ProductosWebController {
     }
 
     @GetMapping("/details/{id}")
-    public String details(@PathVariable("id") Long id, Model model) {
+    public String details(@PathVariable("id") Long id, Model model, HttpSession session) {
+        log.info("Details GET");
+
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         Producto producto = productosService.findById(id);
         model.addAttribute("producto", producto);
         return "productos/details";
     }
 
     @GetMapping("/create")
-    public String createForm(Model model) {
+    public String createForm(Model model, HttpSession session) {
         log.info("Create GET");
+
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                 .get()
                 .map(Categoria::getNombre);
@@ -139,7 +180,14 @@ public class ProductosWebController {
     }
 
     @GetMapping("/update/{id}")
-    public String updateForm(@PathVariable("id") Long id, Model model) {
+    public String updateForm(@PathVariable("id") Long id, Model model, HttpSession session) {
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                 .get()
                 .map(Categoria::getNombre);
@@ -177,13 +225,29 @@ public class ProductosWebController {
     }
 
     @GetMapping("/delete/{id}")
-    public String delete(@PathVariable("id") Long id) {
+    public String delete(@PathVariable("id") Long id, HttpSession session) {
+
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         productosService.deleteById(id);
         return "redirect:/productos/index";
     }
 
     @GetMapping("/update-image/{id}")
-    public String showUpdateImageForm(@PathVariable("id") Long productId, Model model) {
+    public String showUpdateImageForm(@PathVariable("id") Long productId, Model model, HttpSession session) {
+
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         Producto producto = productosService.findById(productId);
         model.addAttribute("producto", producto);
         return "productos/update-image";
@@ -197,9 +261,11 @@ public class ProductosWebController {
     }
 
     private String getLocalizedDate(Date date, Locale locale) {
-        // Formatear la fecha localizada en función del Locale
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, locale);
-        return dateFormat.format(date);
+        // Convertir la fecha a LocalDateTime
+        LocalDateTime localDateTime = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+        // Obtener el formatter localizado para el Locale correspondiente a España
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withLocale(locale);
+        // Formatear la fecha y la hora localizadas
+        return localDateTime.format(formatter);
     }
-
 }

@@ -72,12 +72,19 @@
         </ul>
     </nav>
     <a class="btn btn-success" href="/productos/create">Nuevo Producto</a>
+
+    <!-- Incluir el fragmento del footer -->
+    <p class="mt-4 text-center" style="font-size: smaller;">
+        <span>Nº de visitas: </span><span th:text="${numVisitas}"></span>
+        <span>, desde tu último login: </span>
+        <span th:text="${lastLoginDate}"></span>
+    </p>
+
 </div>
 
 <!-- Incluir el fragmento del footer -->
 <div th:replace="~{productos/footer.html :: footer}"></div>
-<span th:text="${numVisitas}"></span>
-<span th:text="${lastLoginDate}"></span>
+
 
 <script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
 </body>
