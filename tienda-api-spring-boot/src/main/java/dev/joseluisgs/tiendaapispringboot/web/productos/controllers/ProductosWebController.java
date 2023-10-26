@@ -45,24 +45,13 @@ public class ProductosWebController {
         this.userSession = userSession;
     }
 
-    @GetMapping
-    public String index(HttpSession session) {
-        log.info("Index GET");
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData != null && sessionData.isLogged()) {
-            log.info("Si está logueado volvemos al index");
-            return "redirect:/productos/index";
-        }
-        return "productos/login";
-    }
-
     @GetMapping("/login")
     public String login(HttpSession session) {
         log.info("Login GET");
         UserStore sessionData = (UserStore) session.getAttribute("userSession");
         if (sessionData != null && sessionData.isLogged()) {
             log.info("Si está logueado volvemos al index");
-            return "redirect:/productos/index";
+            return "redirect:/productos";
         }
         return "productos/login";
     }
@@ -77,13 +66,21 @@ public class ProductosWebController {
             session.setAttribute("userSession", userSession);
             // Establece el tiempo de caducidad de la sesión en 1800 segundos (30 minutos)
             session.setMaxInactiveInterval(1800);
-            return "redirect:/productos/index";
+            return "redirect:/productos";
         } else {
             return "productos/login";
         }
     }
 
-    @GetMapping("/index")
+    @GetMapping("/logout")
+    public String logout(HttpSession session) {
+        log.info("Logout GET");
+        // Eliminamos la sesión
+        session.invalidate();
+        return "redirect:/productos";
+    }
+
+    @GetMapping(path = {"", "/", "/index", "/list"})
     public String index(HttpSession session,
                         Model model,
                         @RequestParam(value = "search", required = false) Optional<String> search,
@@ -93,6 +90,14 @@ public class ProductosWebController {
                         @RequestParam(defaultValue = "asc") String direction,
                         Locale locale
     ) {
+
+        // Comprobamos si está logueado
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        if (sessionData == null || !sessionData.isLogged()) {
+            log.info("No hay sesión o no está logueado volvemos al login");
+            return "redirect:/productos/login";
+        }
+
         log.info("Index GET con parámetros search: " + search + ", page: " + page + ", size: " + size);
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
@@ -103,12 +108,6 @@ public class ProductosWebController {
         // Mensaje de bienvenida o de encabezado -- Localización
         String welcomeMessage = messageSource.getMessage("welcome.message", null, locale);
 
-        // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
-            log.info("No hay sesión o no está logueado volvemos al login");
-            return "redirect:/productos/login";
-        }
         sessionData.incrementLoginCount();
         var numVisitas = sessionData.getLoginCount();
         var lastLogin = sessionData.getLastLogin();
@@ -176,7 +175,7 @@ public class ProductosWebController {
         }
         // Salvamos el producto
         var producto = productosService.save(productoDto);
-        return "redirect:/productos/index";
+        return "redirect:/productos";
     }
 
     @GetMapping("/update/{id}")
@@ -221,7 +220,7 @@ public class ProductosWebController {
         System.out.println(productoUpdateDto);
         var res = productosService.update(id, productoUpdateDto);
         System.out.println(res);
-        return "redirect:/productos/index";
+        return "redirect:/productos";
     }
 
     @GetMapping("/delete/{id}")
@@ -235,7 +234,7 @@ public class ProductosWebController {
         }
 
         productosService.deleteById(id);
-        return "redirect:/productos/index";
+        return "redirect:/productos";
     }
 
     @GetMapping("/update-image/{id}")
@@ -257,7 +256,7 @@ public class ProductosWebController {
     public String updateProductImage(@PathVariable("id") Long productId, @RequestParam("imagen") MultipartFile imagen) {
         log.info("Update POST con imagen");
         productosService.updateImage(productId, imagen, true);
-        return "redirect:/productos/index";
+        return "redirect:/productos";
     }
 
     private String getLocalizedDate(Date date, Locale locale) {

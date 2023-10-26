@@ -12,7 +12,7 @@
     <div th:replace="~{productos/header.html :: header}"></div>
 
     <h1 th:text="${welcomeMessage}"></h1>
-    <form action="/productos/index" class="mb-3" method="get">
+    <form action="/productos/" class="mb-3" method="get">
         <div class="input-group">
             <input class="form-control" id="search" name="search" th:value="${search}" type="text">
             <div class="input-group-append">
