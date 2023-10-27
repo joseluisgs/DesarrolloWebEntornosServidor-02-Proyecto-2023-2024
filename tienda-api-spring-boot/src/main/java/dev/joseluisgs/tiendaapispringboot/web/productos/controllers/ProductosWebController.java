@@ -48,8 +48,7 @@ public class ProductosWebController {
     @GetMapping("/login")
     public String login(HttpSession session) {
         log.info("Login GET");
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData != null && sessionData.isLogged()) {
+        if (isLoggedAndSessionIsActive(session)) {
             log.info("Si está logueado volvemos al index");
             return "redirect:/productos";
         }
@@ -92,8 +91,7 @@ public class ProductosWebController {
     ) {
 
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -108,6 +106,8 @@ public class ProductosWebController {
         // Mensaje de bienvenida o de encabezado -- Localización
         String welcomeMessage = messageSource.getMessage("welcome.message", null, locale);
 
+        // Obtenemos la sesión y actualizamos los datos
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
         sessionData.incrementLoginCount();
         var numVisitas = sessionData.getLoginCount();
         var lastLogin = sessionData.getLastLogin();
@@ -126,8 +126,7 @@ public class ProductosWebController {
         log.info("Details GET");
 
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -142,8 +141,7 @@ public class ProductosWebController {
         log.info("Create GET");
 
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -181,8 +179,7 @@ public class ProductosWebController {
     @GetMapping("/update/{id}")
     public String updateForm(@PathVariable("id") Long id, Model model, HttpSession session) {
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -227,8 +224,7 @@ public class ProductosWebController {
     public String delete(@PathVariable("id") Long id, HttpSession session) {
 
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -241,8 +237,7 @@ public class ProductosWebController {
     public String showUpdateImageForm(@PathVariable("id") Long productId, Model model, HttpSession session) {
 
         // Comprobamos si está logueado
-        UserStore sessionData = (UserStore) session.getAttribute("userSession");
-        if (sessionData == null || !sessionData.isLogged()) {
+        if (!isLoggedAndSessionIsActive(session)) {
             log.info("No hay sesión o no está logueado volvemos al login");
             return "redirect:/productos/login";
         }
@@ -266,5 +261,11 @@ public class ProductosWebController {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss").withLocale(locale);
         // Formatear la fecha y la hora localizadas
         return localDateTime.format(formatter);
+    }
+
+    private boolean isLoggedAndSessionIsActive(HttpSession session) {
+        log.info("Comprobando si está logueado");
+        UserStore sessionData = (UserStore) session.getAttribute("userSession");
+        return sessionData != null && sessionData.isLogged();
     }
 }
