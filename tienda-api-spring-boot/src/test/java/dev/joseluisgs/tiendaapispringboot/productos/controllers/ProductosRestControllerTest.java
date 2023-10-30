@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
@@ -257,7 +257,7 @@ class ProductosRestControllerTest {
 
     @Test
     void createProduct() throws Exception {
-        var productoDto = ProductoCreateDto.builder()
+        var productoDto = ProductoCreateRequest.builder()
                 .marca("Adidas")
                 .modelo("Zapatillas")
                 .descripcion("Zapatillas de deporte")
@@ -268,7 +268,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.save(any(ProductoCreateDto.class))).thenReturn(producto1);
+        when(productosService.save(any(ProductoCreateRequest.class))).thenReturn(producto1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -288,12 +288,12 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).save(any(ProductoCreateDto.class));
+        verify(productosService, times(1)).save(any(ProductoCreateRequest.class));
     }
 
     @Test
     void createProductWithBadRequest() throws Exception {
-        var productoDto = ProductoCreateDto.builder()
+        var productoDto = ProductoCreateRequest.builder()
                 .marca("Ad")
                 .modelo("")
                 .descripcion("Zapatillas de deporte")
@@ -329,7 +329,7 @@ class ProductosRestControllerTest {
     @Test
     void updateProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = ProductoUpdateDto.builder()
+        var productoDto = ProductoUpdateRequest.builder()
                 .marca("Adidas")
                 .modelo("Zapatillas")
                 .descripcion("Zapatillas de deporte")
@@ -341,7 +341,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
+        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(producto1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -361,13 +361,13 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).update(anyLong(), any(ProductoUpdateDto.class));
+        verify(productosService, times(1)).update(anyLong(), any(ProductoUpdateRequest.class));
     }
 
     @Test
     void updateProductNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = ProductoUpdateDto.builder()
+        var productoDto = ProductoUpdateRequest.builder()
                 .marca("Adidas")
                 .modelo("Zapatillas")
                 .descripcion("Zapatillas de deporte")
@@ -379,7 +379,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenThrow(new ProductoNotFound(1L));
+        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenThrow(new ProductoNotFound(1L));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -397,7 +397,7 @@ class ProductosRestControllerTest {
     @Test
     void updateProductWithBadRequest() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = ProductoUpdateDto.builder()
+        var productoDto = ProductoUpdateRequest.builder()
                 .marca("Ad")
                 .modelo("")
                 .descripcion("Zapatillas de deporte")
@@ -431,7 +431,7 @@ class ProductosRestControllerTest {
     @Test
     void updatePartialProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var productoDto = ProductoUpdateDto.builder()
+        var productoDto = ProductoUpdateRequest.builder()
                 .marca("Adidas")
                 .imagen("http://placeimg.com/640/480/people")
                 .categoria("OTROS")
@@ -440,7 +440,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.update(anyLong(), any(ProductoUpdateDto.class))).thenReturn(producto1);
+        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(producto1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -460,7 +460,7 @@ class ProductosRestControllerTest {
         );
 
         // Verify
-        verify(productosService, times(1)).update(anyLong(), any(ProductoUpdateDto.class));
+        verify(productosService, times(1)).update(anyLong(), any(ProductoUpdateRequest.class));
     }
 
     @Test

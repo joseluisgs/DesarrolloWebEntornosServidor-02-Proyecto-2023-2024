@@ -2,8 +2,8 @@ package dev.joseluisgs.tiendaapispringboot.web.productos.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
 import dev.joseluisgs.tiendaapispringboot.web.productos.store.UserStore;
@@ -149,7 +149,7 @@ public class ProductosWebController {
         var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                 .get()
                 .map(Categoria::getNombre);
-        var producto = ProductoCreateDto.builder()
+        var producto = ProductoCreateRequest.builder()
                 .imagen("https://via.placeholder.com/150")
                 .precio(0.0)
                 .stock(0)
@@ -160,7 +160,7 @@ public class ProductosWebController {
     }
 
     @PostMapping("/create")
-    public String create(@Valid @ModelAttribute("producto") ProductoCreateDto productoDto,
+    public String create(@Valid @ModelAttribute("producto") ProductoCreateRequest productoDto,
                          BindingResult result,
                          Model model) {
         log.info("Create POST");
@@ -188,7 +188,7 @@ public class ProductosWebController {
                 .get()
                 .map(Categoria::getNombre);
         Producto producto = productosService.findById(id);
-        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+        ProductoUpdateRequest productoUpdateRequest = ProductoUpdateRequest.builder()
                 .marca(producto.getMarca())
                 .modelo(producto.getModelo())
                 .descripcion(producto.getDescripcion())
@@ -198,13 +198,13 @@ public class ProductosWebController {
                 .stock(producto.getStock())
                 .isDeleted(producto.getIsDeleted())
                 .build();
-        model.addAttribute("producto", productoUpdateDto);
+        model.addAttribute("producto", productoUpdateRequest);
         model.addAttribute("categorias", categorias);
         return "productos/update";
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute ProductoUpdateDto productoUpdateDto, BindingResult result, Model model) {
+    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute ProductoUpdateRequest productoUpdateRequest, BindingResult result, Model model) {
         if (result.hasErrors()) {
             var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                     .get()
@@ -214,8 +214,8 @@ public class ProductosWebController {
         }
         log.info("Update POST");
         System.out.println(id);
-        System.out.println(productoUpdateDto);
-        var res = productosService.update(id, productoUpdateDto);
+        System.out.println(productoUpdateRequest);
+        var res = productosService.update(id, productoUpdateRequest);
         System.out.println(res);
         return "redirect:/productos";
     }

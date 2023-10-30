@@ -1,8 +1,8 @@
 package dev.joseluisgs.tiendaapispringboot.productos.mappers;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +22,7 @@ class ProductoMapperTest {
     @Test
     void toProduct() {
         // Arrange
-        ProductoCreateDto productoCreateDto = ProductoCreateDto.builder()
+        ProductoCreateRequest productoCreateRequest = ProductoCreateRequest.builder()
                 .marca("Samsung")
                 .modelo("S20")
                 .descripcion("Móvil")
@@ -33,17 +33,17 @@ class ProductoMapperTest {
                 .build();
 
         // Act
-        var res = productoMapper.toProduct(productoCreateDto, categoria);
+        var res = productoMapper.toProduct(productoCreateRequest, categoria);
 
         // Assert
         assertAll(
-                () -> assertEquals(productoCreateDto.getMarca(), res.getMarca()),
-                () -> assertEquals(productoCreateDto.getModelo(), res.getModelo()),
-                () -> assertEquals(productoCreateDto.getDescripcion(), res.getDescripcion()),
-                () -> assertEquals(productoCreateDto.getPrecio(), res.getPrecio()),
-                () -> assertEquals(productoCreateDto.getImagen(), res.getImagen()),
-                () -> assertEquals(productoCreateDto.getCategoria(), res.getCategoria().getNombre()),
-                () -> assertEquals(productoCreateDto.getStock(), res.getStock())
+                () -> assertEquals(productoCreateRequest.getMarca(), res.getMarca()),
+                () -> assertEquals(productoCreateRequest.getModelo(), res.getModelo()),
+                () -> assertEquals(productoCreateRequest.getDescripcion(), res.getDescripcion()),
+                () -> assertEquals(productoCreateRequest.getPrecio(), res.getPrecio()),
+                () -> assertEquals(productoCreateRequest.getImagen(), res.getImagen()),
+                () -> assertEquals(productoCreateRequest.getCategoria(), res.getCategoria().getNombre()),
+                () -> assertEquals(productoCreateRequest.getStock(), res.getStock())
         );
     }
 
@@ -51,7 +51,7 @@ class ProductoMapperTest {
     void testToProduct() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+        ProductoUpdateRequest productoUpdateRequest = ProductoUpdateRequest.builder()
                 .marca("Samsung")
                 .modelo("S20")
                 .descripcion("Móvil")
@@ -64,12 +64,12 @@ class ProductoMapperTest {
 
         Producto producto = Producto.builder()
                 .id(id)
-                .marca(productoUpdateDto.getMarca())
-                .modelo(productoUpdateDto.getModelo())
-                .descripcion(productoUpdateDto.getDescripcion())
-                .precio(productoUpdateDto.getPrecio())
-                .imagen(productoUpdateDto.getImagen())
-                .stock(productoUpdateDto.getStock())
+                .marca(productoUpdateRequest.getMarca())
+                .modelo(productoUpdateRequest.getModelo())
+                .descripcion(productoUpdateRequest.getDescripcion())
+                .precio(productoUpdateRequest.getPrecio())
+                .imagen(productoUpdateRequest.getImagen())
+                .stock(productoUpdateRequest.getStock())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
                 .uuid(UUID.randomUUID())
@@ -78,18 +78,18 @@ class ProductoMapperTest {
                 .build();
 
         // Act
-        var res = productoMapper.toProduct(productoUpdateDto, producto, categoria);
+        var res = productoMapper.toProduct(productoUpdateRequest, producto, categoria);
 
         // Assert
         assertAll(
                 () -> assertEquals(id, res.getId()),
-                () -> assertEquals(productoUpdateDto.getMarca(), res.getMarca()),
-                () -> assertEquals(productoUpdateDto.getModelo(), res.getModelo()),
-                () -> assertEquals(productoUpdateDto.getDescripcion(), res.getDescripcion()),
-                () -> assertEquals(productoUpdateDto.getPrecio(), res.getPrecio()),
-                () -> assertEquals(productoUpdateDto.getImagen(), res.getImagen()),
-                () -> assertEquals(productoUpdateDto.getCategoria(), res.getCategoria().getNombre()),
-                () -> assertEquals(productoUpdateDto.getStock(), res.getStock())
+                () -> assertEquals(productoUpdateRequest.getMarca(), res.getMarca()),
+                () -> assertEquals(productoUpdateRequest.getModelo(), res.getModelo()),
+                () -> assertEquals(productoUpdateRequest.getDescripcion(), res.getDescripcion()),
+                () -> assertEquals(productoUpdateRequest.getPrecio(), res.getPrecio()),
+                () -> assertEquals(productoUpdateRequest.getImagen(), res.getImagen()),
+                () -> assertEquals(productoUpdateRequest.getCategoria(), res.getCategoria().getNombre()),
+                () -> assertEquals(productoUpdateRequest.getStock(), res.getStock())
         );
     }
 
@@ -110,7 +110,7 @@ class ProductoMapperTest {
                 .isDeleted(false)
                 .categoria(categoria)
                 .build();
-        
+
         // Act
         var res = productoMapper.toProductResponseDto(producto);
 

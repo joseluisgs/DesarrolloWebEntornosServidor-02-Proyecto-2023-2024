@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Data
 @Builder
-public class ProductoResponseDto {
+public class ProductoResponse {
     private final Long id;
     private final String marca;
     private final String modelo;

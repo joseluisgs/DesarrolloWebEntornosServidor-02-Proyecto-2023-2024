@@ -1,7 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.productos.services;
 
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,9 +16,9 @@ public interface ProductosService {
 
     Producto findbyUuid(String uuid);
 
-    Producto save(ProductoCreateDto productoCreateDto);
+    Producto save(ProductoCreateRequest productoCreateRequest);
 
-    Producto update(Long id, ProductoUpdateDto productoUpdateDto);
+    Producto update(Long id, ProductoUpdateRequest productoUpdateRequest);
 
     void deleteById(Long id);
 

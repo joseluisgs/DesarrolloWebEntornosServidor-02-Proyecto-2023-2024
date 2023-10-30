@@ -1,7 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.productos.controllers;
 
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
@@ -95,44 +95,44 @@ public class ProductosRestController {
     /**
      * Crear un producto
      *
-     * @param productoCreateDto a crear
+     * @param productoCreateRequest a crear
      * @return Producto creado
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PostMapping()
-    public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateDto productoCreateDto) {
-        log.info("Creando producto: " + productoCreateDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateDto));
+    public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateRequest productoCreateRequest) {
+        log.info("Creando producto: " + productoCreateRequest);
+        return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateRequest));
     }
 
     /**
      * Actualizar un producto
      *
-     * @param id                del producto a actualizar, se pasa como parámetro de la URL /{id}
-     * @param productoUpdateDto a actualizar
+     * @param id                    del producto a actualizar, se pasa como parámetro de la URL /{id}
+     * @param productoUpdateRequest a actualizar
      * @return Producto actualizado
      * @throws ProductoNotFound                    si no existe el producto (404)
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateDto);
-        return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
+    public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
+        log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateRequest);
+        return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
     }
 
     /**
      * Actualizar un producto parcial
      *
-     * @param id                del producto a actualizar, se pasa como parámetro de la URL /{id}
-     * @param productoUpdateDto a actualizar
+     * @param id                    del producto a actualizar, se pasa como parámetro de la URL /{id}
+     * @param productoUpdateRequest a actualizar
      * @return Producto actualizado
      * @throws ProductoNotFound                    si no existe el producto (404)
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateDto productoUpdateDto) {
-        log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateDto);
-        return ResponseEntity.ok(productosService.update(id, productoUpdateDto));
+    public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
+        log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateRequest);
+        return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
     }
 
     /**

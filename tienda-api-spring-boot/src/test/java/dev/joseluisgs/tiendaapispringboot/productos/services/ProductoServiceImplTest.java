@@ -6,8 +6,8 @@ import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
 import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
 import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
@@ -252,7 +252,7 @@ class ProductoServiceImplTest {
     @Test
     void save_ShouldReturnSavedProduct_WhenValidProductCreateDtoProvided() throws IOException {
         // Arrange
-        ProductoCreateDto productoCreateDto = ProductoCreateDto.builder()
+        ProductoCreateRequest productoCreateRequest = ProductoCreateRequest.builder()
                 .marca("Marca1")
                 .modelo("Categoria1")
                 .descripcion("Descripción1")
@@ -279,28 +279,28 @@ class ProductoServiceImplTest {
                 .build();
 
 
-        when(categoriaService.findByNombre(productoCreateDto.getCategoria())).thenReturn(categoria);
-        when(productoMapper.toProduct(productoCreateDto, categoria)).thenReturn(expectedProduct);
+        when(categoriaService.findByNombre(productoCreateRequest.getCategoria())).thenReturn(categoria);
+        when(productoMapper.toProduct(productoCreateRequest, categoria)).thenReturn(expectedProduct);
         when(productosRepository.save(expectedProduct)).thenReturn(expectedProduct);
         doNothing().when(webSocketHandlerMock).sendMessage(any());
 
         // Act
-        Producto actualProduct = productoService.save(productoCreateDto);
+        Producto actualProduct = productoService.save(productoCreateRequest);
 
         // Assert
         assertEquals(expectedProduct, actualProduct);
 
         // Verify
-        verify(categoriaService, times(1)).findByNombre(productoCreateDto.getCategoria());
+        verify(categoriaService, times(1)).findByNombre(productoCreateRequest.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
-        verify(productoMapper, times(1)).toProduct(productoCreateDto, categoria);
+        verify(productoMapper, times(1)).toProduct(productoCreateRequest, categoria);
     }
 
     @Test
     void update_ShouldReturnUpdatedProduct_WhenValidIdAndProductUpdateDtoProvided() throws IOException {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+        ProductoUpdateRequest productoUpdateRequest = ProductoUpdateRequest.builder()
                 .marca("Marca1")
                 .modelo("Categoria1")
                 .descripcion("Descripción1")
@@ -314,29 +314,29 @@ class ProductoServiceImplTest {
         Producto existingProduct = producto1;
 
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
-        when(categoriaService.findByNombre(productoUpdateDto.getCategoria())).thenReturn(categoria);
+        when(categoriaService.findByNombre(productoUpdateRequest.getCategoria())).thenReturn(categoria);
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
-        when(productoMapper.toProduct(productoUpdateDto, producto1, categoria)).thenReturn(existingProduct);
+        when(productoMapper.toProduct(productoUpdateRequest, producto1, categoria)).thenReturn(existingProduct);
         doNothing().when(webSocketHandlerMock).sendMessage(any());
 
         // Act
-        Producto actualProduct = productoService.update(id, productoUpdateDto);
+        Producto actualProduct = productoService.update(id, productoUpdateRequest);
 
         // Assert
         assertEquals(existingProduct, actualProduct);
 
         // Verify
         verify(productosRepository, times(1)).findById(id);
-        verify(categoriaService, times(1)).findByNombre(productoUpdateDto.getCategoria());
+        verify(categoriaService, times(1)).findByNombre(productoUpdateRequest.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
-        verify(productoMapper, times(1)).toProduct(productoUpdateDto, producto1, categoria);
+        verify(productoMapper, times(1)).toProduct(productoUpdateRequest, producto1, categoria);
     }
 
     @Test
     void update_ShouldThrowProductoNotFound_WhenInvalidIdProvided() {
         // Arrange
         Long id = 1L;
-        ProductoUpdateDto productoUpdateDto = ProductoUpdateDto.builder()
+        ProductoUpdateRequest productoUpdateRequest = ProductoUpdateRequest.builder()
                 .marca("Marca1")
                 .modelo("Categoria1")
                 .descripcion("Descripción1")
@@ -350,7 +350,7 @@ class ProductoServiceImplTest {
         when(productosRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
-        var res = assertThrows(ProductoNotFound.class, () -> productoService.update(id, productoUpdateDto));
+        var res = assertThrows(ProductoNotFound.class, () -> productoService.update(id, productoUpdateRequest));
         assertEquals("Producto con id " + id + " no encontrado", res.getMessage());
 
         // Verify

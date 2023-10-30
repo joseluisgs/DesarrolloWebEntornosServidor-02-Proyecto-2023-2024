@@ -9,8 +9,8 @@ import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
 import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationResponse;
 import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
 import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
@@ -161,18 +161,18 @@ public class ProductoServiceImpl implements ProductosService {
     /**
      * Guarda un producto
      *
-     * @param productoCreateDto Producto a guardar
+     * @param productoCreateRequest Producto a guardar
      * @return Producto guardado
      */
     @Override
     @CachePut(key = "#result.id")
-    public Producto save(ProductoCreateDto productoCreateDto) {
-        log.info("Guardando producto: " + productoCreateDto);
+    public Producto save(ProductoCreateRequest productoCreateRequest) {
+        log.info("Guardando producto: " + productoCreateRequest);
         // Buscamos la categoría por su nombre
-        var categoria = categoriaService.findByNombre(productoCreateDto.getCategoria());
+        var categoria = categoriaService.findByNombre(productoCreateRequest.getCategoria());
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        var productoSaved = productosRepository.save(productosMapper.toProduct(productoCreateDto, categoria));
+        var productoSaved = productosRepository.save(productosMapper.toProduct(productoCreateRequest, categoria));
         // Enviamos la notificación a los clientes ws
         onChange(Notificacion.Tipo.CREATE, productoSaved);
         // Devolvemos el producto guardado
@@ -182,29 +182,29 @@ public class ProductoServiceImpl implements ProductosService {
     /**
      * Actualiza un producto
      *
-     * @param id                Id del producto a actualizar
-     * @param productoUpdateDto Producto a actualizar
+     * @param id                    Id del producto a actualizar
+     * @param productoUpdateRequest Producto a actualizar
      * @return Producto actualizado
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
     @CachePut(key = "#result.id")
     @Transactional
-    public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
+    public Producto update(Long id, ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
         // Buscamos la categoría por su nombre
         // Si no tenemos categoría, no la actualizamos
         Categoria categoria = null;
-        if (productoUpdateDto.getCategoria() != null && !productoUpdateDto.getCategoria().isEmpty()) {
-            categoria = categoriaService.findByNombre(productoUpdateDto.getCategoria());
+        if (productoUpdateRequest.getCategoria() != null && !productoUpdateRequest.getCategoria().isEmpty()) {
+            categoria = categoriaService.findByNombre(productoUpdateRequest.getCategoria());
         } else {
             categoria = productoActual.getCategoria();
         }
         // Actualizamos el producto con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
-        var productoUpdated = productosRepository.save(productosMapper.toProduct(productoUpdateDto, productoActual, categoria));
+        var productoUpdated = productosRepository.save(productosMapper.toProduct(productoUpdateRequest, productoActual, categoria));
         // Enviamos la notificación a los clientes ws
         onChange(Notificacion.Tipo.UPDATE, productoUpdated);
         // Devolvemos el producto actualizado

@@ -1,9 +1,9 @@
 package dev.joseluisgs.tiendaapispringboot.productos.mappers;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoResponseDto;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateDto;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoResponse;
+import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.stereotype.Component;
 
@@ -11,28 +11,28 @@ import java.time.LocalDateTime;
 
 @Component
 public class ProductoMapper {
-    public Producto toProduct(ProductoCreateDto dto, Categoria categoria) {
+    public Producto toProduct(ProductoCreateRequest request, Categoria categoria) {
         return Producto.builder()
-                .marca(dto.getMarca())
-                .modelo(dto.getModelo())
-                .descripcion(dto.getDescripcion())
-                .precio(dto.getPrecio())
-                .imagen(dto.getImagen())
-                .stock(dto.getStock())
+                .marca(request.getMarca())
+                .modelo(request.getModelo())
+                .descripcion(request.getDescripcion())
+                .precio(request.getPrecio())
+                .imagen(request.getImagen())
+                .stock(request.getStock())
                 .categoria(categoria)
                 .build();
     }
 
-    public Producto toProduct(ProductoUpdateDto dto, Producto producto, Categoria categoria) {
+    public Producto toProduct(ProductoUpdateRequest request, Producto producto, Categoria categoria) {
         // Creamos el producto actualizado con los campos que nos llegan actualizando el updateAt y si son null no se actualizan y se quedan los anteriores
         return Producto.builder()
                 .id(producto.getId())
-                .marca(dto.getMarca() != null ? dto.getMarca() : producto.getMarca())
-                .modelo(dto.getModelo() != null ? dto.getModelo() : producto.getModelo())
-                .descripcion(dto.getDescripcion() != null ? dto.getDescripcion() : producto.getDescripcion())
-                .precio(dto.getPrecio() != null ? dto.getPrecio() : producto.getPrecio())
-                .imagen(dto.getImagen() != null ? dto.getImagen() : producto.getImagen())
-                .stock(dto.getStock() != null ? dto.getStock() : producto.getStock())
+                .marca(request.getMarca() != null ? request.getMarca() : producto.getMarca())
+                .modelo(request.getModelo() != null ? request.getModelo() : producto.getModelo())
+                .descripcion(request.getDescripcion() != null ? request.getDescripcion() : producto.getDescripcion())
+                .precio(request.getPrecio() != null ? request.getPrecio() : producto.getPrecio())
+                .imagen(request.getImagen() != null ? request.getImagen() : producto.getImagen())
+                .stock(request.getStock() != null ? request.getStock() : producto.getStock())
                 .uuid(producto.getUuid())
                 .createdAt(producto.getCreatedAt())
                 .updatedAt(LocalDateTime.now())
@@ -40,8 +40,8 @@ public class ProductoMapper {
                 .build();
     }
 
-    public ProductoResponseDto toProductResponseDto(Producto producto) {
-        return ProductoResponseDto.builder()
+    public ProductoResponse toProductResponseDto(Producto producto) {
+        return ProductoResponse.builder()
                 .id(producto.getId())
                 .marca(producto.getMarca())
                 .modelo(producto.getModelo())
