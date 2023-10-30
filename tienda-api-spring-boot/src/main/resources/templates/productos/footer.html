@@ -1,0 +1,5 @@
+<footer class="mt-4 text-center">
+    <hr>
+    <p>CRUD de Productos - <a href="http://joseluisgs.dev" target="_blank">José Luis González Sánchez</a> - 2º DAW IES
+        Luis Vives</p>
+</footer>

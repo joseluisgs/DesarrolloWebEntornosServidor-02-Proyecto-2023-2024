@@ -38,7 +38,7 @@ public class CategoriasServiceImpl implements CategoriasService {
         log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
         // Criterio de búsqueda por nombre
         Specification<Categoria> specNombreCategoria = (root, query, criteriaBuilder) ->
-                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m + "%"))
+                nombre.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("nombre")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         // Criterio de búsqueda por borrado
@@ -61,14 +61,14 @@ public class CategoriasServiceImpl implements CategoriasService {
 
 
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Categoria findById(Long id) {
         log.info("Buscando categoría por id: " + id);
         return categoriasRepository.findById(id).orElseThrow(() -> new CategoriaNotFound(id));
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria save(CategoriaDto categoriaDto) {
         log.info("Guardando categoría: " + categoriaDto);
         // No debe existir una con el mismo nombre
@@ -79,7 +79,7 @@ public class CategoriasServiceImpl implements CategoriasService {
     }
 
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Categoria update(Long id, CategoriaDto categoriaDto) {
         log.info("Actualizando categoría: " + categoriaDto);
         Categoria categoriaActual = findById(id);
@@ -94,7 +94,7 @@ public class CategoriasServiceImpl implements CategoriasService {
     }
 
     @Override
-    @CacheEvict
+    @CacheEvict(key = "#id")
     @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         log.info("Borrando categoría por id: " + id);

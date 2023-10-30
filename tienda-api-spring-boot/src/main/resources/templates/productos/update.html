@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Producto</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}">
+    <link href="/favicon.png" rel="icon" type="image/png">
+</head>
+<body>
+<div class="container">
+    <!-- Incluir el fragmento del header -->
+    <div th:replace="~{productos/header.html :: header}"></div>
+
+    <h1>Actualizar Producto</h1>
+    <!-- Agregando th:action="@{/productos/update/{id}(id=${id})}" en el formulario, aseguras que la ruta de acción sea
+    la correcta y se envíe la solicitud POST correctamente al controlador. -->
+    <form action="@{/productos/update/{id}(id=${id})}" method="post"
+          th:action="@{/productos/update/{id}(id=${id})}"
+          th:object="${producto}">
+        <div class="form-group">
+            <label for="marca">ID:</label>
+            <label th:text="${id}">id</label>
+        </div>
+        <div class="form-group">
+            <label for="marca">Marca:</label>
+            <input class="form-control" id="marca" name="marca" th:field="*{marca}" type="text">
+            <small class="text-danger" th:errors="*{marca}" th:if="${#fields.hasErrors('marca')}"></small>
+        </div>
+        <div class="form-group">
+            <label for="modelo">Modelo:</label>
+            <input class="form-control" id="modelo" name="modelo" th:field="*{modelo}" type="text">
+            <small class="text-danger" th:errors="*{modelo}" th:if="${#fields.hasErrors('modelo')}"></small>
+        </div>
+        <div class="form-group">
+            <label for="descripcion">Descripción:</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" th:field="*{descripcion}"></textarea>
+            <small class="text-danger" th:errors="*{descripcion}" th:if="${#fields.hasErrors('descripcion')}"></small>
+        </div>
+        <div class="form-group">
+            <label for="precio">Precio:</label>
+            <input class="form-control" id="precio" min="0.0" name="precio" step="0.01" th:field="*{precio}"
+                   type="number">
+            <small class="text-danger" th:errors="*{precio}" th:if="${#fields.hasErrors('precio')}"></small>
+        </div>
+        <div class="form-group">
+            <label for="imagen">Imagen:</label>
+            <input class="form-control" id="imagen" name="imagen" readonly th:field="*{imagen}" type="text">
+        </div>
+        <div class="form-group">
+            <label for="stock">Stock:</label>
+            <input class="form-control" id="stock" min="0" name="stock" th:field="*{stock}" type="number">
+            <small class="text-danger" th:errors="*{stock}" th:if="${#fields.hasErrors('stock')}"></small>
+        </div>
+        <div class="form-group">
+            <label for="categoria">Categoría:</label>
+            <select class="form-control" id="categoria" name="categoria" th:field="*{categoria}">
+                <option value="">Seleccione una categoría</option>
+                <option th:each="cat : ${categorias}" th:selected="${cat == categoria}" th:text="${cat}"
+                        th:value="${cat}"></option>
+            </select>
+            <small class="text-danger" th:errors="*{categoria}" th:if="${#fields.hasErrors('categoria')}"></small>
+        </div>
+        <button class="btn btn-primary" type="submit">Actualizar</button>
+        <a class="btn btn-secondary mx-2" href="/productos">Volver</a>
+    </form>
+</div>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="~{productos/footer.html :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

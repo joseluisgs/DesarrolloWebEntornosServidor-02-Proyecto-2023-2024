@@ -7,6 +7,7 @@ import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository
 import dev.joseluisgs.tiendaapispringboot.productos.repositories.ProductosRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
@@ -19,7 +20,7 @@ import java.time.LocalDateTime;
 
 @Service
 @Slf4j
-@Cacheable("pedidos")
+@CacheConfig(cacheNames = {"pedidos"})
 public class PedidosServiceImpl implements PedidosService {
     private final PedidosRepository pedidosRepository;
     private final ProductosRepository productosRepository;
@@ -38,7 +39,7 @@ public class PedidosServiceImpl implements PedidosService {
 
 
     @Override
-    @Cacheable("pedidos")
+    @Cacheable(key = "#idPedido")
     public Pedido findById(ObjectId idPedido) {
         log.info("Obteniendo pedido con id: " + idPedido);
         return pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
@@ -52,7 +53,7 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    @CachePut("pedidos")
+    @CachePut(key = "#result.id")
     public Pedido save(Pedido pedido) {
         log.info("Guardando pedido: {}", pedido);
 
@@ -108,7 +109,7 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    @CacheEvict("pedidos")
+    @CacheEvict(key = "#idPedido")
     public void delete(ObjectId idPedido) {
         log.info("Borrando pedido: " + idPedido);
         // Lo primero que tenemos que ver es si existe el pedido
@@ -140,7 +141,7 @@ public class PedidosServiceImpl implements PedidosService {
 
     @Override
     @Transactional
-    @CachePut("pedidos")
+    @CachePut(key = "#idPedido")
     public Pedido update(ObjectId idPedido, Pedido pedido) {
         log.info("Actualizando pedido con id: " + idPedido);
 

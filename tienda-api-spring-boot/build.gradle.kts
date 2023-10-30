@@ -36,6 +36,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
     // Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+    // Thyemeleaf
+    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -57,6 +59,10 @@ dependencies {
 
     // MongoDB para test, pero no es necesario, usamos sus repositorios
     // testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring31x:4.9.3")
+
+    // Extras para web
+    // Bootstrap
+    implementation("org.webjars:bootstrap:4.0.0")
 
 }
 

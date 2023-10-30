@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}">
+    <link href="/favicon.png" rel="icon" type="image/png">
+</head>
+<body>
+<div class="container">
+    <h1>Login</h1>
+    <form action="/productos" method="post">
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input class="form-control" id="password" name="password" required type="password">
+        </div>
+        <div th:if="${error}">
+            <p style="color: red;" th:text="${error}"></p>
+        </div>
+        <button class="btn btn-primary" type="submit">Login</button>
+    </form>
+</div>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="~{productos/footer.html :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

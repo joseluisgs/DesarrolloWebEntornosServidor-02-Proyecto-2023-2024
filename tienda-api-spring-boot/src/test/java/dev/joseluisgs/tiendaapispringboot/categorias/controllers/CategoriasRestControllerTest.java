@@ -13,10 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.json.JacksonTester;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
@@ -35,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureJsonTesters
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
 class CategoriasRestControllerTest {
     private final String myEndpoint = "/v1/categorias";
@@ -47,9 +44,6 @@ class CategoriasRestControllerTest {
     MockMvc mockMvc; // Cliente MVC
     @MockBean
     private CategoriasService categoriasService;
-    // Para testear los JSON
-    @Autowired
-    private JacksonTester<CategoriaDto> jsonCategoriaDto;
 
     @Autowired
     public CategoriasRestControllerTest(CategoriasService categoriasService) {
@@ -174,10 +168,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         Categoria res = mapper.readValue(response.getContentAsString(), Categoria.class);
@@ -200,10 +194,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         // System.out.println(response.getContentAsString());
@@ -226,10 +220,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         post(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         // System.out.println(response.getContentAsString());
@@ -252,10 +246,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         Categoria res = mapper.readValue(response.getContentAsString(), Categoria.class);
@@ -281,10 +275,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         // Assert
@@ -299,10 +293,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         System.out.println(response.getContentAsString());
@@ -326,10 +320,10 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         put(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 // Le paso el body
-                                .content(jsonCategoriaDto.write(categoriaDto).getJson())
-                                .accept(MediaType.APPLICATION_JSON))
+                                .content(mapper.writeValueAsString(categoriaDto)))
                 .andReturn().getResponse();
 
         // System.out.println(response.getContentAsString());
@@ -351,8 +345,8 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         delete(myLocalEndpoint)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
         // Assert
@@ -374,8 +368,8 @@ class CategoriasRestControllerTest {
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
                         delete(myLocalEndpoint)
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .accept(MediaType.APPLICATION_JSON))
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
         // Assert

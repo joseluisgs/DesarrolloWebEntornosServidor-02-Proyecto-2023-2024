@@ -21,7 +21,6 @@ import jakarta.persistence.criteria.Join;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -84,14 +83,14 @@ public class ProductoServiceImpl implements ProductosService {
     public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
         // Criterio de búsqueda por marca
         Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
-                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m + "%")) // Buscamos por marca
+                marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m.toLowerCase() + "%")) // Buscamos por marca
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay marca, no filtramos
 
         // Criterio de búsqueda por categoría
         Specification<Producto> specCategoriaProducto = (root, query, criteriaBuilder) ->
                 categoria.map(c -> {
                     Join<Producto, Categoria> categoriaJoin = root.join("categoria"); // Join con categoría
-                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c + "%"); // Buscamos por nombre
+                    return criteriaBuilder.like(criteriaBuilder.lower(categoriaJoin.get("nombre")), "%" + c.toLowerCase() + "%"); // Buscamos por nombre
                 }).orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true))); // Si no hay categoría, no filtramos
 
         // Criterio de búsqueda por isDeleted
@@ -101,7 +100,7 @@ public class ProductoServiceImpl implements ProductosService {
 
         // Criterio de búsqueda por modelo
         Specification<Producto> specModeloProducto = (root, query, criteriaBuilder) ->
-                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m + "%"))
+                modelo.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("modelo")), "%" + m.toLowerCase() + "%"))
                         .orElseGet(() -> criteriaBuilder.isTrue(criteriaBuilder.literal(true)));
 
         // Criterio de búsqueda por precioMax, es decir tiene que ser menor o igual
@@ -133,7 +132,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#id")
     public Producto findById(Long id) {
         log.info("Buscando producto por id: " + id);
         return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
@@ -148,7 +147,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoBadUuid  Si el uuid no es válido
      */
     @Override
-    @Cacheable
+    @Cacheable(key = "#uuid")
     public Producto findbyUuid(String uuid) {
         log.info("Buscando producto por uuid: " + uuid);
         try {
@@ -166,7 +165,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @return Producto guardado
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     public Producto save(ProductoCreateDto productoCreateDto) {
         log.info("Guardando producto: " + productoCreateDto);
         // Buscamos la categoría por su nombre
@@ -189,7 +188,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     @Transactional
     public Producto update(Long id, ProductoUpdateDto productoUpdateDto) {
         log.info("Actualizando producto por id: " + id);
@@ -219,7 +218,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CacheEvict
+    @CachePut(key = "#id")
     @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
@@ -246,9 +245,9 @@ public class ProductoServiceImpl implements ProductosService {
      * @throws ProductoNotFound Si no lo encuentra
      */
     @Override
-    @CachePut
+    @CachePut(key = "#result.id")
     @Transactional
-    public Producto updateImage(Long id, MultipartFile image) {
+    public Producto updateImage(Long id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = this.findById(id);
@@ -257,7 +256,9 @@ public class ProductoServiceImpl implements ProductosService {
             storageService.delete(productoActual.getImagen());
         }
         String imageStored = storageService.store(image);
-        String imageUrl = imageStored; //storageService.getUrl(imageStored); // Si quiero la url completa
+        // Si quiero la url completa
+        String imageUrl = !withUrl ? imageStored : storageService.getUrl(imageStored);
+        //storageService.getUrl(imageStored); // Si quiero la url completa
         // Clonamos el producto con la nueva imagen, porque inmutabilidad de los objetos
         var productoActualizado = Producto.builder()
                 .id(productoActual.getId())
