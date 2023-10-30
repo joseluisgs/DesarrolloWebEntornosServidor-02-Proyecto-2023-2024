@@ -50,3 +50,10 @@ insert into USER_ROLES (user_id, roles)
 values (1, 'USER');
 insert into USER_ROLES (user_id, roles)
 values (1, 'ADMIN');
+
+-- Contraseña: Test1
+insert into USUARIOS (nombre, apellidos, username, email, password)
+values ('Test', 'TestTest', 'test', 'test@prueba.net',
+        '$2a$10$Pd1yyq2NowcsDf4Cpf/ZXObYFkcycswqHAqBndE1wWJvYwRxlb.Pu');
+insert into USER_ROLES (user_id, roles)
+values (2, 'USER');
