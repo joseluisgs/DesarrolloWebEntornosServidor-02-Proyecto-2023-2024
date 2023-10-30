@@ -34,7 +34,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias",
+							"raw": "localhost:3000/v1/categorias?page=1&size=100",
 							"host": [
 								"localhost"
 							],
@@ -56,13 +56,11 @@
 								},
 								{
 									"key": "page",
-									"value": "1",
-									"disabled": true
+									"value": "1"
 								},
 								{
 									"key": "size",
-									"value": "100",
-									"disabled": true
+									"value": "100"
 								}
 							]
 						}
@@ -498,7 +496,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/pedidos",
+							"raw": "localhost:3000/v1/pedidos?page=0&size=1&sortBy=asc",
 							"host": [
 								"localhost"
 							],
@@ -510,18 +508,15 @@
 							"query": [
 								{
 									"key": "page",
-									"value": "0",
-									"disabled": true
+									"value": "0"
 								},
 								{
 									"key": "size",
-									"value": "1",
-									"disabled": true
+									"value": "1"
 								},
 								{
 									"key": "sortBy",
-									"value": "asc",
-									"disabled": true
+									"value": "asc"
 								}
 							]
 						}
@@ -784,7 +779,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODY2NzY1MSwiZXhwIjoxNjk4NzU0MDUxfQ.EYcJYOusz1x3I8jTHbP_ENIy-QCMTxoD-4v5w0lxwbo-pyU0ZGBbYJA5qKwmmYATvVM9gZS1OHML8oCmgAU6NA",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjk4Njk4NjY1LCJleHAiOjE2OTg3ODUwNjV9.-A2pqzrY2Z7FfYeK3-FHbIXD6hTCL_rwum12TkEQ8pgXeqQFJBdLaJpzJKyN2OQ6ea6FysJ1JHoyHacpqBxVUQ",
 									"type": "string"
 								}
 							]
