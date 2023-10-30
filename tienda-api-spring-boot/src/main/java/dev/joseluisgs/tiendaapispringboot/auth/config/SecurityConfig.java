@@ -8,6 +8,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -20,8 +21,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
-@EnableWebSecurity
-
+@EnableWebSecurity // Habilitamos la seguridad
+@EnableMethodSecurity // Habilitamos la seguridad a nivel de método
 public class SecurityConfig {
     // private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userService;
@@ -52,6 +53,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request.requestMatchers("/productos/**").permitAll())
                 // Ahora permito el acceso a todo lo de la API y su versión
                 .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
+                // El resto de peticiones tienen que estar autenticadas
+                // Metodo GET me de /v1/auth/me autenticado y de rorl ADMIN
+                //.authorizeHttpRequests(request -> request.requestMatchers(GET, "/" + apiVersion + "/auth/me").hasRole("ADMIN"))
 
                 // Añadimos el filtro de autenticación
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
@@ -77,4 +81,6 @@ public class SecurityConfig {
             throws Exception {
         return config.getAuthenticationManager();
     }
+
+
 }

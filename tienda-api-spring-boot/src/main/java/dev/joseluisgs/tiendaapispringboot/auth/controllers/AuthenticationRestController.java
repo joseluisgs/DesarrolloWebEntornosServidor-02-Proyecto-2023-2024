@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -61,11 +62,13 @@ public class AuthenticationRestController {
      * @return Datos del usuario
      */
     @GetMapping("/me")
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
         log.info("Obteniendo usuario");
         if (user == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        System.out.println(user.getAuthorities());
         return ResponseEntity.ok(UserResponse.builder()
                 .id(user.getId())
                 .nombre(user.getNombre())
