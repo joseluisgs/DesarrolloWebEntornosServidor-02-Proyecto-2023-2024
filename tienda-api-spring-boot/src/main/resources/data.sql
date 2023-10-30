@@ -39,3 +39,14 @@ VALUES ('Nike', 'Modelo1', 'Descripción1', 10.99, 'https://via.placeholder.com/
        ('Nike', 'Modelo3', 'Descripción3', 15.99, 'https://via.placeholder.com/150', 1, 2, UUID()),
        ('Nike', 'Modelo4', 'Descripción4', 25.99, 'https://via.placeholder.com/150', 5, 8, UUID()),
        ('Adidas', 'Modelo5', 'Descripción5', 12.99, 'https://via.placeholder.com/150', 5, 3, UUID());
+
+-- Datos de ejemplo USUARIO
+-- Contraseña: Admin1
+insert into USUARIOS (nombre, apellidos, username, email, password)
+values ('Admin', 'AdminAdmin', 'admin', 'admin@prueba.net',
+        '$2a$10$vPaqZvZkz6jhb7U7k/V/v.5vprfNdOnh4sxi/qpPRkYTzPmFlI9p2');
+
+insert into USER_ROLES (user_id, roles)
+values (1, 'USER');
+insert into USER_ROLES (user_id, roles)
+values (1, 'ADMIN');
