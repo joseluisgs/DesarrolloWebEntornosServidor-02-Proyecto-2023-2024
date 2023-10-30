@@ -62,12 +62,9 @@ public class AuthenticationRestController {
      * @return Datos del usuario
      */
     @GetMapping("/me")
-    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
+    @PreAuthorize("hasRole('USER')") // Solo los administradores pueden acceder
     public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
         log.info("Obteniendo usuario");
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
         System.out.println(user.getAuthorities());
         return ResponseEntity.ok(UserResponse.builder()
                 .id(user.getId())

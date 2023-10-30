@@ -4,7 +4,6 @@ import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUsernameNotFound;
 import dev.joseluisgs.tiendaapispringboot.auth.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 
 // Indicamos que es uns ervicio de detalles de usuario
@@ -19,7 +18,7 @@ import org.springframework.stereotype.Service;
  * y lugeo usarlo aqui con implements UserService
  */
 @Service("userDetailsService")
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 

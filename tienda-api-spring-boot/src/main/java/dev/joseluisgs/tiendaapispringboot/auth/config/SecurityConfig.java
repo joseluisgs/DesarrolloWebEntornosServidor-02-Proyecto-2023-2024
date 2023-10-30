@@ -54,6 +54,7 @@ public class SecurityConfig {
                 // Ahora permito el acceso a todo lo de la API y su versión
                 .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
                 // El resto de peticiones tienen que estar autenticadas
+                .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/admin").authenticated())
                 // Metodo GET me de /v1/auth/me autenticado y de rorl ADMIN
                 //.authorizeHttpRequests(request -> request.requestMatchers(GET, "/" + apiVersion + "/auth/me").hasRole("ADMIN"))
 
