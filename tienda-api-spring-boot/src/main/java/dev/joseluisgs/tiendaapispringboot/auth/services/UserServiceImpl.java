@@ -32,7 +32,7 @@ public class UserServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UserUsernameNotFound {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserUsernameNotFound(username + " no encontrado"));
+                .orElseThrow(() -> new UserUsernameNotFound("Usuario con username " + username + " no encontrado"));
     }
 
 }

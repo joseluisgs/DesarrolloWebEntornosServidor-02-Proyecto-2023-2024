@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
@@ -24,13 +25,15 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
     // private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final UserDetailsService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Value("${api.version}")
     private String apiVersion;
 
     @Autowired
-    public SecurityConfig(UserDetailsService userService) {
+    public SecurityConfig(UserDetailsService userService, JwtAuthenticationFilter jwtAuthenticationFilter) {
         this.userService = userService;
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
     }
 
     @Bean
@@ -48,8 +51,11 @@ public class SecurityConfig {
                 // Permitimos el acceso a la web de productos
                 .authorizeHttpRequests(request -> request.requestMatchers("/productos/**").permitAll())
                 // Ahora permito el acceso a todo lo de la API y su versión
-                .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll());
+                .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
 
+                // Añadimos el filtro de autenticación
+                .authenticationProvider(authenticationProvider()).addFilterBefore(
+                        jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 

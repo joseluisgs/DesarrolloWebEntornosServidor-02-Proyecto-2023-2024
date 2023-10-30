@@ -1,14 +1,17 @@
 package dev.joseluisgs.tiendaapispringboot.auth.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
+import dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.models.User;
 import dev.joseluisgs.tiendaapispringboot.auth.services.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -49,6 +52,31 @@ public class AuthenticationRestController {
     public ResponseEntity<JwtAuthResponse> signIn(@Valid @RequestBody UserSignInRequest request) {
         log.info("Iniciando sesión de usuario: {}", request);
         return ResponseEntity.ok(authenticationService.signIn(request));
+    }
+
+    /**
+     * Obtiene el usuario actual
+     *
+     * @param user usuario autenticado
+     * @return Datos del usuario
+     */
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> me(@AuthenticationPrincipal User user) {
+        log.info("Obteniendo usuario");
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(UserResponse.builder()
+                .id(user.getId())
+                .nombre(user.getNombre())
+                .apellidos(user.getApellidos())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                // Depende de como lo queramos devolver
+                //.roles(user.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")))
+                .roles(user.getRoles().stream().map(Enum::name).toList().toString())
+                .build()
+        );
     }
 
     /**
