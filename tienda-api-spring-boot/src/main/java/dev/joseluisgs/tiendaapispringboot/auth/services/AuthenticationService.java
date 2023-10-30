@@ -1,10 +1,11 @@
 package dev.joseluisgs.tiendaapispringboot.auth.services;
 
 import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
-import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequestDto;
+import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
 
 public interface AuthenticationService {
-    JwtAuthResponse signUp(UserSignInRequestDto request);
+    JwtAuthResponse signUp(UserSignUpRequest request);
 
-    JwtAuthResponse signIn(UserSignInRequestDto request);
+    JwtAuthResponse signIn(UserSignInRequest request);
 }

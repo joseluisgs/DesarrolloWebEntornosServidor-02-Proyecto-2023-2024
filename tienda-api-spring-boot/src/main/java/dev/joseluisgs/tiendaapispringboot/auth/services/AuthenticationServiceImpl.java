@@ -1,7 +1,8 @@
 package dev.joseluisgs.tiendaapispringboot.auth.services;
 
 import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
-import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequestDto;
+import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserSingInInvalid;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUserNameOrEmailExisten;
@@ -47,7 +48,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return Token de autenticación
      */
     @Override
-    public JwtAuthResponse signUp(UserSignInRequestDto request) {
+    public JwtAuthResponse signUp(UserSignUpRequest request) {
         log.info("Creando usuario: {}", request);
         if (request.getPassword().contentEquals(request.getPasswordComprobacion())) {
             User user = User.builder()
@@ -78,7 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
      * @return Token de autenticación
      */
     @Override
-    public JwtAuthResponse signIn(UserSignInRequestDto request) {
+    public JwtAuthResponse signIn(UserSignInRequest request) {
         log.info("Autenticando usuario: {}", request);
         // Autenticamos y devolvemos el token
         authenticationManager.authenticate(
