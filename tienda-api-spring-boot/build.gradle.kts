@@ -39,7 +39,7 @@ dependencies {
     // Thyemeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     // Spring Security
-    // implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -65,7 +65,7 @@ dependencies {
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     // Test Spring Security
-    // testImplementation("org.springframework.security:spring-security-test")
+    testImplementation("org.springframework.security:spring-security-test")
 
     // MongoDB para test, pero no es necesario, usamos sus repositorios
     // testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring31x:4.9.3")
