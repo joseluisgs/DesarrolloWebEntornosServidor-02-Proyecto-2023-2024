@@ -9,6 +9,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,6 +22,7 @@ import java.util.UUID;
 @Builder
 @Entity // Para que sea una entidad de JPA
 @Table(name = "PRODUCTOS") // Para indicar la tabla de la BD, si no coge el nombre de la clase
+@EntityListeners(AuditingEntityListener.class) // Para que sea auditada y se autorellene
 public class Producto {
     public static final String IMAGE_DEFAULT = "https://via.placeholder.com/150";
 
@@ -47,10 +51,12 @@ public class Producto {
     @Column(unique = true, updatable = false, nullable = false)
     @Builder.Default
     private UUID uuid = UUID.randomUUID();
+    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+    @LastModifiedDate
     @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Column(updatable = true, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     @Builder.Default
@@ -64,5 +70,5 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "categoria_id") // Así la vamos a llamar en la BB.DD
     private Categoria categoria;
-    
+
 }

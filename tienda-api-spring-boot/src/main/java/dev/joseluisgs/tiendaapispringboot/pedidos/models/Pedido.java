@@ -1,20 +1,25 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.EntityListeners;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bson.types.ObjectId;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-@TypeAlias("Pedido")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,6 +27,8 @@ import java.util.List;
 // Nombre de la colección en MongoDB
 @Document("pedidos")
 // Para que sepa con qué clase recuperarlo al traerlo con MongoDB y aplicar polimorfismo
+@TypeAlias("Pedido")
+@EntityListeners(AuditingEntityListener.class) // Para que sea auditada y se autorellene
 public class Pedido {
     // Id de mongo
     @Id
@@ -40,8 +47,12 @@ public class Pedido {
     @Builder.Default()
     private Double total = 0.0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Builder.Default()
     private LocalDateTime createdAt = LocalDateTime.now();
+    @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
     @Builder.Default()
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
     private LocalDateTime updatedAt = LocalDateTime.now();

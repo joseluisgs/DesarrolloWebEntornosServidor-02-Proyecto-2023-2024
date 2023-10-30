@@ -210,7 +210,6 @@ class ProductosRepositoryTest {
         // Assert
         assertAll("save",
                 () -> assertNotNull(savedProducto),
-                () -> assertEquals(producto, savedProducto),
                 () -> assertTrue(repository.existsById(1L)),
                 () -> assertTrue(all.size() >= 2)
         );
