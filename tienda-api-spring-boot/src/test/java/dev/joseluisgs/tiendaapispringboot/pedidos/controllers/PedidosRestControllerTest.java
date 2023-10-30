@@ -9,7 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.pedidos.models.Direccion;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.LineaPedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.services.PedidosService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

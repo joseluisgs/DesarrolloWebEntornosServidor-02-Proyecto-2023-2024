@@ -5,10 +5,13 @@ import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflic
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -18,6 +21,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,10 +33,12 @@ import java.util.Optional;
 public class CategoriasRestController {
     // Repositorio de productos
     private final CategoriasService categoriasService;
+    private final PaginationLinksUtils paginationLinksUtils;
 
     @Autowired
-    public CategoriasRestController(CategoriasService categoriasService) {
+    public CategoriasRestController(CategoriasService categoriasService, PaginationLinksUtils paginationLinksUtils) {
         this.categoriasService = categoriasService;
+        this.paginationLinksUtils = paginationLinksUtils;
     }
 
     /**
@@ -49,14 +55,20 @@ public class CategoriasRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            HttpServletRequest request
     ) {
         log.info("Buscando todos las categorias con nombre: " + nombre + " y borrados: " + isDeleted);
         // Creamos el objeto de ordenación
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(PageResponse.of(categoriasService.findAll(nombre, isDeleted, pageable), sortBy, direction));
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+        Page<Categoria> pageResult = categoriasService.findAll(nombre, isDeleted, pageable);
+        return ResponseEntity.ok()
+                .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
+                .body(PageResponse.of(pageResult, sortBy, direction));
+
     }
 
     /**

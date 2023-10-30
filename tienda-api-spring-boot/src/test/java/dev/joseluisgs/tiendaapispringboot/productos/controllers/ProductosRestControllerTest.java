@@ -9,7 +9,7 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

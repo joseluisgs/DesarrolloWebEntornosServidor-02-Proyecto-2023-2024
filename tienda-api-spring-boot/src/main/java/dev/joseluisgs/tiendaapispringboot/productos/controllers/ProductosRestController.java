@@ -5,10 +5,13 @@ import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,11 +44,13 @@ import java.util.Optional;
 public class ProductosRestController {
     // Repositorio de productos
     private final ProductosService productosService;
+    private final PaginationLinksUtils paginationLinksUtils;
 
 
     @Autowired
-    public ProductosRestController(ProductosService productosService) {
+    public ProductosRestController(ProductosService productosService, PaginationLinksUtils paginationLinksUtils) {
         this.productosService = productosService;
+        this.paginationLinksUtils = paginationLinksUtils;
     }
 
     /**
@@ -69,14 +75,19 @@ public class ProductosRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            HttpServletRequest request
     ) {
         log.info("Buscando todos los productos con las siguientes opciones: " + marca + " " + categoria + " " + modelo + " " + isDeleted + " " + precioMax + " " + stockMin);
         // Creamos el objeto de ordenación
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(PageResponse.of(productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable), sortBy, direction));
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+        Page<Producto> pageResult = productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable);
+        return ResponseEntity.ok()
+                .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
+                .body(PageResponse.of(pageResult, sortBy, direction));
     }
 
     /**

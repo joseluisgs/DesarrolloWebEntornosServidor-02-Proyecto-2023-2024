@@ -2,27 +2,33 @@ package dev.joseluisgs.tiendaapispringboot.pedidos.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.pedidos.services.PedidosService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("${api.version}/pedidos") // Es la ruta del controlador
 @Slf4j
 public class PedidosRestController {
     private final PedidosService pedidosService;
+    private final PaginationLinksUtils paginationLinksUtils;
 
     @Autowired
-    public PedidosRestController(PedidosService pedidosService) {
+    public PedidosRestController(PedidosService pedidosService, PaginationLinksUtils paginationLinksUtils) {
         this.pedidosService = pedidosService;
+        this.paginationLinksUtils = paginationLinksUtils;
     }
 
     // Get pedidos
@@ -31,12 +37,17 @@ public class PedidosRestController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "id") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            HttpServletRequest request
     ) {
         log.info("Obteniendo todos los pedidos");
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return ResponseEntity.ok(PageResponse.of(pedidosService.findAll(pageable), sortBy, direction));
+        UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
+        Page<Pedido> pageResult = pedidosService.findAll(pageable);
+        return ResponseEntity.ok()
+                .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
+                .body(PageResponse.of(pageResult, sortBy, direction));
     }
 
     @GetMapping("/{id}")

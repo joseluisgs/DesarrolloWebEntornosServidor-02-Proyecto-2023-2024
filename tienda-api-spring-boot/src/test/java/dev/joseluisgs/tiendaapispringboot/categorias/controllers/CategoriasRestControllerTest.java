@@ -8,7 +8,7 @@ import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflic
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
-import dev.joseluisgs.tiendaapispringboot.utils.pageresponse.PageResponse;
+import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

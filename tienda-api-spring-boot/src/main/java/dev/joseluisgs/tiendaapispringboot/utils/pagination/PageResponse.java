@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.utils.pageresponse;
+package dev.joseluisgs.tiendaapispringboot.utils.pagination;
 
 import org.springframework.data.domain.Page;
 
