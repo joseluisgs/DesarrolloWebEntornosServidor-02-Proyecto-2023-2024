@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -82,9 +81,8 @@ public class ProductosRestController {
         // Creamos el objeto de ordenación
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
-        Pageable pageable = PageRequest.of(page, size, sort);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-        Page<Producto> pageResult = productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, pageable);
+        Page<Producto> pageResult = productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, PageRequest.of(page, size, sort));
         return ResponseEntity.ok()
                 .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
                 .body(PageResponse.of(pageResult, sortBy, direction));

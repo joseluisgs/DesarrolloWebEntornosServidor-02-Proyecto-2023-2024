@@ -42,9 +42,8 @@ public class PedidosRestController {
     ) {
         log.info("Obteniendo todos los pedidos");
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
-        Pageable pageable = PageRequest.of(page, size, sort);
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-        Page<Pedido> pageResult = pedidosService.findAll(pageable);
+        Page<Pedido> pageResult = pedidosService.findAll(PageRequest.of(page, size, sort));
         return ResponseEntity.ok()
                 .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
                 .body(PageResponse.of(pageResult, sortBy, direction));
