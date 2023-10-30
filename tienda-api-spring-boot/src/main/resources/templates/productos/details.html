@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del Producto</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}">
+    <link href="/favicon.png" rel="icon" type="image/png">
+</head>
+<body>
+<div class="container">
+    <!-- Incluir el fragmento del header -->
+    <div th:replace="~{productos/header.html :: header}"></div>
+
+    <h1>Detalles del Producto</h1>
+    <dl class="row">
+        <dt class="col-sm-2">ID:</dt>
+        <dd class="col-sm-10" th:text="${producto.id}"></dd>
+        <dt class="col-sm-2">Marca:</dt>
+        <dd class="col-sm-10" th:text="${producto.marca}"></dd>
+        <dt class="col-sm-2">Modelo:</dt>
+        <dd class="col-sm-10" th:text="${producto.modelo}"></dd>
+        <dt class="col-sm-2">Descripción:</dt>
+        <dd class="col-sm-10" th:text="${producto.descripcion}"></dd>
+        <dt class="col-sm-2">Precio:</dt>
+        <dd class="col-sm-10" th:text="${producto.precio}"></dd>
+        <dt class="col-sm-2">Imagen:</dt>
+        <dd class="col-sm-10"><img alt="Producto Image" class="img-fluid" th:src="${producto.imagen}"></dd>
+        <dt class="col-sm-2">Stock:</dt>
+        <dd class="col-sm-10" th:text="${producto.stock}"></dd>
+        <dt class="col-sm-2">Categoría:</dt>
+        <dd class="col-sm-10" th:text="${producto.categoria.nombre}"></dd>
+    </dl>
+    <a class="btn btn-primary" href="/productos">Volver</a>
+</div>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="~{productos/footer.html :: footer}"></div>
+
+<script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>

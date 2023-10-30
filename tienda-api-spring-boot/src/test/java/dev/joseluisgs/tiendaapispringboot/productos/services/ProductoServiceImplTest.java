@@ -346,7 +346,7 @@ class ProductoServiceImplTest {
                 .stock(5)
                 .isDeleted(false)
                 .build();
-        
+
         when(productosRepository.findById(id)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -408,7 +408,7 @@ class ProductoServiceImplTest {
         doNothing().when(webSocketHandlerMock).sendMessage(anyString());
 
         // Act
-        Producto updatedProduct = productoService.updateImage(producto1.getId(), multipartFile);
+        Producto updatedProduct = productoService.updateImage(producto1.getId(), multipartFile, false);
 
         // Assert
         assertEquals(updatedProduct.getImagen(), imageUrl);

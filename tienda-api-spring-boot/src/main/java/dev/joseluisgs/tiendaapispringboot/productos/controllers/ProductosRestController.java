@@ -192,7 +192,7 @@ public class ProductosRestController {
         // Buscamos la raqueta
         if (!file.isEmpty()) {
             // Actualizamos el producto
-            return ResponseEntity.ok(productosService.updateImage(id, file));
+            return ResponseEntity.ok(productosService.updateImage(id, file, true));
 
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");

@@ -22,5 +22,5 @@ public interface ProductosService {
 
     void deleteById(Long id);
 
-    Producto updateImage(Long id, MultipartFile image);
+    Producto updateImage(Long id, MultipartFile image, Boolean withUrl);
 }

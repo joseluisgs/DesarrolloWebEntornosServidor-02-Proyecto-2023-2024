@@ -23,10 +23,13 @@ public class Categoria {
     @Length(min = 3, message = "La categoría debe tener al menos 3 caracteres")
     private String nombre;
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
     @Column(updatable = true, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
     @Column(columnDefinition = "boolean default false")
+    @Builder.Default
     private Boolean isDeleted = false;
 
 }

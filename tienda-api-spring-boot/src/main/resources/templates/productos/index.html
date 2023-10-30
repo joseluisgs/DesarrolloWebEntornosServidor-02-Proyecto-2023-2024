@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Productos</title>
+    <link rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.min.css}">
+    <link href="/favicon.png" rel="icon" type="image/png">
+</head>
+<body>
+<div class="container">
+    <!-- Incluir el fragmento del header -->
+    <div th:replace="~{productos/header.html :: header}"></div>
+
+    <h1 th:text="${welcomeMessage}"></h1>
+    <form action="/productos/" class="mb-3" method="get">
+        <div class="input-group">
+            <input class="form-control" id="search" name="search" th:value="${search}" type="text">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">Buscar</button>
+            </div>
+        </div>
+    </form>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Marca</th>
+            <th>Modelo</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Imagen</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="producto : ${productosPage.content}">
+            <td th:text="${producto.id}"></td>
+            <td th:text="${producto.marca}"></td>
+            <td th:text="${producto.modelo}"></td>
+            <td th:text="${producto.precio}"></td>
+            <td th:text="${producto.stock}"></td>
+            <td>
+                <img alt="Imagen del producto" height="50" th:src="${producto.imagen}" width="50">
+            </td>
+            <td>
+                <a class="btn btn-primary btn-sm" th:href="@{/productos/details/{id}(id=${producto.id})}">Detalles</a>
+                <a class="btn btn-secondary btn-sm" th:href="@{/productos/update/{id}(id=${producto.id})}">Editar</a>
+                <a class="btn btn-info btn-sm" th:href="@{/productos/update-image/{id}(id=${producto.id})}">Imagen</a>
+                <a class="btn btn-danger btn-sm" th:href="@{/productos/delete/{id}(id=${producto.id})}">Eliminar</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${productosPage.first ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{${productosPage.first ? '#' : '/productos/index'}(page=0, size=${productosPage.size}, sort=${productosPage.pageable.sort})}">&laquo;</a>
+            </li>
+            <li class="page-item" th:classappend="${productosPage.first ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{${productosPage.first ? '#' : '/productos/index'}(page=${productosPage.number - 1}, size=${productosPage.size}, sort=${productosPage.pageable.sort})}">Anterior</a>
+            </li>
+            <li class="page-item" th:classappend="${productosPage.last ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{${productosPage.last ? '#' : '/productos/index'}(page=${productosPage.number + 1}, size=${productosPage.size}, sort=${productosPage.pageable.sort})}">Siguiente</a>
+            </li>
+            <li class="page-item" th:classappend="${productosPage.last ? 'disabled' : ''}">
+                <a class="page-link"
+                   th:href="@{${productosPage.last ? '#' : '/productos/index'}(page=${productosPage.totalPages - 1}, size=${productosPage.size}, sort=${productosPage.pageable.sort})}">&raquo;</a>
+            </li>
+        </ul>
+    </nav>
+    <a class="btn btn-success" href="/productos/create">Nuevo Producto</a>
+
+    <!-- Incluir el fragmento del footer -->
+    <p class="mt-4 text-center" style="font-size: smaller;">
+        <span>Nº de visitas: </span><span th:text="${numVisitas}"></span>
+        <span>, desde tu último login: </span>
+        <span th:text="${lastLoginDate}"></span>
+    </p>
+
+</div>
+
+<!-- Incluir el fragmento del footer -->
+<div th:replace="~{productos/footer.html :: footer}"></div>
+
+
+<script th:src="@{/webjars/bootstrap/4.0.0/js/bootstrap.bundle.min.js}"></script>
+</body>
+</html>
