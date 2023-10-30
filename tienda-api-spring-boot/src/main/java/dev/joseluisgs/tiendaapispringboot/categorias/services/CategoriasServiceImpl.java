@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.services;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.mappers.CategoriasMapper;
@@ -69,28 +69,28 @@ public class CategoriasServiceImpl implements CategoriasService {
 
     @Override
     @CachePut(key = "#result.id")
-    public Categoria save(CategoriaDto categoriaDto) {
-        log.info("Guardando categoría: " + categoriaDto);
+    public Categoria save(CategoriaRequest categoriaRequest) {
+        log.info("Guardando categoría: " + categoriaRequest);
         // No debe existir una con el mismo nombre
-        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaDto.getNombre()).ifPresent(c -> {
-            throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre());
+        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaRequest.getNombre()).ifPresent(c -> {
+            throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaRequest.getNombre());
         });
-        return categoriasRepository.save(categoriasMapper.toCategoria(categoriaDto));
+        return categoriasRepository.save(categoriasMapper.toCategoria(categoriaRequest));
     }
 
     @Override
     @CachePut(key = "#result.id")
-    public Categoria update(Long id, CategoriaDto categoriaDto) {
-        log.info("Actualizando categoría: " + categoriaDto);
+    public Categoria update(Long id, CategoriaRequest categoriaRequest) {
+        log.info("Actualizando categoría: " + categoriaRequest);
         Categoria categoriaActual = findById(id);
         // No debe existir una con el mismo nombre, y si existe soy yo mismo
-        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaDto.getNombre()).ifPresent(c -> {
+        categoriasRepository.findByNombreEqualsIgnoreCase(categoriaRequest.getNombre()).ifPresent(c -> {
             if (!c.getId().equals(id)) {
-                throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre());
+                throw new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaRequest.getNombre());
             }
         });
         // Actualizamos los datos
-        return categoriasRepository.save(categoriasMapper.toCategoria(categoriaDto, categoriaActual));
+        return categoriasRepository.save(categoriasMapper.toCategoria(categoriaRequest, categoriaActual));
     }
 
     @Override

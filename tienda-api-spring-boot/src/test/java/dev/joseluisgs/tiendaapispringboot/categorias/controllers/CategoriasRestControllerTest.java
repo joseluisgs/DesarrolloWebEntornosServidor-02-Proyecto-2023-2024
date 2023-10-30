@@ -3,7 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.categorias.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -160,10 +160,10 @@ class CategoriasRestControllerTest {
 
     @Test
     void createCategoria() throws Exception {
-        var categoriaDto = new CategoriaDto("TEST", false);
+        var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.save(any(CategoriaDto.class))).thenReturn(categoria1);
+        when(categoriasService.save(any(CategoriaRequest.class))).thenReturn(categoria1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -183,12 +183,12 @@ class CategoriasRestControllerTest {
         );
 
         // Verify
-        verify(categoriasService, times(1)).save(any(CategoriaDto.class));
+        verify(categoriasService, times(1)).save(any(CategoriaRequest.class));
     }
 
     @Test
     void createCategoriaWithBadRequest() throws Exception {
-        var categoriaDto = new CategoriaDto("TE", false);
+        var categoriaDto = new CategoriaRequest("TE", false);
 
 
         // Consulto el endpoint
@@ -211,10 +211,10 @@ class CategoriasRestControllerTest {
 
     @Test
     void createCategoriaWithNombreExists() throws Exception {
-        var categoriaDto = new CategoriaDto("TEST", false);
+        var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.save(any(CategoriaDto.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
+        when(categoriasService.save(any(CategoriaRequest.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
 
         // Arrange
         // Consulto el endpoint
@@ -238,10 +238,10 @@ class CategoriasRestControllerTest {
     @Test
     void updateCategoria() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var categoriaDto = new CategoriaDto("TEST", false);
+        var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaDto.class))).thenReturn(categoria1);
+        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenReturn(categoria1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -261,16 +261,16 @@ class CategoriasRestControllerTest {
         );
 
         // Verify
-        verify(categoriasService, times(1)).update(anyLong(), any(CategoriaDto.class));
+        verify(categoriasService, times(1)).update(anyLong(), any(CategoriaRequest.class));
     }
 
     @Test
     void updateCategoriaNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var categoriaDto = new CategoriaDto("TEST", false);
+        var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaDto.class))).thenThrow(new CategoriaNotFound(1L));
+        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenThrow(new CategoriaNotFound(1L));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -288,7 +288,7 @@ class CategoriasRestControllerTest {
     @Test
     void updateProductWithBadRequest() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var categoriaDto = new CategoriaDto("TE", false);
+        var categoriaDto = new CategoriaRequest("TE", false);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -311,10 +311,10 @@ class CategoriasRestControllerTest {
     @Test
     void updateCategoriaWithNombreExists() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
-        var categoriaDto = new CategoriaDto("TEST", false);
+        var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaDto.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
+        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
 
         // Arrange
         // Consulto el endpoint

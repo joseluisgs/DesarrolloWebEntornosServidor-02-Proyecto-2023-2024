@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.services;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,9 +14,9 @@ public interface CategoriasService {
 
     Categoria findById(Long id);
 
-    Categoria save(CategoriaDto categoriaDto);
+    Categoria save(CategoriaRequest categoriaRequest);
 
-    Categoria update(Long id, CategoriaDto categoriaDto);
+    Categoria update(Long id, CategoriaRequest categoriaRequest);
 
     void deleteById(Long id);
 }

@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.notifications.dto;
 
-public record ProductoNotificationDto(
+public record ProductoNotificationResponse(
         Long id,
         String marca,
         String modelo,

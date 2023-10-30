@@ -1,13 +1,13 @@
 package dev.joseluisgs.tiendaapispringboot.notifications.mapper;
 
-import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationDto;
+import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationResponse;
 import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ProductoNotificationMapper {
-    public ProductoNotificationDto toProductNotificationDto(Producto producto) {
-        return new ProductoNotificationDto(
+    public ProductoNotificationResponse toProductNotificationDto(Producto producto) {
+        return new ProductoNotificationResponse(
                 producto.getId(),
                 producto.getMarca(),
                 producto.getModelo(),

@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.controllers;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaNotFound;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -80,7 +80,7 @@ public class CategoriasRestController {
      * @throws HttpClientErrorException.BadRequest si la categoría no es correcta (400)
      */
     @PostMapping()
-    public ResponseEntity<Categoria> createCategory(@Valid @RequestBody CategoriaDto categoriaCreateDto) {
+    public ResponseEntity<Categoria> createCategory(@Valid @RequestBody CategoriaRequest categoriaCreateDto) {
         log.info("Creando categegoría: " + categoriaCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriasService.save(categoriaCreateDto));
     }
@@ -95,7 +95,7 @@ public class CategoriasRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriaDto categoriaUpdateDto) {
+    public ResponseEntity<Categoria> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriaRequest categoriaUpdateDto) {
         log.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
         return ResponseEntity.ok(categoriasService.update(id, categoriaUpdateDto));
     }

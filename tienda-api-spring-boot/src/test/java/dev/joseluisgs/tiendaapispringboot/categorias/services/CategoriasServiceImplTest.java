@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.services;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.exceptions.CategoriaConflict;
 import dev.joseluisgs.tiendaapispringboot.categorias.mappers.CategoriasMapper;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class CategoriasServiceImplTest {
 
     private final Categoria categoria = new Categoria(1L, "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
-    private final CategoriaDto categoriaDto = new CategoriaDto("TEST", false);
+    private final CategoriaRequest categoriaRequest = new CategoriaRequest("TEST", false);
     @Mock
     private CategoriasRepository categoriasRepository;
 
@@ -97,11 +97,11 @@ public class CategoriasServiceImplTest {
     public void testSave() {
         // Arrange
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.empty());
-        when(categoriasMapper.toCategoria(any(CategoriaDto.class))).thenReturn(categoria);
+        when(categoriasMapper.toCategoria(any(CategoriaRequest.class))).thenReturn(categoria);
         when(categoriasRepository.save(any(Categoria.class))).thenReturn(categoria);
 
         // Act
-        categoriasService.save(categoriaDto);
+        categoriasService.save(categoriaRequest);
 
         // Assert
         assertAll("save",
@@ -120,7 +120,7 @@ public class CategoriasServiceImplTest {
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.of(categoria));
 
         // Act
-        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.save(categoriaDto));
+        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.save(categoriaRequest));
 
         // Assert
         assertAll("saveConflict",
@@ -138,11 +138,11 @@ public class CategoriasServiceImplTest {
         // Arrange
         when(categoriasRepository.findById(any(Long.class))).thenReturn(Optional.of(categoria));
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.of(categoria));
-        when(categoriasMapper.toCategoria(any(CategoriaDto.class), any(Categoria.class))).thenReturn(categoria);
+        when(categoriasMapper.toCategoria(any(CategoriaRequest.class), any(Categoria.class))).thenReturn(categoria);
         when(categoriasRepository.save(any(Categoria.class))).thenReturn(categoria);
 
         // Act
-        categoriasService.update(1L, categoriaDto);
+        categoriasService.update(1L, categoriaRequest);
 
         // Assert
         assertAll("update",
@@ -164,7 +164,7 @@ public class CategoriasServiceImplTest {
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.of(categoria));
 
         // Act, el id no debe ser igual, no se puede actualizar, porqe ya existe
-        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.update(2L, categoriaDto));
+        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.update(2L, categoriaRequest));
 
         // Assert
         assertAll("updateConflict",

@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.mappers;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import org.junit.jupiter.api.Test;
 
@@ -15,26 +15,26 @@ class CategoriasMapperTest {
     // Inyectamos el mapper
     private final CategoriasMapper categoriaMapper = new CategoriasMapper();
 
-    private final CategoriaDto categoriaDto = new CategoriaDto("TEST", false);
+    private final CategoriaRequest categoriaRequest = new CategoriaRequest("TEST", false);
 
     @Test
     public void whenToCategoria_thenReturnCategoria() {
-        Categoria mappedCategoria = categoriaMapper.toCategoria(categoriaDto);
+        Categoria mappedCategoria = categoriaMapper.toCategoria(categoriaRequest);
 
         assertAll("whenToCategoria_thenReturnCategoria",
-                () -> assertEquals(categoriaDto.getNombre(), mappedCategoria.getNombre()),
-                () -> assertEquals(categoriaDto.getIsDeleted(), mappedCategoria.getIsDeleted())
+                () -> assertEquals(categoriaRequest.getNombre(), mappedCategoria.getNombre()),
+                () -> assertEquals(categoriaRequest.getIsDeleted(), mappedCategoria.getIsDeleted())
         );
     }
 
     @Test
     public void whenToCategoriaWithExistingCategoria_thenReturnUpdatedCategoria() {
 
-        Categoria updatedCategoria = categoriaMapper.toCategoria(categoriaDto);
+        Categoria updatedCategoria = categoriaMapper.toCategoria(categoriaRequest);
 
         assertAll("whenToCategoriaWithExistingCategoria_thenReturnUpdatedCategoria",
-                () -> assertEquals(categoriaDto.getNombre(), updatedCategoria.getNombre()),
-                () -> assertEquals(categoriaDto.getIsDeleted(), updatedCategoria.getIsDeleted())
+                () -> assertEquals(categoriaRequest.getNombre(), updatedCategoria.getNombre()),
+                () -> assertEquals(categoriaRequest.getIsDeleted(), updatedCategoria.getIsDeleted())
         );
     }
 }

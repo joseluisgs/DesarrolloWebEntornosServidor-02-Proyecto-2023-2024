@@ -6,7 +6,7 @@ import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
-import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationDto;
+import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationResponse;
 import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
 import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateDto;
@@ -292,7 +292,7 @@ public class ProductoServiceImpl implements ProductosService {
         }
 
         try {
-            Notificacion<ProductoNotificationDto> notificacion = new Notificacion<>(
+            Notificacion<ProductoNotificationResponse> notificacion = new Notificacion<>(
                     "PRODUCTOS",
                     tipo,
                     productoNotificationMapper.toProductNotificationDto(data),

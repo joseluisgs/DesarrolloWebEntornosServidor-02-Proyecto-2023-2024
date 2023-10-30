@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.categorias.mappers;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaDto;
+import dev.joseluisgs.tiendaapispringboot.categorias.dto.CategoriaRequest;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
 import org.springframework.stereotype.Component;
 
@@ -8,23 +8,23 @@ import java.time.LocalDateTime;
 
 @Component
 public class CategoriasMapper {
-    public Categoria toCategoria(CategoriaDto dto) {
+    public Categoria toCategoria(CategoriaRequest request) {
         return new Categoria(
                 null,
-                dto.getNombre(),
+                request.getNombre(),
                 LocalDateTime.now(),
                 LocalDateTime.now(),
                 false
         );
     }
 
-    public Categoria toCategoria(CategoriaDto dto, Categoria categoria) {
+    public Categoria toCategoria(CategoriaRequest request, Categoria categoria) {
         return new Categoria(
                 categoria.getId(),
-                dto.getNombre() != null ? dto.getNombre() : categoria.getNombre(),
+                request.getNombre() != null ? request.getNombre() : categoria.getNombre(),
                 categoria.getCreatedAt(),
                 LocalDateTime.now(),
-                dto.getIsDeleted() != null ? dto.getIsDeleted() : categoria.getIsDeleted()
+                request.getIsDeleted() != null ? request.getIsDeleted() : categoria.getIsDeleted()
         );
     }
 }
