@@ -127,7 +127,40 @@ class AuthenticationRestControllerTest {
         verify(authenticationService, times(1)).signUp(any(UserSignUpRequest.class));
     }
 
-    // Faltan los test de bad request si los datos no son correctos
+    // Comprobar todas las validaciones
+    @Test
+    void signUp_BadRequest_When_Nombre_Apellidos_Email_Username_Empty_ShouldThrowException() throws Exception {
+        // Localpoint
+        var myLocalEndpoint = myEndpoint + "/signup";
+        // Datos de prueba
+        UserSignUpRequest request = new UserSignUpRequest();
+        request.setUsername("");
+        request.setPassword("password");
+        request.setPasswordComprobacion("password");
+        request.setEmail("");
+        request.setNombre("");
+        request.setApellidos("");
+
+        // Consulto el endpoint
+        MockHttpServletResponse response = mockMvc.perform(
+                        post(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                // Le paso el body
+                                .content(mapper.writeValueAsString(request)))
+                .andReturn().getResponse();
+
+        System.out.println(response.getContentAsString());
+
+        // Assert
+        assertAll("signup",
+                () -> assertEquals(400, response.getStatus()),
+                () -> assertTrue(response.getContentAsString().contains("Nombre no puede estar")),
+                () -> assertTrue(response.getContentAsString().contains("Apellidos no puede ")),
+                () -> assertTrue(response.getContentAsString().contains("Username no puede")),
+                () -> assertTrue(response.getContentAsString().contains("Email no puede estar"))
+        );
+    }
 
     @Test
     void signIn() throws Exception {
@@ -178,6 +211,35 @@ class AuthenticationRestControllerTest {
 
         // Verify
         verify(authenticationService, times(1)).signIn(any(UserSignInRequest.class));
+    }
+
+    // Comprobar todas las validaciones no hacerlo uno del tiron
+    @Test
+    void signIn_BadRequest_When_Username_Password_Empty_ShouldThrowException() throws Exception {
+        // Localpoint
+        var myLocalEndpoint = myEndpoint + "/signin";
+        // Datos de prueba
+        UserSignInRequest request = new UserSignInRequest();
+        request.setUsername("");
+        request.setPassword("");
+
+        // Consulto el endpoint
+        MockHttpServletResponse response = mockMvc.perform(
+                        post(myLocalEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                // Le paso el body
+                                .content(mapper.writeValueAsString(request)))
+                .andReturn().getResponse();
+
+        System.out.println(response.getContentAsString());
+
+        // Assert
+        assertAll("signin",
+                () -> assertEquals(400, response.getStatus()),
+                () -> assertTrue(response.getContentAsString().contains("Username no puede"))
+                //() -> assertTrue(response.getContentAsString().contains("Password no puede"))
+        );
     }
 
     @Test

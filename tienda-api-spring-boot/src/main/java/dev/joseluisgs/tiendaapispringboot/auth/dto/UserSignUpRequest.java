@@ -14,9 +14,9 @@ import org.hibernate.validator.constraints.Length;
 @Builder
 public class UserSignUpRequest {
 
-    @NotBlank(message = "nombre no puede estar vacío")
+    @NotBlank(message = "Nombre no puede estar vacío")
     private String nombre;
-    @NotBlank(message = "apellidos no puede estar vacío")
+    @NotBlank(message = "Apellidos no puede estar vacío")
     private String apellidos;
     @NotBlank(message = "Username no puede estar vacío")
     private String username;
