@@ -106,7 +106,9 @@ public class CategoriasServiceImpl implements CategoriasService {
         // Otra forma es que comprobaramos si hay productos para borrarlos antes
         if (categoriasRepository.existsProductoById(id)) {
             log.warn("No se puede borrar la categoría con id: " + id + " porque tiene productos asociados");
-            throw new CategoriaConflict("No se puede borrar la categoría con id " + id + " porque tiene productos asociados");
+            // throw new CategoriaConflict("No se puede borrar la categoría con id " + id + " porque tiene productos asociados");
+            // Otra forma es hacer el borrado logico
+            categoriasRepository.updateIsDeletedToTrueById(id);
         } else {
             categoriasRepository.deleteById(id);
         }
