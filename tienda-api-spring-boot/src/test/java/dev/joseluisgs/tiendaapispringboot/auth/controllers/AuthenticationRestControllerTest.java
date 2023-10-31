@@ -127,6 +127,8 @@ class AuthenticationRestControllerTest {
         verify(authenticationService, times(1)).signUp(any(UserSignUpRequest.class));
     }
 
+    // Faltan los test de bad request si los datos no son correctos
+
     @Test
     void signIn() throws Exception {
         var userSignUpRequest = new UserSignUpRequest("Test", "Test", "test", "test@test.com", "test12345", "test12345");
@@ -156,6 +158,8 @@ class AuthenticationRestControllerTest {
         // Verify
         verify(authenticationService, times(1)).signIn(any(UserSignInRequest.class));
     }
+
+    // Faltan los test de bad request si los datos no son correctos
 
     @Test
     void signIn_Invalid() {
