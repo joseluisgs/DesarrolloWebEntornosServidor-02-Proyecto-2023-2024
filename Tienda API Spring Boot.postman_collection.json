@@ -15,7 +15,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias",
+							"raw": "https://localhost:3000/v1/categorias",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -34,7 +35,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias?page=1&size=100",
+							"raw": "https://localhost:3000/v1/categorias?page=1&size=100",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -73,7 +75,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias/1",
+							"raw": "https://localhost:3000/v1/categorias/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -102,7 +105,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/categorias",
+							"raw": "https://localhost:3000/v1/categorias",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -130,7 +134,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/categorias/2",
+							"raw": "https://localhost:3000/v1/categorias/2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -159,7 +164,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/categorias/2",
+							"raw": "https://localhost:3000/v1/categorias/2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -179,7 +185,8 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/categorias/1",
+							"raw": "https://localhost:3000/v1/categorias/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -211,7 +218,8 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/v1/productos",
+							"raw": "https://localhost:3000/v1/productos",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -237,7 +245,8 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/v1/productos?marca=ni&categoria=depo&isDeleted=false&precioMax=300&stockMin=6&page=1&size=1&sortBy=id&direction=desc",
+							"raw": "https://localhost:3000/v1/productos?marca=ni&categoria=depo&isDeleted=false&precioMax=300&stockMin=6&page=1&size=1&sortBy=id&direction=desc",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -301,7 +310,8 @@
 							}
 						],
 						"url": {
-							"raw": "localhost:3000/v1/productos/2",
+							"raw": "https://localhost:3000/v1/productos/2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -330,7 +340,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/productos",
+							"raw": "https://localhost:3000/v1/productos",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -358,7 +369,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/productos/6",
+							"raw": "https://localhost:3000/v1/productos/6",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -387,7 +399,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/productos/6",
+							"raw": "https://localhost:3000/v1/productos/6",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -417,7 +430,8 @@
 							]
 						},
 						"url": {
-							"raw": "localhost:3000/v1/productos/imagen/2",
+							"raw": "https://localhost:3000/v1/productos/imagen/2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -445,7 +459,8 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/productos/2",
+							"raw": "https://localhost:3000/v1/productos/2",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -470,8 +485,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:3000/v1/storage/1697626472771_image-demo.png",
-							"protocol": "http",
+							"raw": "https://localhost:3000/v1/storage/1697626472771_image-demo.png",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -496,7 +511,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/pedidos?page=0&size=1&sortBy=asc",
+							"raw": "https://localhost:3000/v1/pedidos?page=0&size=1&sortBy=asc",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -529,7 +545,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/65365c274b52b604852506a8",
+							"raw": "https://localhost:3000/v1/pedidos/65365c274b52b604852506a8",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -549,7 +566,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/usuario/1",
+							"raw": "https://localhost:3000/v1/pedidos/usuario/1",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -579,7 +597,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/pedidos",
+							"raw": "https://localhost:3000/v1/pedidos",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -607,7 +626,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/65365cdd1c2d540a8765eb83",
+							"raw": "https://localhost:3000/v1/pedidos/65365cdd1c2d540a8765eb83",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -636,7 +656,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/pedidos/65365c274b52b604852506a8",
+							"raw": "https://localhost:3000/v1/pedidos/65365c274b52b604852506a8",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -670,7 +691,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/auth/signup",
+							"raw": "https://localhost:3000/v1/auth/signup",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -699,7 +721,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/auth/signin",
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -728,7 +751,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/auth/signin",
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -757,7 +781,8 @@
 							}
 						},
 						"url": {
-							"raw": "localhost:3000/v1/auth/signin",
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
@@ -787,7 +812,8 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "localhost:3000/v1/auth/me",
+							"raw": "https://localhost:3000/v1/auth/me",
+							"protocol": "https",
 							"host": [
 								"localhost"
 							],
