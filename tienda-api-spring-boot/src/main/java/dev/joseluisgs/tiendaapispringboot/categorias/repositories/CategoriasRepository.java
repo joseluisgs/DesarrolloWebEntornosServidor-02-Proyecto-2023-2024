@@ -34,7 +34,8 @@ public interface CategoriasRepository extends JpaRepository<Categoria, UUID>, Jp
     void updateIsDeletedToTrueById(UUID id);
 
     // Obtienes si existe un producto con el id de la categoría
+    // Debo hacerlo con consulta porque hay un join
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Producto p WHERE p.categoria.id = :id")
-    Boolean existsProductoById(UUID id);
+    boolean existsProductoById(UUID id);
 
 }

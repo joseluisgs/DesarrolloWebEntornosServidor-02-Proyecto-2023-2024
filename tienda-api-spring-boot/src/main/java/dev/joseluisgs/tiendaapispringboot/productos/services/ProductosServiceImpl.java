@@ -43,7 +43,7 @@ import java.util.UUID;
 @Service
 @CacheConfig(cacheNames = {"productos"})
 @Slf4j
-public class ProductoServiceImpl implements ProductosService {
+public class ProductosServiceImpl implements ProductosService {
     private final ProductosRepository productosRepository;
     private final CategoriasRepository categoriasRepository;
     private final ProductoMapper productosMapper;
@@ -55,7 +55,7 @@ public class ProductoServiceImpl implements ProductosService {
     private WebSocketHandler webSocketService;
 
     @Autowired
-    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasRepository categoriasRepository, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
+    public ProductosServiceImpl(ProductosRepository productosRepository, CategoriasRepository categoriasRepository, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
         this.productosRepository = productosRepository;
         this.categoriasRepository = categoriasRepository;
         this.productosMapper = productoMapper;

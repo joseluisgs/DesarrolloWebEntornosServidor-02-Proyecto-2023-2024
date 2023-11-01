@@ -67,3 +67,10 @@ values ('Test', 'TestTest', 'test', 'test@prueba.net',
         '$2a$10$Pd1yyq2NowcsDf4Cpf/ZXObYFkcycswqHAqBndE1wWJvYwRxlb.Pu');
 insert into USER_ROLES (user_id, roles)
 values (2, 'USER');
+
+-- Contraseña: Otro1
+insert into USUARIOS (nombre, apellidos, username, email, password)
+values ('otro', 'OtroOtro', 'otro', 'otro@otro.com',
+        '$2a$12$3Q4.UZbvBMBEvIwwjGEjae/zrIr6S50NusUlBcCNmBd2382eyU0bS');
+insert into USER_ROLES (user_id, roles)
+values (2, 'USER');

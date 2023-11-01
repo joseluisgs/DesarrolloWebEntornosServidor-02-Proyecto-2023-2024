@@ -30,4 +30,7 @@ public interface ProductosRepository extends JpaRepository<Producto, Long>, JpaS
     @Query("UPDATE Producto p SET p.isDeleted = true WHERE p.id = :id")
     // Consulta de actualización
     void updateIsDeletedToTrueById(Long id);
+
+    // Buscamos si existe una categoria con el mismo id
+    boolean existsByCategoriaId(UUID id);
 }

@@ -74,7 +74,7 @@ public class AuthenticationRestController {
                 .email(user.getEmail())
                 // Depende de como lo queramos devolver
                 //.roles(user.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")))
-                .roles(user.getRoles().stream().map(Enum::name).toList().toString())
+                .roles(user.getRoles())
                 .build()
         );
     }
