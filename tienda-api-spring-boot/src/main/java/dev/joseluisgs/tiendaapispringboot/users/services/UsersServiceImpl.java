@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.users.services;
 
+
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserInfoResponse;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserRequest;
@@ -10,7 +11,6 @@ import dev.joseluisgs.tiendaapispringboot.users.mappers.UsersMapper;
 import dev.joseluisgs.tiendaapispringboot.users.models.User;
 import dev.joseluisgs.tiendaapispringboot.users.repositories.UsersRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -18,24 +18,12 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-// Indicamos que es uns ervicio de detalles de usuario
-// Es muy importante esta línea para decir que vamos a usar el servicio de usuarios Spring
-// Otra forma de hacerlo es
-
-/**
- * public interface UsersService {
- * UserDetailsService userDetailsService();
- * }
- * <p>
- * y lugeo usarlo aqui con implements UsersService
- */
-@Service("userDetailsService")
+@Service
 @Slf4j
 @CacheConfig(cacheNames = {"users"})
 public class UsersServiceImpl implements UsersService {
@@ -44,19 +32,10 @@ public class UsersServiceImpl implements UsersService {
     private final PedidosRepository pedidosRepository;
     private final UsersMapper usersMapper;
 
-    @Autowired
     public UsersServiceImpl(UsersRepository usersRepository, PedidosRepository pedidosRepository, UsersMapper usersMapper) {
         this.usersRepository = usersRepository;
         this.pedidosRepository = pedidosRepository;
         this.usersMapper = usersMapper;
-    }
-
-
-    @Override
-    @Cacheable(key = "#username")
-    public UserDetails loadUserByUsername(String username) throws UserNotFound {
-        return usersRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFound("Usuario con username " + username + " no encontrado"));
     }
 
     @Override
@@ -141,6 +120,4 @@ public class UsersServiceImpl implements UsersService {
             usersRepository.delete(user);
         }
     }
-
-
 }

@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.auth.config;
 
-import dev.joseluisgs.tiendaapispringboot.users.services.UsersService;
+import dev.joseluisgs.tiendaapispringboot.auth.services.AuthUsersService;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -24,12 +24,12 @@ import java.io.IOException;
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
-    private final UsersService usersService;
+    private final AuthUsersService authUsersService;
 
     @Autowired
-    public JwtAuthenticationFilter(JwtService jwtService, UsersService usersService) {
+    public JwtAuthenticationFilter(JwtService jwtService, AuthUsersService authUsersService) {
         this.jwtService = jwtService;
-        this.usersService = usersService;
+        this.authUsersService = authUsersService;
     }
 
     @Override
@@ -66,13 +66,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Comprobamos que el usuario existe y que el token es válido
             log.info("Comprobando usuario y token");
             try {
-                userDetails = usersService.loadUserByUsername(userName);
+                userDetails = authUsersService.loadUserByUsername(userName);
             } catch (Exception e) {
                 log.info("Usuario no encontrado: {}", userName);
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Usuario no autorizado");
                 return;
             }
-            usersService.loadUserByUsername(userName);
+            authUsersService.loadUserByUsername(userName);
             log.info("Usuario encontrado: {}", userDetails);
             if (jwtService.isTokenValid(jwt, userDetails)) {
                 log.info("JWT válido");

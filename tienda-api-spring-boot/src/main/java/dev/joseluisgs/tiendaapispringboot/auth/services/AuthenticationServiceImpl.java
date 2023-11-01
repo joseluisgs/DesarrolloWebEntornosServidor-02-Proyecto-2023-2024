@@ -6,9 +6,9 @@ import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.AuthSingInInvalid;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserAuthNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
+import dev.joseluisgs.tiendaapispringboot.auth.repositories.AuthUsersRepository;
 import dev.joseluisgs.tiendaapispringboot.users.models.Role;
 import dev.joseluisgs.tiendaapispringboot.users.models.User;
-import dev.joseluisgs.tiendaapispringboot.users.repositories.UsersRepository;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,15 +27,15 @@ import java.util.stream.Stream;
 @Service
 @Slf4j
 public class AuthenticationServiceImpl implements AuthenticationService {
-    private final UsersRepository usersRepository;
+    private final AuthUsersRepository authUsersRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthenticationServiceImpl(UsersRepository usersRepository, PasswordEncoder passwordEncoder,
+    public AuthenticationServiceImpl(AuthUsersRepository authUsersRepository, PasswordEncoder passwordEncoder,
                                      JwtService jwtService, AuthenticationManager authenticationManager) {
-        this.usersRepository = usersRepository;
+        this.authUsersRepository = authUsersRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
@@ -61,7 +61,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .build();
             try {
                 // Salvamos y devolvemos el token
-                var userStored = usersRepository.save(user);
+                var userStored = authUsersRepository.save(user);
                 return JwtAuthResponse.builder().token(jwtService.generateToken(userStored)).build();
             } catch (DataIntegrityViolationException ex) {
                 throw new UserAuthNameOrEmailExisten("El usuario con username " + request.getUsername() + " o email " + request.getEmail() + " ya existe");
@@ -84,7 +84,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         // Autenticamos y devolvemos el token
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
-        var user = usersRepository.findByUsername(request.getUsername())
+        var user = authUsersRepository.findByUsername(request.getUsername())
                 .orElseThrow(() -> new AuthSingInInvalid("Usuario o contraseña incorrectos"));
         var jwt = jwtService.generateToken(user);
         return JwtAuthResponse.builder().token(jwt).build();

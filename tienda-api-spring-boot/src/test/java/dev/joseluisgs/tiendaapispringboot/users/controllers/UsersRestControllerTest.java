@@ -3,7 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.users.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse;
-import dev.joseluisgs.tiendaapispringboot.users.services.UsersService;
+import dev.joseluisgs.tiendaapispringboot.auth.services.AuthUsersService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,12 +31,12 @@ class UsersRestControllerTest {
     MockMvc mockMvc; // Cliente MVC
 
     @MockBean
-    private UsersService usersService;
+    private AuthUsersService authUsersService;
 
 
     @Autowired
-    public UsersRestControllerTest(UsersService usersService) {
-        this.usersService = usersService;
+    public UsersRestControllerTest(AuthUsersService authUsersService) {
+        this.authUsersService = authUsersService;
         mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
     }
 

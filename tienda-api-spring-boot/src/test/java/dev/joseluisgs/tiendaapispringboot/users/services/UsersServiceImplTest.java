@@ -18,19 +18,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UsersServiceImplTest {
+class UsersServiceImplTest {
 
     private final UserRequest userRequest = UserRequest.builder().username("test").email("test@test.com").build();
     private final User user = User.builder().id(99L).username("test").email("test@test.com").build();
@@ -45,36 +43,6 @@ public class UsersServiceImplTest {
     @InjectMocks
     private UsersServiceImpl usersService;
 
-    @Test
-    public void testLoadUserByUsername_UserFound_ReturnsUserDetails() {
-        // Arrange
-        String username = "test";
-        User user = new User();
-        user.setUsername(username);
-        when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
-
-        // Act
-        UserDetails userDetails = usersService.loadUserByUsername(username);
-
-        // Assert
-        assertAll(
-                () -> assertNotNull(userDetails),
-                () -> assertEquals(username, userDetails.getUsername())
-        );
-
-        // Verify
-        verify(usersRepository, times(1)).findByUsername(username);
-    }
-
-    @Test
-    public void testLoadUserByUsername_UserNotFound_ThrowsUserNotFound() {
-        // Arrange
-        String username = "test";
-        when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
-
-        // Act and Assert
-        assertThrows(UserNotFound.class, () -> usersService.loadUserByUsername(username));
-    }
 
     @Test
     public void testFindAll_NoFilters_ReturnsPageOfUsers() {

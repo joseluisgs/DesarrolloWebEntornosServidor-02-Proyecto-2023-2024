@@ -6,8 +6,8 @@ import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.AuthSingInInvalid;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserAuthNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
+import dev.joseluisgs.tiendaapispringboot.auth.repositories.AuthUsersRepository;
 import dev.joseluisgs.tiendaapispringboot.users.models.User;
-import dev.joseluisgs.tiendaapispringboot.users.repositories.UsersRepository;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 public class AuthenticationServiceImplTest {
 
     @Mock
-    private UsersRepository usersRepository;
+    private AuthUsersRepository authUsersRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -56,7 +56,7 @@ public class AuthenticationServiceImplTest {
 
         // Mock del repositorio de usuarios
         User userStored = new User();
-        when(usersRepository.save(any(User.class))).thenReturn(userStored);
+        when(authUsersRepository.save(any(User.class))).thenReturn(userStored);
 
         // Mock del servicio JWT
         String token = "test_token";
@@ -69,7 +69,7 @@ public class AuthenticationServiceImplTest {
         assertAll("Sign Up",
                 () -> assertNotNull(response),
                 () -> assertEquals(token, response.getToken()),
-                () -> verify(usersRepository, times(1)).save(any(User.class)),
+                () -> verify(authUsersRepository, times(1)).save(any(User.class)),
                 () -> verify(jwtService, times(1)).generateToken(userStored)
         );
     }
@@ -101,7 +101,7 @@ public class AuthenticationServiceImplTest {
         request.setApellidos("User");
 
         // Mock del repositorio de usuarios
-        when(usersRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
+        when(authUsersRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
 
         // Llamada al método a probar y verificación de excepción
         assertThrows(UserAuthNameOrEmailExisten.class, () -> authenticationService.signUp(request));
@@ -116,7 +116,7 @@ public class AuthenticationServiceImplTest {
 
         // Mock del repositorio de usuarios
         User user = new User();
-        when(usersRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(user));
+        when(authUsersRepository.findByUsername(request.getUsername())).thenReturn(Optional.of(user));
 
         // Mock del servicio JWT
         String token = "test_token";
@@ -130,7 +130,7 @@ public class AuthenticationServiceImplTest {
                 () -> assertNotNull(response),
                 () -> assertEquals(token, response.getToken()),
                 () -> verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class)),
-                () -> verify(usersRepository, times(1)).findByUsername(request.getUsername()),
+                () -> verify(authUsersRepository, times(1)).findByUsername(request.getUsername()),
                 () -> verify(jwtService, times(1)).generateToken(user)
         );
     }
@@ -143,7 +143,7 @@ public class AuthenticationServiceImplTest {
         request.setPassword("password");
 
         // Mock del repositorio de usuarios
-        when(usersRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
+        when(authUsersRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
 
         // Llamada al método a probar y verificación de excepción
         assertThrows(AuthSingInInvalid.class, () -> authenticationService.signIn(request));
