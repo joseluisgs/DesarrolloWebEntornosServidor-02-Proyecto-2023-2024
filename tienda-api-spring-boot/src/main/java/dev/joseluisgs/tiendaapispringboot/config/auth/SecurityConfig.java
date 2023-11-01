@@ -56,6 +56,9 @@ public class SecurityConfig {
                 // Websockets para notificaciones
                 .authorizeHttpRequests(request -> request.requestMatchers("/ws/**").permitAll())
                 // Ahora permito el acceso a todo lo de la API y su versión (luego capo en los controladores!!)
+                // Storage
+                .authorizeHttpRequests(request -> request.requestMatchers("/storage/**").permitAll())
+                // Otras rutas de la API podemos permitiras o no....
                 .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
                 // El resto de peticiones tienen que estar autenticadas
                 .authorizeHttpRequests(request -> request.requestMatchers("/**").authenticated())

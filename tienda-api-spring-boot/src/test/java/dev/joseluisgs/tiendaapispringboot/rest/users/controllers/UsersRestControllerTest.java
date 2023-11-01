@@ -21,6 +21,7 @@ import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -41,7 +42,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 //@WithMockUser(username = "pepe", roles = {"USER"})
 // @WithUserDetails(value = "admin", userDetailsServiceBeanName = "userDetailsService")
 // Porque lo tengo en la base de datos data.sql
-@WithUserDetails(value = "admin")
+// @WithUserDetails(value = "admin")
+@WithMockUser(username = "admin", password = "admin", roles = {"ADMIN", "USER"}) // Usuario de prueba (admin, tiene de rol usaurio y admin)
 class UsersRestControllerTest {
 
     private final UserRequest userRequest = UserRequest.builder()
@@ -361,6 +363,10 @@ class UsersRestControllerTest {
     }
 
     @Test
+    // Este lo puede hacer cualquiera que esté autenticado
+    // Pero autentication principal necesita uno de vverdad, por ueso usamos admin o user
+    // que está en la base de datos data.sql que lo buscará con el userDetailsService
+    @WithUserDetails
     void me() throws Exception {
         // Localpoint
         var myLocalEndpoint = myEndpoint + "/me";

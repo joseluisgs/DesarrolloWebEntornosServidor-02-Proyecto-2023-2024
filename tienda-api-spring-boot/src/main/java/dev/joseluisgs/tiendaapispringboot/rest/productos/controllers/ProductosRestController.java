@@ -41,7 +41,7 @@ import java.util.Optional;
 @RestController // Es un controlador Rest
 @Slf4j
 @RequestMapping("${api.version}/productos") // Es la ruta del controlador
-@PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+// @PreAuthorize("hasRole('USER')") // Los productos puede verse por todo el mundo (por defecto)
 public class ProductosRestController {
     // Repositorio de productos
     private final ProductosService productosService;

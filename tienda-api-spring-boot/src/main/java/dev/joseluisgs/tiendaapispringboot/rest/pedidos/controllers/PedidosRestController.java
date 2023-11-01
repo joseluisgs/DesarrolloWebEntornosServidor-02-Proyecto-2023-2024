@@ -15,12 +15,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
 @RequestMapping("${api.version}/pedidos") // Es la ruta del controlador
 @Slf4j
+@PreAuthorize("hasRole('ADMIN')") // Solo los usuarios pueden acceder por defecto
 public class PedidosRestController {
     private final PedidosService pedidosService;
     private final PaginationLinksUtils paginationLinksUtils;
