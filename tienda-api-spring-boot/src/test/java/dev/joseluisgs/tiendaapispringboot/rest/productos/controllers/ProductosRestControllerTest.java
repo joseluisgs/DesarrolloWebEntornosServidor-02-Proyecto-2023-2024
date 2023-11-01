@@ -23,6 +23,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +40,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
+@WithUserDetails(value = "user") // Usuario autenticado por defecto
 class ProductosRestControllerTest {
     private final String myEndpoint = "/v1/productos";
 
@@ -85,6 +88,19 @@ class ProductosRestControllerTest {
     public ProductosRestControllerTest(ProductosService productosService) {
         this.productosService = productosService;
         mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
+    }
+
+    @Test
+    @WithAnonymousUser
+    void NotAuthenticated() throws Exception {
+        // Localpoint
+        MockHttpServletResponse response = mockMvc.perform(
+                        get(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertEquals(403, response.getStatus());
     }
 
     @Test
@@ -256,6 +272,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void createProduct() throws Exception {
         var productoDto = ProductoCreateRequest.builder()
                 .marca("Adidas")
@@ -292,6 +310,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void createProductWithBadRequest() throws Exception {
         var productoDto = ProductoCreateRequest.builder()
                 .marca("Ad")
@@ -327,6 +347,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void updateProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = ProductoUpdateRequest.builder()
@@ -365,6 +387,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void updateProductNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = ProductoUpdateRequest.builder()
@@ -395,6 +419,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void updateProductWithBadRequest() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = ProductoUpdateRequest.builder()
@@ -429,6 +455,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void updatePartialProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
         var productoDto = ProductoUpdateRequest.builder()
@@ -464,6 +492,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void deleteProduct() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
 
@@ -487,6 +517,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void deleteProductNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/1";
 
@@ -508,6 +540,8 @@ class ProductosRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
+        // Usuario admin
     void updateProductImage() throws Exception {
         var myLocalEndpoint = myEndpoint + "/imagen/1";
 

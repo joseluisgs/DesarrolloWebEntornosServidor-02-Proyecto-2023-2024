@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
-@WithUserDetails(value = "user")
+@WithUserDetails(value = "user") // Usuario por defecto
 class CategoriasRestControllerTest {
     private final String myEndpoint = "/v1/categorias";
 
@@ -177,6 +177,7 @@ class CategoriasRestControllerTest {
 
     @Test
     @WithUserDetails(value = "admin")
+        // Usuario admin
     void createCategoria() throws Exception {
         var categoriaDto = new CategoriaRequest("TEST", false);
 

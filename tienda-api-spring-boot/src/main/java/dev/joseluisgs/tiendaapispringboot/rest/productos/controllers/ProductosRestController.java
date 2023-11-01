@@ -17,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +41,7 @@ import java.util.Optional;
 @RestController // Es un controlador Rest
 @Slf4j
 @RequestMapping("${api.version}/productos") // Es la ruta del controlador
+@PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
 public class ProductosRestController {
     // Repositorio de productos
     private final ProductosService productosService;
@@ -109,6 +111,7 @@ public class ProductosRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateRequest productoCreateRequest) {
         log.info("Creando producto: " + productoCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateRequest));
@@ -124,6 +127,7 @@ public class ProductosRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateRequest);
         return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
@@ -139,6 +143,7 @@ public class ProductosRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateRequest);
         return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
@@ -152,6 +157,7 @@ public class ProductosRestController {
      * @throws ProductoNotFound si no existe el producto (404)
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
         log.info("Borrando producto por id: " + id);
         productosService.deleteById(id);
@@ -192,6 +198,7 @@ public class ProductosRestController {
      * @RequestPart: Indica que el parámetro de la función es un parámetro del cuerpo de la petición HTTP
      */
     @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
     public ResponseEntity<Producto> nuevoProducto(
             @PathVariable Long id,
             @RequestPart("file") MultipartFile file) {
