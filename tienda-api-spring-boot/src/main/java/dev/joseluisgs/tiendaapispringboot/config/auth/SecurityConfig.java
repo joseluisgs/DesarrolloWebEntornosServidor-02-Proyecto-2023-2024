@@ -53,10 +53,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request.requestMatchers("/webjars/**").permitAll())
                 // Permitimos el acceso a la web de productos
                 .authorizeHttpRequests(request -> request.requestMatchers("/productos/**").permitAll())
-                // Ahora permito el acceso a todo lo de la API y su versión
+                // Websockets para notificaciones
+                .authorizeHttpRequests(request -> request.requestMatchers("/ws/**").permitAll())
+                // Ahora permito el acceso a todo lo de la API y su versión (luego capo en los controladores!!)
                 .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
                 // El resto de peticiones tienen que estar autenticadas
-                .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/admin").authenticated())
+                .authorizeHttpRequests(request -> request.requestMatchers("/**").authenticated())
                 // Metodo GET me de /v1/auth/me autenticado y de rorl ADMIN
                 //.authorizeHttpRequests(request -> request.requestMatchers(GET, "/" + apiVersion + "/auth/me").hasRole("ADMIN"))
 
