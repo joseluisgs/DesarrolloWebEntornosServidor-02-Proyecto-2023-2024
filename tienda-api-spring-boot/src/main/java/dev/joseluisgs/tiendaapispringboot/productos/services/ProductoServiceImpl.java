@@ -3,7 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.productos.services;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.categorias.repositories.CategoriasRepository;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
 import dev.joseluisgs.tiendaapispringboot.notifications.dto.ProductoNotificationResponse;
@@ -11,6 +11,7 @@ import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificat
 import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
@@ -44,7 +45,7 @@ import java.util.UUID;
 @Slf4j
 public class ProductoServiceImpl implements ProductosService {
     private final ProductosRepository productosRepository;
-    private final CategoriasService categoriaService;
+    private final CategoriasRepository categoriasRepository;
     private final ProductoMapper productosMapper;
     private final StorageService storageService;
 
@@ -54,9 +55,9 @@ public class ProductoServiceImpl implements ProductosService {
     private WebSocketHandler webSocketService;
 
     @Autowired
-    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasService categoriaService, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
+    public ProductoServiceImpl(ProductosRepository productosRepository, CategoriasRepository categoriasRepository, ProductoMapper productoMapper, StorageService storageService, WebSocketConfig webSocketConfig, ProductoNotificationMapper productoNotificationMapper) {
         this.productosRepository = productosRepository;
-        this.categoriaService = categoriaService;
+        this.categoriasRepository = categoriasRepository;
         this.productosMapper = productoMapper;
         this.storageService = storageService;
         this.webSocketConfig = webSocketConfig;
@@ -123,7 +124,6 @@ public class ProductoServiceImpl implements ProductosService {
         return productosRepository.findAll(criterio, pageable);
     }
 
-
     /**
      * Busca un producto por su id
      *
@@ -159,6 +159,20 @@ public class ProductoServiceImpl implements ProductosService {
     }
 
     /**
+     * Comprueba si existe la categoría
+     *
+     * @param nombreCategoria Nombre de la categoría
+     */
+    private Categoria checkCategoria(String nombreCategoria) {
+        // Buscamos la categoría por su nombre, debe existir y no estar borrada
+        var categoria = categoriasRepository.findByNombreEqualsIgnoreCase(nombreCategoria);
+        if (categoria.isEmpty() || categoria.get().getIsDeleted()) {
+            throw new ProductoBadRequest("La categoría " + nombreCategoria + " no existe o está borrada");
+        }
+        return categoria.get();
+    }
+
+    /**
      * Guarda un producto
      *
      * @param productoCreateRequest Producto a guardar
@@ -168,8 +182,8 @@ public class ProductoServiceImpl implements ProductosService {
     @CachePut(key = "#result.id")
     public Producto save(ProductoCreateRequest productoCreateRequest) {
         log.info("Guardando producto: " + productoCreateRequest);
-        // Buscamos la categoría por su nombre
-        var categoria = categoriaService.findByNombre(productoCreateRequest.getCategoria());
+        // Comprobamos que la categoría
+        var categoria = checkCategoria(productoCreateRequest.getCategoria());
         // Creamos el producto nuevo con los datos que nos vienen del dto, podríamos usar el mapper
         // Lo guardamos en el repositorio
         var productoSaved = productosRepository.save(productosMapper.toProduct(productoCreateRequest, categoria));
@@ -193,12 +207,13 @@ public class ProductoServiceImpl implements ProductosService {
     public Producto update(Long id, ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
-        var productoActual = this.findById(id);
+        var productoActual = productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
         // Buscamos la categoría por su nombre
         // Si no tenemos categoría, no la actualizamos
         Categoria categoria = null;
         if (productoUpdateRequest.getCategoria() != null && !productoUpdateRequest.getCategoria().isEmpty()) {
-            categoria = categoriaService.findByNombre(productoUpdateRequest.getCategoria());
+            // Buscamos la categoría por su nombre, debe existir y no estar borrada
+            categoria = checkCategoria(productoUpdateRequest.getCategoria());
         } else {
             categoria = productoActual.getCategoria();
         }
@@ -223,7 +238,7 @@ public class ProductoServiceImpl implements ProductosService {
     public void deleteById(Long id) {
         log.debug("Borrando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
-        var prod = this.findById(id);
+        var prod = productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
         // Lo borramos del repositorio
         productosRepository.deleteById(id);
         // O lo marcamos como borrado, para evitar problemas de cascada, no podemos borrar productos en pedidos!!!

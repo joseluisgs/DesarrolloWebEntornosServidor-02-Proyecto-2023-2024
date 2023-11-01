@@ -1,7 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.productos.services;
 
 import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.categorias.repositories.CategoriasRepository;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketConfig;
 import dev.joseluisgs.tiendaapispringboot.notifications.config.WebSocketHandler;
 import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificationMapper;
@@ -73,7 +73,7 @@ class ProductoServiceImplTest {
     @Mock
     private StorageService storageService;
     @Mock
-    private CategoriasService categoriaService;
+    private CategoriasRepository categoriasRepository;
     @Mock
     private ProductoMapper productoMapper;
     @Mock
@@ -279,7 +279,7 @@ class ProductoServiceImplTest {
                 .build();
 
 
-        when(categoriaService.findByNombre(productoCreateRequest.getCategoria())).thenReturn(categoria);
+        when(categoriasRepository.findByNombreEqualsIgnoreCase(productoCreateRequest.getCategoria())).thenReturn(Optional.of(categoria));
         when(productoMapper.toProduct(productoCreateRequest, categoria)).thenReturn(expectedProduct);
         when(productosRepository.save(expectedProduct)).thenReturn(expectedProduct);
         doNothing().when(webSocketHandlerMock).sendMessage(any());
@@ -291,7 +291,7 @@ class ProductoServiceImplTest {
         assertEquals(expectedProduct, actualProduct);
 
         // Verify
-        verify(categoriaService, times(1)).findByNombre(productoCreateRequest.getCategoria());
+        verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(productoCreateRequest.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
         verify(productoMapper, times(1)).toProduct(productoCreateRequest, categoria);
     }
@@ -314,7 +314,7 @@ class ProductoServiceImplTest {
         Producto existingProduct = producto1;
 
         when(productosRepository.findById(id)).thenReturn(Optional.of(existingProduct));
-        when(categoriaService.findByNombre(productoUpdateRequest.getCategoria())).thenReturn(categoria);
+        when(categoriasRepository.findByNombreEqualsIgnoreCase(productoUpdateRequest.getCategoria())).thenReturn(Optional.of(categoria));
         when(productosRepository.save(existingProduct)).thenReturn(existingProduct);
         when(productoMapper.toProduct(productoUpdateRequest, producto1, categoria)).thenReturn(existingProduct);
         doNothing().when(webSocketHandlerMock).sendMessage(any());
@@ -327,7 +327,7 @@ class ProductoServiceImplTest {
 
         // Verify
         verify(productosRepository, times(1)).findById(id);
-        verify(categoriaService, times(1)).findByNombre(productoUpdateRequest.getCategoria());
+        verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(productoUpdateRequest.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
         verify(productoMapper, times(1)).toProduct(productoUpdateRequest, producto1, categoria);
     }
