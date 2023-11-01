@@ -15,13 +15,13 @@ import java.util.Optional;
 // Otra forma de hacerlo es
 
 /**
- * public interface UserService {
+ * public interface UsersService {
  * UserDetailsService userDetailsService();
  * }
  * <p>
- * y lugeo usarlo aqui con implements UserService
+ * y lugeo usarlo aqui con implements UsersService
  */
-public interface UserService extends UserDetailsService {
+public interface UsersService extends UserDetailsService {
     @Override
     UserDetails loadUserByUsername(String username);
 

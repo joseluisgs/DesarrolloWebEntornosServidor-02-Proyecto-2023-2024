@@ -29,23 +29,23 @@ import java.util.Optional;
 // Otra forma de hacerlo es
 
 /**
- * public interface UserService {
+ * public interface UsersService {
  * UserDetailsService userDetailsService();
  * }
  * <p>
- * y lugeo usarlo aqui con implements UserService
+ * y lugeo usarlo aqui con implements UsersService
  */
 @Service("userDetailsService")
 @Slf4j
 @CacheConfig(cacheNames = {"users"})
-public class UserServiceImpl implements UserService {
+public class UsersServiceImpl implements UsersService {
 
     private final UsersRepository usersRepository;
     private final PedidosRepository pedidosRepository;
     private final UsersMapper usersMapper;
 
     @Autowired
-    public UserServiceImpl(UsersRepository usersRepository, PedidosRepository pedidosRepository, UsersMapper usersMapper) {
+    public UsersServiceImpl(UsersRepository usersRepository, PedidosRepository pedidosRepository, UsersMapper usersMapper) {
         this.usersRepository = usersRepository;
         this.pedidosRepository = pedidosRepository;
         this.usersMapper = usersMapper;

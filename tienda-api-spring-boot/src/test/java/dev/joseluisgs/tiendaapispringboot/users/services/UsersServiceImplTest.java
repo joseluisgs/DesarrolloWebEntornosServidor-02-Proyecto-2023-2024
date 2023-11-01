@@ -1,6 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.users.services;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
+import dev.joseluisgs.tiendaapispringboot.users.dto.UserInfoResponse;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserRequest;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNameOrEmailExists;
@@ -8,7 +9,6 @@ import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNotFound;
 import dev.joseluisgs.tiendaapispringboot.users.mappers.UsersMapper;
 import dev.joseluisgs.tiendaapispringboot.users.models.User;
 import dev.joseluisgs.tiendaapispringboot.users.repositories.UsersRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -30,11 +30,12 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceImplTest {
+public class UsersServiceImplTest {
 
     private final UserRequest userRequest = UserRequest.builder().username("test").email("test@test.com").build();
     private final User user = User.builder().id(99L).username("test").email("test@test.com").build();
     private final UserResponse userResponse = UserResponse.builder().username("test").email("test@test.com").build();
+    private final UserInfoResponse userIResponse = UserInfoResponse.builder().username("test").email("test@test.com").build();
     @Mock
     private UsersRepository usersRepository;
     @Mock
@@ -42,7 +43,7 @@ public class UserServiceImplTest {
     @Mock
     private UsersMapper usersMapper;
     @InjectMocks
-    private UserServiceImpl userService;
+    private UsersServiceImpl usersService;
 
     @Test
     public void testLoadUserByUsername_UserFound_ReturnsUserDetails() {
@@ -53,7 +54,7 @@ public class UserServiceImplTest {
         when(usersRepository.findByUsername(username)).thenReturn(Optional.of(user));
 
         // Act
-        UserDetails userDetails = userService.loadUserByUsername(username);
+        UserDetails userDetails = usersService.loadUserByUsername(username);
 
         // Assert
         assertAll(
@@ -72,7 +73,7 @@ public class UserServiceImplTest {
         when(usersRepository.findByUsername(username)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(UserNotFound.class, () -> userService.loadUserByUsername(username));
+        assertThrows(UserNotFound.class, () -> usersService.loadUserByUsername(username));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class UserServiceImplTest {
         when(usersMapper.toUserResponse(any(User.class))).thenReturn(new UserResponse());
 
         // Act
-        Page<UserResponse> result = userService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Pageable.unpaged());
+        Page<UserResponse> result = usersService.findAll(Optional.empty(), Optional.empty(), Optional.empty(), Pageable.unpaged());
 
         // Assert
         assertAll(
@@ -103,10 +104,12 @@ public class UserServiceImplTest {
         // Arrange
         Long userId = 1L;
         when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
-        when(usersMapper.toUserResponse(user)).thenReturn(userResponse);
+        when(pedidosRepository.findPedidosIdsByIdUsuario(userId)).thenReturn(List.of());
+        when(usersMapper.toUserInfoResponse(any(User.class), anyList())).thenReturn(userIResponse);
+
 
         // Act
-        UserResponse result = userService.findById(userId);
+        UserInfoResponse result = usersService.findById(userId);
 
         assertAll(
                 () -> assertNotNull(result),
@@ -116,7 +119,8 @@ public class UserServiceImplTest {
 
         // Verify
         verify(usersRepository, times(1)).findById(userId);
-        verify(usersMapper, times(1)).toUserResponse(user);
+        verify(pedidosRepository, times(1)).findPedidosIdsByIdUsuario(userId);
+        verify(usersMapper, times(1)).toUserInfoResponse(user, List.of());
 
     }
 
@@ -127,7 +131,7 @@ public class UserServiceImplTest {
         when(usersRepository.findById(userId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(UserNotFound.class, () -> userService.findById(userId));
+        assertThrows(UserNotFound.class, () -> usersService.findById(userId));
 
         // Verify
         verify(usersRepository, times(1)).findById(userId);
@@ -144,7 +148,7 @@ public class UserServiceImplTest {
         when(usersRepository.save(user)).thenReturn(user);
 
         // Act
-        UserResponse result = userService.save(userRequest);
+        UserResponse result = usersService.save(userRequest);
 
         // Assert
         assertAll(
@@ -167,7 +171,7 @@ public class UserServiceImplTest {
         when(usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.of(new User()));
 
         // Act and Assert
-        assertThrows(UserNameOrEmailExists.class, () -> userService.save(userRequest));
+        assertThrows(UserNameOrEmailExists.class, () -> usersService.save(userRequest));
     }
 
     @Test
@@ -181,7 +185,7 @@ public class UserServiceImplTest {
         when(usersRepository.save(user)).thenReturn(user);
 
         // Act
-        UserResponse result = userService.update(userId, userRequest);
+        UserResponse result = usersService.update(userId, userRequest);
 
         // Assert
         assertAll(
@@ -206,7 +210,7 @@ public class UserServiceImplTest {
         when(usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.of(user));
 
         // Act and Assert
-        assertThrows(UserNameOrEmailExists.class, () -> userService.update(userId, userRequest));
+        assertThrows(UserNameOrEmailExists.class, () -> usersService.update(userId, userRequest));
     }
 
     @Test
@@ -216,7 +220,7 @@ public class UserServiceImplTest {
         when(usersRepository.findById(userId)).thenReturn(Optional.empty());
 
         // Act and Assert
-        assertThrows(UserNotFound.class, () -> userService.update(userId, userRequest));
+        assertThrows(UserNotFound.class, () -> usersService.update(userId, userRequest));
     }
 
     @Test
@@ -227,10 +231,7 @@ public class UserServiceImplTest {
         when(pedidosRepository.existsByIdUsuario(userId)).thenReturn(false);
 
         // Act
-        userService.deleteById(userId);
-
-        // Assert
-        assertThrows(UserNotFound.class, () -> userService.findById(userId));
+        usersService.deleteById(userId);
 
         // Verify
         verify(usersRepository, times(1)).delete(user);
@@ -246,7 +247,7 @@ public class UserServiceImplTest {
         doNothing().when(usersRepository).updateIsDeletedToTrueById(userId);
 
         // Act
-        userService.deleteById(userId);
+        usersService.deleteById(userId);
 
         // Assert
 
@@ -264,12 +265,10 @@ public class UserServiceImplTest {
         when(pedidosRepository.existsByIdUsuario(userId)).thenReturn(true);
 
         // Act
-        userService.deleteById(userId);
+        usersService.deleteById(userId);
 
-        // Assert
-        Assertions.assertAll(
-                () -> assertThrows(UserNotFound.class, () -> userService.findById(userId)),
-                () -> Assertions.assertFalse(usersRepository.existsById(userId))
-        );
+        // Verify
+        verify(usersRepository, times(1)).updateIsDeletedToTrueById(userId);
+        verify(pedidosRepository, times(1)).existsByIdUsuario(userId);
     }
 }

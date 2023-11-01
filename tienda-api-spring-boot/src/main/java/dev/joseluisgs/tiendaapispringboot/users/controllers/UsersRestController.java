@@ -6,7 +6,7 @@ import dev.joseluisgs.tiendaapispringboot.users.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNameOrEmailExists;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNotFound;
 import dev.joseluisgs.tiendaapispringboot.users.models.User;
-import dev.joseluisgs.tiendaapispringboot.users.services.UserService;
+import dev.joseluisgs.tiendaapispringboot.users.services.UsersService;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +35,11 @@ import java.util.Optional;
 @RequestMapping("${api.version}/users") // Es la ruta del controlador
 @PreAuthorize("hasRole('ADMIN')") // Solo los usuarios pueden acceder
 public class UsersRestController {
-    private final UserService usersService;
+    private final UsersService usersService;
     private final PaginationLinksUtils paginationLinksUtils;
 
     @Autowired
-    public UsersRestController(UserService usersService, PaginationLinksUtils paginationLinksUtils) {
+    public UsersRestController(UsersService usersService, PaginationLinksUtils paginationLinksUtils) {
         this.usersService = usersService;
         this.paginationLinksUtils = paginationLinksUtils;
     }

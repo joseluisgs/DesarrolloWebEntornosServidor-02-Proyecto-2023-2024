@@ -4,11 +4,14 @@ import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.services.AuthenticationService;
+import dev.joseluisgs.tiendaapispringboot.users.models.User;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -69,4 +72,24 @@ public class AuthenticationRestController {
         });
         return errors;
     }
+
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    public ResponseEntity<dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse> me(@AuthenticationPrincipal User user) {
+        log.info("Obteniendo usuario");
+        System.out.println(user.getAuthorities());
+        return ResponseEntity.ok(dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse.builder()
+                .id(user.getId())
+                .nombre(user.getNombre())
+                .apellidos(user.getApellidos())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                // Depende de como lo queramos devolver
+                //.roles(user.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")))
+                .roles(user.getRoles())
+                .build()
+        );
+    }
+
+
 }

@@ -21,8 +21,6 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,8 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
-@ExtendWith(SpringExtension.class)
-@ContextConfiguration
 class AuthenticationRestControllerTest {
     private final String myEndpoint = "/v1/auth";
     private final ObjectMapper mapper = new ObjectMapper();
