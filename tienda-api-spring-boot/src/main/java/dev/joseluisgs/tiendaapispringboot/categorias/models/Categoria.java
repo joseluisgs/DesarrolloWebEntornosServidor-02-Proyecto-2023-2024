@@ -25,6 +25,7 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @ColumnDefault("random_uuid()") // Para que se genere un UUID por defecto, analizar el SGDB que se usa
+    @Builder.Default
     private UUID id = UUID.randomUUID();
     @Column(unique = true, nullable = false)
     @Length(min = 3, message = "La categoría debe tener al menos 3 caracteres")

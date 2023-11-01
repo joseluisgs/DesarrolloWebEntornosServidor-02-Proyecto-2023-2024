@@ -1,15 +1,13 @@
 package dev.joseluisgs.tiendaapispringboot.utils.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -28,7 +26,6 @@ public class JwtServiceImpl implements JwtService {
     @Value("${jwt.expiration}")
     private Long jwtExpiration;
 
-
     /**
      * Extrae el nombre de usuario del token
      *
@@ -38,7 +35,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public String extractUserName(String token) {
         log.info("Extracting username from token " + token);
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, DecodedJWT::getSubject);
     }
 
     /**
@@ -74,10 +71,10 @@ public class JwtServiceImpl implements JwtService {
      * @param claimsResolvers Detalles del usuario
      * @return token
      */
-    private <T> T extractClaim(String token, Function<Claims, T> claimsResolvers) {
+    private <T> T extractClaim(String token, Function<DecodedJWT, T> claimsResolvers) {
         log.info("Extracting claim from token " + token);
-        final Claims claims = extractAllClaims(token);
-        return claimsResolvers.apply(claims);
+        final DecodedJWT decodedJWT = JWT.decode(token);
+        return claimsResolvers.apply(decodedJWT);
     }
 
     /**
@@ -88,13 +85,18 @@ public class JwtServiceImpl implements JwtService {
      * @return token
      */
     private String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-        return Jwts.builder()
-                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
-                .setHeaderParam("typ", "JWT")
-                .setClaims(extraClaims).setSubject(userDetails.getUsername())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + (1000 * jwtExpiration)))
-                .compact();
+        // Preparamos el token
+        Algorithm algorithm = Algorithm.HMAC512(getSigningKey());
+        Date now = new Date();
+        Date expirationDate = new Date(now.getTime() + (1000 * jwtExpiration));
+
+        return JWT.create()
+                .withHeader(createHeader())
+                .withSubject(userDetails.getUsername())
+                .withIssuedAt(now)
+                .withExpiresAt(expirationDate)
+                .withClaim("extraClaims", extraClaims)
+                .sign(algorithm);
     }
 
     /**
@@ -104,7 +106,8 @@ public class JwtServiceImpl implements JwtService {
      * @return true si ha expirado
      */
     private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+        Date expirationDate = extractExpiration(token);
+        return expirationDate.before(new Date());
     }
 
     /**
@@ -114,20 +117,18 @@ public class JwtServiceImpl implements JwtService {
      * @return fecha de expiración
      */
     private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return extractClaim(token, DecodedJWT::getExpiresAt);
     }
 
     /**
-     * Extrae todos los claims del token
+     * Crea el encabezado del token
      *
-     * @param token token
-     * @return claims
+     * @return encabezado del token
      */
-    private Claims extractAllClaims(String token) {
-        log.info("Extracting all claims from token " + token);
-        return Jwts.parserBuilder()
-                .setSigningKey(getSigningKey()).build().parseClaimsJws(token)
-                .getBody();
+    private Map<String, Object> createHeader() {
+        Map<String, Object> header = new HashMap<>();
+        header.put("typ", "JWT");
+        return header;
     }
 
     /**
@@ -135,8 +136,8 @@ public class JwtServiceImpl implements JwtService {
      *
      * @return clave de firma
      */
-    private Key getSigningKey() {
-        byte[] keyBytes = Base64.getEncoder().encode(jwtSigningKey.getBytes());
-        return Keys.hmacShaKeyFor(keyBytes);
+    private byte[] getSigningKey() {
+        return Base64.getEncoder().encode(jwtSigningKey.getBytes());
+
     }
 }
