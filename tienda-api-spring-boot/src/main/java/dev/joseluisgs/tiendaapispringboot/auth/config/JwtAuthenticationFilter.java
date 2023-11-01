@@ -1,6 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.auth.config;
 
-import dev.joseluisgs.tiendaapispringboot.auth.services.UserService;
+import dev.joseluisgs.tiendaapispringboot.users.services.UserService;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -6,9 +6,9 @@ import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.AuthSingInInvalid;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserAuthNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserSingInInvalid;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUserNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.services.AuthenticationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -118,10 +118,10 @@ class AuthenticationRestControllerTest {
         request.setApellidos("User");
 
         // Mock del servicio
-        when(authenticationService.signUp(any(UserSignUpRequest.class))).thenThrow(new UserUserNameOrEmailExisten("El usuario con username " + request.getUsername() + " o email " + request.getEmail() + " ya existe"));
+        when(authenticationService.signUp(any(UserSignUpRequest.class))).thenThrow(new UserAuthNameOrEmailExisten("El usuario con username " + request.getUsername() + " o email " + request.getEmail() + " ya existe"));
 
         // Llamada al método a probar y verificación de excepción
-        assertThrows(UserUserNameOrEmailExisten.class, () -> authenticationService.signUp(request));
+        assertThrows(UserAuthNameOrEmailExisten.class, () -> authenticationService.signUp(request));
 
         // Verify
         verify(authenticationService, times(1)).signUp(any(UserSignUpRequest.class));
@@ -204,10 +204,10 @@ class AuthenticationRestControllerTest {
         request.setPassword("<PASSWORD>");
 
         // Mock del servicio
-        when(authenticationService.signIn(any(UserSignInRequest.class))).thenThrow(new UserSingInInvalid("Usuario o contraseña incorrectos"));
+        when(authenticationService.signIn(any(UserSignInRequest.class))).thenThrow(new AuthSingInInvalid("Usuario o contraseña incorrectos"));
 
         // Llamada al método a probar y verificación de excepción
-        assertThrows(UserSingInInvalid.class, () -> authenticationService.signIn(request));
+        assertThrows(AuthSingInInvalid.class, () -> authenticationService.signIn(request));
 
         // Verify
         verify(authenticationService, times(1)).signIn(any(UserSignInRequest.class));

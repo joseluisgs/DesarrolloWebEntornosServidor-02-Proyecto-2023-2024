@@ -3,12 +3,12 @@ package dev.joseluisgs.tiendaapispringboot.auth.services;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.AuthSingInInvalid;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserAuthNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserSingInInvalid;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUserNameOrEmailExisten;
-import dev.joseluisgs.tiendaapispringboot.auth.models.Role;
-import dev.joseluisgs.tiendaapispringboot.auth.models.User;
-import dev.joseluisgs.tiendaapispringboot.auth.repositories.UserRepository;
+import dev.joseluisgs.tiendaapispringboot.users.models.Role;
+import dev.joseluisgs.tiendaapispringboot.users.models.User;
+import dev.joseluisgs.tiendaapispringboot.users.repositories.UserRepository;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +64,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 var userStored = userRepository.save(user);
                 return JwtAuthResponse.builder().token(jwtService.generateToken(userStored)).build();
             } catch (DataIntegrityViolationException ex) {
-                throw new UserUserNameOrEmailExisten("El usuario con username " + request.getUsername() + " o email " + request.getEmail() + " ya existe");
+                throw new UserAuthNameOrEmailExisten("El usuario con username " + request.getUsername() + " o email " + request.getEmail() + " ya existe");
             }
         } else {
             throw new UserDiferentePasswords("Las contraseñas no coinciden");
@@ -85,7 +85,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         var user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new UserSingInInvalid("Usuario o contraseña incorrectos"));
+                .orElseThrow(() -> new AuthSingInInvalid("Usuario o contraseña incorrectos"));
         var jwt = jwtService.generateToken(user);
         return JwtAuthResponse.builder().token(jwt).build();
     }

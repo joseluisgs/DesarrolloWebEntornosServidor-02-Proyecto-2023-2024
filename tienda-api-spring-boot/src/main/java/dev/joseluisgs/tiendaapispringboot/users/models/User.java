@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.auth.models;
+package dev.joseluisgs.tiendaapispringboot.users.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;

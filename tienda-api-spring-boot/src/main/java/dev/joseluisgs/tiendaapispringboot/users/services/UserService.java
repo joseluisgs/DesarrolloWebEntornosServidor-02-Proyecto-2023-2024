@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.auth.services;
+package dev.joseluisgs.tiendaapispringboot.users.services;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

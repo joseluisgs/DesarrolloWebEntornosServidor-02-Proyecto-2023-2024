@@ -1,7 +1,7 @@
-package dev.joseluisgs.tiendaapispringboot.auth.services;
+package dev.joseluisgs.tiendaapispringboot.users.services;
 
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUsernameNotFound;
-import dev.joseluisgs.tiendaapispringboot.auth.repositories.UserRepository;
+import dev.joseluisgs.tiendaapispringboot.users.exceptions.UsernameNotFound;
+import dev.joseluisgs.tiendaapispringboot.users.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -29,9 +29,9 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UserUsernameNotFound {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFound {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserUsernameNotFound("Usuario con username " + username + " no encontrado"));
+                .orElseThrow(() -> new UsernameNotFound("Usuario con username " + username + " no encontrado"));
     }
 
 }

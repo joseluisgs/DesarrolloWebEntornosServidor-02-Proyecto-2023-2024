@@ -3,11 +3,11 @@ package dev.joseluisgs.tiendaapispringboot.auth.services;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.JwtAuthResponse;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignInRequest;
 import dev.joseluisgs.tiendaapispringboot.auth.dto.UserSignUpRequest;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.AuthSingInInvalid;
+import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserAuthNameOrEmailExisten;
 import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserDiferentePasswords;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserSingInInvalid;
-import dev.joseluisgs.tiendaapispringboot.auth.exceptions.UserUserNameOrEmailExisten;
-import dev.joseluisgs.tiendaapispringboot.auth.models.User;
-import dev.joseluisgs.tiendaapispringboot.auth.repositories.UserRepository;
+import dev.joseluisgs.tiendaapispringboot.users.models.User;
+import dev.joseluisgs.tiendaapispringboot.users.repositories.UserRepository;
 import dev.joseluisgs.tiendaapispringboot.utils.jwt.JwtService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -104,7 +104,7 @@ public class AuthenticationServiceImplTest {
         when(userRepository.save(any(User.class))).thenThrow(DataIntegrityViolationException.class);
 
         // Llamada al método a probar y verificación de excepción
-        assertThrows(UserUserNameOrEmailExisten.class, () -> authenticationService.signUp(request));
+        assertThrows(UserAuthNameOrEmailExisten.class, () -> authenticationService.signUp(request));
     }
 
     @Test
@@ -146,6 +146,6 @@ public class AuthenticationServiceImplTest {
         when(userRepository.findByUsername(request.getUsername())).thenReturn(Optional.empty());
 
         // Llamada al método a probar y verificación de excepción
-        assertThrows(UserSingInInvalid.class, () -> authenticationService.signIn(request));
+        assertThrows(AuthSingInInvalid.class, () -> authenticationService.signIn(request));
     }
 }

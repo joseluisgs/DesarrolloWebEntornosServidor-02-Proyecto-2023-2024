@@ -1,4 +1,4 @@
-package dev.joseluisgs.tiendaapispringboot.auth.models;
+package dev.joseluisgs.tiendaapispringboot.users.models;
 
 /**
  * Roles de usuario

@@ -1,6 +1,6 @@
-package dev.joseluisgs.tiendaapispringboot.auth.repositories;
+package dev.joseluisgs.tiendaapispringboot.users.repositories;
 
-import dev.joseluisgs.tiendaapispringboot.auth.models.User;
+import dev.joseluisgs.tiendaapispringboot.users.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
