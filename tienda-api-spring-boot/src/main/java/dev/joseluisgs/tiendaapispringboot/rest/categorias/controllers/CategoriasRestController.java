@@ -16,6 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +31,8 @@ import java.util.UUID;
 @RestController
 @RequestMapping("${api.version}/categorias") // Es la ruta del controlador
 @Slf4j
+// Categorias capadas solo para admin
+@PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
 public class CategoriasRestController {
     // Repositorio de productos
     private final CategoriasService categoriasService;
@@ -91,6 +94,7 @@ public class CategoriasRestController {
      * @throws HttpClientErrorException.BadRequest si la categoría no es correcta (400)
      */
     @PostMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Categoria> createCategory(@Valid @RequestBody CategoriaRequest categoriaCreateDto) {
         log.info("Creando categegoría: " + categoriaCreateDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(categoriasService.save(categoriaCreateDto));
@@ -106,6 +110,7 @@ public class CategoriasRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Categoria> updateCategory(@PathVariable UUID id, @Valid @RequestBody CategoriaRequest categoriaUpdateDto) {
         log.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
         return ResponseEntity.ok(categoriasService.update(id, categoriaUpdateDto));
@@ -121,6 +126,7 @@ public class CategoriasRestController {
      * @throws CategoriaConflict si no se puede borrar porque tiene productos asociados (409)
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
         log.info("Borrando categoria por id: " + id);
         categoriasService.deleteById(id);

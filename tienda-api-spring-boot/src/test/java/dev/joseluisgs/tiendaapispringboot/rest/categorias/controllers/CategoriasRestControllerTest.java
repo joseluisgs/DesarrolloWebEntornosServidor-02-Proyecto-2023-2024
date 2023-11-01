@@ -19,6 +19,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
@@ -34,6 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class) // Extensión de Mockito para usarlo
+@WithUserDetails(value = "user")
 class CategoriasRestControllerTest {
     private final String myEndpoint = "/v1/categorias";
 
@@ -50,6 +53,20 @@ class CategoriasRestControllerTest {
         this.categoriasService = categoriasService;
         mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
     }
+
+    @Test
+    @WithAnonymousUser
+    void NotAuthenticated() throws Exception {
+        // Localpoint
+        MockHttpServletResponse response = mockMvc.perform(
+                        get(myEndpoint)
+                                .accept(MediaType.APPLICATION_JSON)
+                                .contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse();
+
+        assertEquals(403, response.getStatus());
+    }
+
 
     @Test
     void getAllCategorias() throws Exception {
@@ -159,6 +176,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void createCategoria() throws Exception {
         var categoriaDto = new CategoriaRequest("TEST", false);
 
@@ -187,6 +205,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void createCategoriaWithBadRequest() throws Exception {
         var categoriaDto = new CategoriaRequest("TE", false);
 
@@ -210,6 +229,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void createCategoriaWithNombreExists() throws Exception {
         var categoriaDto = new CategoriaRequest("TEST", false);
 
@@ -236,6 +256,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void updateCategoria() throws Exception {
         var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
@@ -265,6 +286,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void updateCategoriaNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
@@ -309,6 +331,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void updateCategoriaWithNombreExists() throws Exception {
         var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
@@ -336,6 +359,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void deleteCategoria() throws Exception {
         var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
@@ -359,6 +383,7 @@ class CategoriasRestControllerTest {
     }
 
     @Test
+    @WithUserDetails(value = "admin")
     void deleteCategoriaNotFound() throws Exception {
         var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
