@@ -1,11 +1,11 @@
 package dev.joseluisgs.tiendaapispringboot.web.productos.controllers;
 
-import dev.joseluisgs.tiendaapispringboot.categorias.models.Categoria;
-import dev.joseluisgs.tiendaapispringboot.categorias.services.CategoriasService;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
-import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
-import dev.joseluisgs.tiendaapispringboot.productos.models.Producto;
-import dev.joseluisgs.tiendaapispringboot.productos.services.ProductosService;
+import dev.joseluisgs.tiendaapispringboot.rest.categorias.models.Categoria;
+import dev.joseluisgs.tiendaapispringboot.rest.categorias.services.CategoriasService;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoUpdateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.models.Producto;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.services.ProductosService;
 import dev.joseluisgs.tiendaapispringboot.web.productos.store.UserStore;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
