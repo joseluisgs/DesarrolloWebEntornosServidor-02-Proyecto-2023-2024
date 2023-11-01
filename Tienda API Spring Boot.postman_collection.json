@@ -953,16 +953,6 @@
 					"response": []
 				}
 			],
-			"auth": {
-				"type": "bearer",
-				"bearer": [
-					{
-						"key": "token",
-						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODg0MjA3MywiZXhwIjoxNjk4OTI4NDczfQ.oefUC11V45eZGBa6dCz8jHIWCXLwjfFCZ2bdxkoHdaHhkUVAkFF8We1oqBCfJkC0dqEwGQoe2TE9Ws5ivb1Xng",
-						"type": "string"
-					}
-				]
-			},
 			"event": [
 				{
 					"listen": "prerequest",
@@ -983,6 +973,36 @@
 					}
 				}
 			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODg2NDQ4NywiZXhwIjoxNjk4OTUwODg3LCJleHRyYUNsYWltcyI6e319.LzF9dXMKeyNpHUJvXVyFbwN8HJMGVMBOO9oHQwXPBDV0F0GgXRCAnOcRlw2rySf2GCBrfXj2bYD5P4qdSN5gwg",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		}
 	]
 }
