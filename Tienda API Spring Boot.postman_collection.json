@@ -7,6 +7,131 @@
 	},
 	"item": [
 		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"username\": \"user\",\r\n    \"password\": \"user1234\",\r\n    \"passwordComprobacion\": \"user1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signup",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"{{$randomUserName}}\",\r\n    \"password\": \"user1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"Admin1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Sign In Test",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"test\",\r\n    \"password\": \"Test1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/auth/signin",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"auth",
+								"signin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Categorias",
 			"item": [
 				{
@@ -35,7 +160,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:3000/v1/categorias?page=1&size=100",
+							"raw": "https://localhost:3000/v1/categorias?nombre=COM&page=1&size=1",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -48,8 +173,7 @@
 							"query": [
 								{
 									"key": "nombre",
-									"value": "dep",
-									"disabled": true
+									"value": "COM"
 								},
 								{
 									"key": "isDeleted",
@@ -62,7 +186,7 @@
 								},
 								{
 									"key": "size",
-									"value": "100"
+									"value": "1"
 								}
 							]
 						}
@@ -75,7 +199,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:3000/v1/categorias/1",
+							"raw": "https://localhost:3000/v1/categorias/6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -84,7 +208,7 @@
 							"path": [
 								"v1",
 								"categorias",
-								"1"
+								"6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154"
 							]
 						}
 					},
@@ -134,7 +258,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:3000/v1/categorias/2",
+							"raw": "https://localhost:3000/v1/categorias/6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -143,7 +267,7 @@
 							"path": [
 								"v1",
 								"categorias",
-								"2"
+								"6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154"
 							]
 						}
 					},
@@ -164,7 +288,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:3000/v1/categorias/2",
+							"raw": "https://localhost:3000/v1/categorias/6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -173,7 +297,7 @@
 							"path": [
 								"v1",
 								"categorias",
-								"2"
+								"6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154"
 							]
 						}
 					},
@@ -185,7 +309,7 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:3000/v1/categorias/1",
+							"raw": "https://localhost:3000/v1/categorias/6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -194,7 +318,7 @@
 							"path": [
 								"v1",
 								"categorias",
-								"1"
+								"6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154"
 							]
 						}
 					},
@@ -361,7 +485,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"OTROS\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
+							"raw": "{\r\n    \"marca\": \"{{$randomProductName}}\",\r\n    \"modelo\": \"{{$randomProductAdjective}}\",\r\n    \"descripcion\": \"{{$randomWord}}\",\r\n    \"precio\": \"{{$randomPrice}}\",\r\n    \"categoria\": \"COMIDA\",\r\n    \"stock\": \"{{$randomInt}}\",\r\n    \"imagen\": \"{{$randomPeopleImage}}\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -369,7 +493,7 @@
 							}
 						},
 						"url": {
-							"raw": "https://localhost:3000/v1/productos/6",
+							"raw": "https://localhost:3000/v1/productos/1",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -378,7 +502,7 @@
 							"path": [
 								"v1",
 								"productos",
-								"6"
+								"1"
 							]
 						}
 					},
@@ -674,24 +798,15 @@
 			]
 		},
 		{
-			"name": "Auth",
+			"name": "Users",
 			"item": [
 				{
-					"name": "Sign Up",
+					"name": "Get All",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"username\": \"user\",\r\n    \"password\": \"user1234\",\r\n    \"passwordComprobacion\": \"user1234\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "https://localhost:3000/v1/auth/signup",
+							"raw": "https://localhost:3000/v1/users",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -699,29 +814,19 @@
 							"port": "3000",
 							"path": [
 								"v1",
-								"auth",
-								"signup"
+								"users"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "Sign In",
+					"name": "Get by ID",
 					"request": {
-						"method": "POST",
+						"method": "GET",
 						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"{{$randomUserName}}\",\r\n    \"password\": \"user1234\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
 						"url": {
-							"raw": "https://localhost:3000/v1/auth/signin",
+							"raw": "https://localhost:3000/v1/users/3",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -729,68 +834,8 @@
 							"port": "3000",
 							"path": [
 								"v1",
-								"auth",
-								"signin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Sign In Admin",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"Admin1\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:3000/v1/auth/signin",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"v1",
-								"auth",
-								"signin"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Sign In Test",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"username\": \"test\",\r\n    \"password\": \"Test1\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "https://localhost:3000/v1/auth/signin",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"v1",
-								"auth",
-								"signin"
+								"users",
+								"3"
 							]
 						}
 					},
@@ -804,7 +849,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiaWF0IjoxNjk4Njk4NjY1LCJleHAiOjE2OTg3ODUwNjV9.-A2pqzrY2Z7FfYeK3-FHbIXD6hTCL_rwum12TkEQ8pgXeqQFJBdLaJpzJKyN2OQ6ea6FysJ1JHoyHacpqBxVUQ",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODg0MjA3MywiZXhwIjoxNjk4OTI4NDczfQ.oefUC11V45eZGBa6dCz8jHIWCXLwjfFCZ2bdxkoHdaHhkUVAkFF8We1oqBCfJkC0dqEwGQoe2TE9Ws5ivb1Xng",
 									"type": "string"
 								}
 							]
@@ -812,7 +857,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:3000/v1/auth/me",
+							"raw": "https://localhost:3000/v1/users/me",
 							"protocol": "https",
 							"host": [
 								"localhost"
@@ -820,12 +865,122 @@
 							"port": "3000",
 							"path": [
 								"v1",
-								"auth",
+								"users",
 								"me"
 							]
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "POST create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"username\": \"user\",\r\n    \"password\": \"user1234\",\r\n    \"roles\": [\r\n        \"USER\",\r\n        \"ADMIN\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/users",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST by Id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"username\": \"update\",\r\n    \"password\": \"update\",\r\n    \"roles\": [\r\n        \"USER\",\r\n        \"ADMIN\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://localhost:3000/v1/users/2",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by ID",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "https://localhost:3000/v1/users/3",
+							"protocol": "https",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"v1",
+								"users",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODg0MjA3MywiZXhwIjoxNjk4OTI4NDczfQ.oefUC11V45eZGBa6dCz8jHIWCXLwjfFCZ2bdxkoHdaHhkUVAkFF8We1oqBCfJkC0dqEwGQoe2TE9Ws5ivb1Xng",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}
