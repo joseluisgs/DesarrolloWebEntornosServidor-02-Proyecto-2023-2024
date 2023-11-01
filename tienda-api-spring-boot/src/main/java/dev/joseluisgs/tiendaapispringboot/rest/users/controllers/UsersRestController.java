@@ -33,7 +33,7 @@ import java.util.Optional;
 @RestController
 @Slf4j
 @RequestMapping("${api.version}/users") // Es la ruta del controlador
-@PreAuthorize("hasRole('ADMIN')") // Solo los usuarios pueden acceder
+@PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
 public class UsersRestController {
     private final UsersService usersService;
     private final PaginationLinksUtils paginationLinksUtils;
@@ -58,6 +58,7 @@ public class UsersRestController {
      * @return Respuesta con la página de usuarios
      */
     @GetMapping
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<PageResponse<UserResponse>> findAll(
             @RequestParam(required = false) Optional<String> username,
             @RequestParam(required = false) Optional<String> email,
@@ -88,6 +89,7 @@ public class UsersRestController {
      * @throws UserNotFound si no existe el usuario (404)
      */
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<UserInfoResponse> findById(@PathVariable Long id) {
         log.info("findById: id: {}", id);
         return ResponseEntity.ok(usersService.findById(id));
@@ -102,6 +104,7 @@ public class UsersRestController {
      * @throws HttpClientErrorException.BadRequest si hay algún error de validación
      */
     @PostMapping
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest) {
         log.info("save: userRequest: {}", userRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(usersService.save(userRequest));
@@ -118,6 +121,7 @@ public class UsersRestController {
      * @throws UserNameOrEmailExists               si el nombre de usuario o el email ya existen (400)
      */
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest) {
         log.info("update: id: {}, userRequest: {}", id, userRequest);
         return ResponseEntity.ok(usersService.update(id, userRequest));
@@ -131,6 +135,7 @@ public class UsersRestController {
      * @throws UserNotFound si no existe el usuario (404)
      */
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         log.info("delete: id: {}", id);
         usersService.deleteById(id);
@@ -143,12 +148,27 @@ public class UsersRestController {
      * @param user usuario autenticado
      * @return Datos del usuario
      */
-    @GetMapping("/me")
+    @GetMapping("/me/profile")
     @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
     public ResponseEntity<UserInfoResponse> me(@AuthenticationPrincipal User user) {
         log.info("Obteniendo usuario");
         // Esta autenticado, por lo que devolvemos sus datos ya sabemos su id
         return ResponseEntity.ok(usersService.findById(user.getId()));
+    }
+
+    @PutMapping("/me/profile")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    public ResponseEntity<UserResponse> updateMe(@AuthenticationPrincipal User user, @Valid @RequestBody UserRequest userRequest) {
+        log.info("updateMe: user: {}, userRequest: {}", user, userRequest);
+        return ResponseEntity.ok(usersService.update(user.getId(), userRequest));
+    }
+
+    @DeleteMapping("/me/profile")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    public ResponseEntity<Void> deleteMe(@AuthenticationPrincipal User user) {
+        log.info("deleteMe: user: {}", user);
+        usersService.deleteById(user.getId());
+        return ResponseEntity.noContent().build();
     }
 
 

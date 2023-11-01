@@ -3,6 +3,7 @@ package dev.joseluisgs.tiendaapispringboot.rest.users.dto;
 import dev.joseluisgs.tiendaapispringboot.rest.users.models.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,6 +28,7 @@ public class UserRequest {
     private String email;
     @NotBlank(message = "Password no puede estar vacío")
     @Length(min = 5, message = "Password debe tener al menos 5 caracteres")
+    @Size(min = 5, message = "Password debe tener al menos 5 caracteres")
     private String password;
     @Builder.Default
     private Set<Role> roles = Set.of(Role.USER);

@@ -369,7 +369,7 @@ class UsersRestControllerTest {
     @WithUserDetails
     void me() throws Exception {
         // Localpoint
-        var myLocalEndpoint = myEndpoint + "/me";
+        var myLocalEndpoint = myEndpoint + "/me/profile";
 
         // Arrange
         when(usersService.findById(anyLong())).thenReturn(userInfoResponse);
@@ -387,7 +387,7 @@ class UsersRestControllerTest {
     @WithAnonymousUser
     void me_AnonymousUser() throws Exception {
         // Localpoint
-        var myLocalEndpoint = myEndpoint + "/me";
+        var myLocalEndpoint = myEndpoint + "/me/profile";
         MockHttpServletResponse response = mockMvc.perform(
                         get(myLocalEndpoint)
                                 .accept(MediaType.APPLICATION_JSON)

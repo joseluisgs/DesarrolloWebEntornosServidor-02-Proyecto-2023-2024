@@ -22,6 +22,19 @@ public class UsersMapper {
                 .build();
     }
 
+    public User toUser(UserRequest request, Long id) {
+        return User.builder()
+                .id(id)
+                .nombre(request.getNombre())
+                .apellidos(request.getApellidos())
+                .username(request.getUsername())
+                .email(request.getEmail())
+                .password(request.getPassword())
+                .roles(request.getRoles())
+                .isDeleted(request.getIsDeleted())
+                .build();
+    }
+
     public UserResponse toUserResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())

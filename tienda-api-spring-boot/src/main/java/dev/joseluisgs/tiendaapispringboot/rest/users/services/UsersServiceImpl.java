@@ -97,10 +97,11 @@ public class UsersServiceImpl implements UsersService {
         usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(userRequest.getUsername(), userRequest.getEmail())
                 .ifPresent(u -> {
                     if (!u.getId().equals(id)) {
+                        System.out.println("usuario encontrado: " + u.getId() + " Mi id: " + id);
                         throw new UserNameOrEmailExists("Ya existe un usuario con ese username o email");
                     }
                 });
-        return usersMapper.toUserResponse(usersRepository.save(usersMapper.toUser(userRequest)));
+        return usersMapper.toUserResponse(usersRepository.save(usersMapper.toUser(userRequest, id)));
     }
 
     @Override
