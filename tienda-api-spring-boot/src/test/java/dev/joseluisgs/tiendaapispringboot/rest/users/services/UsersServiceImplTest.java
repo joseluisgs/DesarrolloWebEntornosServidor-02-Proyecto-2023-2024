@@ -148,7 +148,7 @@ class UsersServiceImplTest {
         Long userId = 1L;
         when(usersRepository.findById(userId)).thenReturn(Optional.of(user));
         when(usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString())).thenReturn(Optional.empty());
-        when(usersMapper.toUser(userRequest)).thenReturn(user);
+        when(usersMapper.toUser(userRequest, userId)).thenReturn(user);
         when(usersMapper.toUserResponse(user)).thenReturn(userResponse);
         when(usersRepository.save(user)).thenReturn(user);
 
@@ -165,7 +165,7 @@ class UsersServiceImplTest {
         // Verify
         verify(usersRepository, times(1)).findById(userId);
         verify(usersRepository, times(1)).findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(anyString(), anyString());
-        verify(usersMapper, times(1)).toUser(userRequest);
+        verify(usersMapper, times(1)).toUser(userRequest, userId);
         verify(usersMapper, times(1)).toUserResponse(user);
         verify(usersRepository, times(1)).save(user);
     }

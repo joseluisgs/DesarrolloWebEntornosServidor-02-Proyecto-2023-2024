@@ -332,6 +332,9 @@
 				{
 					"name": "GET All",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -359,6 +362,9 @@
 				{
 					"name": "GET All Page, Options and SortBy",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -424,6 +430,9 @@
 				{
 					"name": "GET By Id",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -609,16 +618,15 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "https://localhost:3000/v1/storage/1697626472771_image-demo.png",
+							"raw": "https://localhost:3000/storage/1698868340066_image-demo.png",
 							"protocol": "https",
 							"host": [
 								"localhost"
 							],
 							"port": "3000",
 							"path": [
-								"v1",
 								"storage",
-								"1697626472771_image-demo.png"
+								"1698868340066_image-demo.png"
 							]
 						}
 					},
@@ -736,7 +744,7 @@
 					"response": []
 				},
 				{
-					"name": "Update by id",
+					"name": "UPDATE",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -766,7 +774,7 @@
 					"response": []
 				},
 				{
-					"name": "DELETE by id",
+					"name": "DELETE",
 					"request": {
 						"method": "DELETE",
 						"header": [],
@@ -800,6 +808,236 @@
 		{
 			"name": "Users",
 			"item": [
+				{
+					"name": "Me",
+					"item": [
+						{
+							"name": "Profile",
+							"item": [
+								{
+									"name": "Me",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/profile",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"profile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Me",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/profile",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"profile"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Me",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"nombre\": \"{{$randomFirstName}}\",\r\n    \"apellidos\": \"{{$randomLastName}}\",\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"username\": \"admin\",\r\n    \"password\": \"caca1234\",\r\n    \"roles\": [\r\n        \"USER\",\r\n        \"ADMIN\"\r\n    ]\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/profile",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"profile"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "Pedidos",
+							"item": [
+								{
+									"name": "GET Pedidos",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/pedidos",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"pedidos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "GET Pedidos by Id",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/pedidos/65376a9522702a195b2d983d",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"pedidos",
+												"65376a9522702a195b2d983d"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "POST Create",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/pedidos",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"pedidos"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UPDATE",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"idUsuario\": 1,\r\n    \"cliente\": {\r\n        \"nombreCompleto\": \"Juan Perez\",\r\n        \"email\": \"juanperez@gmail.com\",\r\n        \"telefono\": \"+34123456789\",\r\n        \"direccion\": {\r\n            \"calle\": \"Calle Mayor\",\r\n            \"numero\": \"10\",\r\n            \"ciudad\": \"Madrid\",\r\n            \"provincia\": \"Madrid\",\r\n            \"pais\": \"España\",\r\n            \"codigoPostal\": \"28001\"\r\n        }\r\n    },\r\n    \"lineasPedido\": [\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174001\",\r\n            \"idProducto\": 2,\r\n            \"precioProducto\": 19.99,\r\n            \"cantidad\": 1\r\n        },\r\n        {\r\n            \"id\": \"123e4567-e89b-12d3-a456-426614174002\",\r\n            \"idProducto\": 3,\r\n            \"precioProducto\": 15.99,\r\n            \"cantidad\": 2\r\n        }\r\n    ]\r\n}\r\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/pedidos/6542c2c94efd947500a5a23e",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"pedidos",
+												"6542c2c94efd947500a5a23e"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "DELETE",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "https://localhost:3000/v1/users/me/pedidos/6542c2c94efd947500a5a23e",
+											"protocol": "https",
+											"host": [
+												"localhost"
+											],
+											"port": "3000",
+											"path": [
+												"v1",
+												"users",
+												"me",
+												"pedidos",
+												"6542c2c94efd947500a5a23e"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
 				{
 					"name": "Get All",
 					"request": {
@@ -836,37 +1074,6 @@
 								"v1",
 								"users",
 								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Me",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlhdCI6MTY5ODg0MjA3MywiZXhwIjoxNjk4OTI4NDczfQ.oefUC11V45eZGBa6dCz8jHIWCXLwjfFCZ2bdxkoHdaHhkUVAkFF8We1oqBCfJkC0dqEwGQoe2TE9Ws5ivb1Xng",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "https://localhost:3000/v1/users/me",
-							"protocol": "https",
-							"host": [
-								"localhost"
-							],
-							"port": "3000",
-							"path": [
-								"v1",
-								"users",
-								"me"
 							]
 						}
 					},

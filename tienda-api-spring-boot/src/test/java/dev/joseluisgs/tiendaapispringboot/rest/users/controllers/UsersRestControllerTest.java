@@ -366,7 +366,7 @@ class UsersRestControllerTest {
     // Este lo puede hacer cualquiera que esté autenticado
     // Pero autentication principal necesita uno de vverdad, por ueso usamos admin o user
     // que está en la base de datos data.sql que lo buscará con el userDetailsService
-    @WithUserDetails
+    @WithUserDetails("admin")
     void me() throws Exception {
         // Localpoint
         var myLocalEndpoint = myEndpoint + "/me/profile";

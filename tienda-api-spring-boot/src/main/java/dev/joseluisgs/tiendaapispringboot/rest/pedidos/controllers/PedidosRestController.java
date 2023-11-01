@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.rest.pedidos.controllers;
 
+import dev.joseluisgs.tiendaapispringboot.rest.pedidos.exceptions.*;
 import dev.joseluisgs.tiendaapispringboot.rest.pedidos.models.Pedido;
 import dev.joseluisgs.tiendaapispringboot.rest.pedidos.services.PedidosService;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @RestController
@@ -33,7 +35,16 @@ public class PedidosRestController {
         this.paginationLinksUtils = paginationLinksUtils;
     }
 
-    // Get pedidos
+    /**
+     * Obtiene todos los pedidos
+     *
+     * @param page      Número de página
+     * @param size      Tamaño de la página
+     * @param sortBy    Campo de ordenación
+     * @param direction Dirección de ordenación
+     * @param request   Petición
+     * @return Lista de pedidos paginada
+     */
     @GetMapping()
     public ResponseEntity<PageResponse<Pedido>> getAllPedidos(
             @RequestParam(defaultValue = "0") int page,
@@ -51,12 +62,30 @@ public class PedidosRestController {
                 .body(PageResponse.of(pageResult, sortBy, direction));
     }
 
+    /**
+     * Obtiene un pedido por su id
+     *
+     * @param idPedido id del pedido
+     * @return Pedido
+     * @throws PedidoNotFound si no existe el pedido (404)
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> getPedido(@PathVariable("id") ObjectId idPedido) {
         log.info("Obteniendo pedido con id: " + idPedido);
         return ResponseEntity.ok(pedidosService.findById(idPedido));
     }
 
+    /**
+     * Obtiene los pedidos de un usuario
+     *
+     * @param idUsuario id del usuario
+     * @param page      Número de página
+     * @param size      Tamaño de la página
+     * @param sortBy    Campo de ordenación
+     * @param direction Dirección de ordenación
+     * @return Lista de pedidos paginada
+     * @throws PedidoNotFound si no existe el pedido (404)
+     */
     @GetMapping("/usuario/{id}")
     public ResponseEntity<PageResponse<Pedido>> getPedidosByUsuario(
             @PathVariable("id") Long idUsuario,
@@ -71,19 +100,49 @@ public class PedidosRestController {
         return ResponseEntity.ok(PageResponse.of(pedidosService.findByIdUsuario(idUsuario, pageable), sortBy, direction));
     }
 
-    // Post pedidos
+    /**
+     * Crea un pedido para el usuario actual
+     *
+     * @param pedido pedido a crear
+     * @return Pedido creado
+     * @throws HttpClientErrorException.BadRequest si hay algún error de validación (400)
+     * @throws PedidoNotItems                      si no hay items en el pedido (400)
+     * @throws ProductoBadPrice                    si el precio del producto no es correcto (400)
+     * @throws ProductoNotFound                    si no existe el producto (404)
+     * @throws ProductoNotStock                    si no hay stock del producto (400)
+     */
     @PostMapping()
     public ResponseEntity<Pedido> createPedido(@Valid @RequestBody Pedido pedido) {
         log.info("Creando pedido: " + pedido);
         return ResponseEntity.status(HttpStatus.CREATED).body(pedidosService.save(pedido));
     }
 
+    /**
+     * Actualiza un pedido
+     *
+     * @param idPedido id del pedido
+     * @param pedido   pedido a actualizar
+     * @return Pedido actualizado
+     * @throws PedidoNotFound                      si no existe el pedido (404)
+     * @throws HttpClientErrorException.BadRequest si hay algún error de validación (400)
+     * @throws PedidoNotItems                      si no hay items en el pedido (400)
+     * @throws ProductoBadPrice                    si el precio del producto no es correcto (400)
+     * @throws ProductoNotFound                    si no existe el producto (404)
+     * @throws ProductoNotStock                    si no hay stock del producto (400)
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Pedido> updatePedido(@PathVariable("id") ObjectId idPedido, @Valid @RequestBody Pedido pedido) {
         log.info("Actualizando pedido con id: " + idPedido);
         return ResponseEntity.ok(pedidosService.update(idPedido, pedido));
     }
 
+    /**
+     * Borra un pedido
+     *
+     * @param idPedido id del pedido
+     * @return Pedido borrado
+     * @throws PedidoNotFound si no existe el pedido (404)
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Pedido> deletePedido(@PathVariable("id") ObjectId idPedido) {
         log.info("Borrando pedido con id: " + idPedido);
