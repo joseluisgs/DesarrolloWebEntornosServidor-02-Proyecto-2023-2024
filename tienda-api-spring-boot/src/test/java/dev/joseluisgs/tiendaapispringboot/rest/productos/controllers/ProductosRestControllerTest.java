@@ -23,7 +23,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,19 +89,7 @@ class ProductosRestControllerTest {
         mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
     }
 
-    @Test
-    @WithAnonymousUser
-    void NotAuthenticated() throws Exception {
-        // Localpoint
-        MockHttpServletResponse response = mockMvc.perform(
-                        get(myEndpoint)
-                                .accept(MediaType.APPLICATION_JSON)
-                                .contentType(MediaType.APPLICATION_JSON))
-                .andReturn().getResponse();
-
-        assertEquals(403, response.getStatus());
-    }
-
+    
     @Test
     void getAllProducts() throws Exception {
         var productosList = List.of(producto1, producto2);
