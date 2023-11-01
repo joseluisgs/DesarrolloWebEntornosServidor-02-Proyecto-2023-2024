@@ -50,7 +50,7 @@ VALUES ('Nike', 'Modelo1', 'Descripción1', 10.99, 'https://via.placeholder.com/
         '1e2584d8-db52-45da-b2d6-4203637ea78e',
         '6dbcbf5e-8e1c-47cc-8578-7b0a33ebc154');
 
--- Datos de ejemplo USUARIO
+-- Datos de ejemplo USUARIOS
 -- Contraseña: Admin1
 insert into USUARIOS (nombre, apellidos, username, email, password)
 values ('Admin', 'AdminAdmin', 'admin', 'admin@prueba.net',
@@ -73,4 +73,4 @@ insert into USUARIOS (nombre, apellidos, username, email, password)
 values ('otro', 'OtroOtro', 'otro', 'otro@otro.com',
         '$2a$12$3Q4.UZbvBMBEvIwwjGEjae/zrIr6S50NusUlBcCNmBd2382eyU0bS');
 insert into USER_ROLES (user_id, roles)
-values (2, 'USER');
+values (3, 'USER');

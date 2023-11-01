@@ -1,5 +1,6 @@
 package dev.joseluisgs.tiendaapispringboot.users.services;
 
+import dev.joseluisgs.tiendaapispringboot.users.dto.UserInfoResponse;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserRequest;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserResponse;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public interface UserService extends UserDetailsService {
 
     Page<UserResponse> findAll(Optional<String> username, Optional<String> email, Optional<Boolean> isDeleted, Pageable pageable);
 
-    UserResponse findById(Long id);
+    UserInfoResponse findById(Long id);
 
     UserResponse save(UserRequest userRequest);
 

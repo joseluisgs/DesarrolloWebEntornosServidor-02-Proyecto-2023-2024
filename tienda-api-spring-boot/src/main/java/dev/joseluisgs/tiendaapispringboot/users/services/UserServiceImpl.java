@@ -1,6 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.users.services;
 
 import dev.joseluisgs.tiendaapispringboot.pedidos.repositories.PedidosRepository;
+import dev.joseluisgs.tiendaapispringboot.users.dto.UserInfoResponse;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserRequest;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNameOrEmailExists;
@@ -87,9 +88,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Cacheable(key = "#id")
-    public UserResponse findById(Long id) {
+    public UserInfoResponse findById(Long id) {
         log.info("Buscando usuario por id: " + id);
-        return usersRepository.findById(id).map(usersMapper::toUserResponse).orElseThrow(() -> new UserNotFound(id));
+        // Buscamos el usuario
+        var user = usersRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
+        // Buscamos sus pedidos
+        var pedidos = pedidosRepository.findPedidosIdsByIdUsuario(id).stream().map(p -> p.getId().toHexString()).toList();
+        return usersMapper.toUserInfoResponse(user, pedidos);
     }
 
     @Override
