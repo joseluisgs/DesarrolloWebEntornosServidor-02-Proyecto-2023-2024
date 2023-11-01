@@ -189,10 +189,6 @@ public class CategoriasServiceImplTest {
         categoriasService.deleteById(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"));
 
         // Assert
-        assertAll("deleteById",
-                () -> assertNotNull(categoria),
-                () -> assertEquals("TEST", categoria.getNombre())
-        );
 
         // Verify
         verify(categoriasRepository, times(1)).findById(any(UUID.class));

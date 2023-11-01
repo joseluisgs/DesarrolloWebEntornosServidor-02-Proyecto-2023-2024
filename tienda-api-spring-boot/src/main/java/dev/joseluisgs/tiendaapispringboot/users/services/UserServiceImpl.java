@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     @CachePut(key = "#result.id")
     public UserResponse update(Long id, UserRequest userRequest) {
         log.info("Actualizando usuario: " + userRequest);
-        User userActual = usersRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
+        usersRepository.findById(id).orElseThrow(() -> new UserNotFound(id));
         // No debe existir otro con el mismo username o email, y si existe soy yo mismo
         usersRepository.findByUsernameEqualsIgnoreCaseOrEmailEqualsIgnoreCase(userRequest.getUsername(), userRequest.getEmail())
                 .ifPresent(u -> {

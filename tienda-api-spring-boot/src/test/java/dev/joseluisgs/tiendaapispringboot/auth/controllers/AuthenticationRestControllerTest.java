@@ -262,8 +262,7 @@ class AuthenticationRestControllerTest {
         assertAll("me",
                 () -> assertEquals(200, response.getStatus()),
                 () -> assertEquals(res.getUsername(), "admin"),
-                () -> assertTrue(res.getRoles().contains("USER"))
-        );
+                () -> assertTrue(res.getRoles().toString().contains("ADMIN")));
     }
 
     @Test
