@@ -1,9 +1,11 @@
 package dev.joseluisgs.tiendaapispringboot.users.controllers;
 
+import dev.joseluisgs.tiendaapispringboot.users.dto.UserInfoResponse;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserRequest;
 import dev.joseluisgs.tiendaapispringboot.users.dto.UserResponse;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNameOrEmailExists;
 import dev.joseluisgs.tiendaapispringboot.users.exceptions.UserNotFound;
+import dev.joseluisgs.tiendaapispringboot.users.models.User;
 import dev.joseluisgs.tiendaapispringboot.users.services.UserService;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
@@ -17,6 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
@@ -85,7 +88,7 @@ public class UsersRestController {
      * @throws UserNotFound si no existe el usuario (404)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> findById(@PathVariable Long id) {
+    public ResponseEntity<UserInfoResponse> findById(@PathVariable Long id) {
         log.info("findById: id: {}", id);
         return ResponseEntity.ok(usersService.findById(id));
     }
@@ -132,6 +135,30 @@ public class UsersRestController {
         log.info("delete: id: {}", id);
         usersService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Obtiene el usuario actual
+     *
+     * @param user usuario autenticado
+     * @return Datos del usuario
+     */
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('USER')") // Solo los usuarios pueden acceder
+    public ResponseEntity<dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse> me(@AuthenticationPrincipal User user) {
+        log.info("Obteniendo usuario");
+        System.out.println(user.getAuthorities());
+        return ResponseEntity.ok(dev.joseluisgs.tiendaapispringboot.auth.dto.UserResponse.builder()
+                .id(user.getId())
+                .nombre(user.getNombre())
+                .apellidos(user.getApellidos())
+                .username(user.getUsername())
+                .email(user.getEmail())
+                // Depende de como lo queramos devolver
+                //.roles(user.getRoles().stream().map(Enum::name).collect(Collectors.joining(",")))
+                .roles(user.getRoles())
+                .build()
+        );
     }
 
 
