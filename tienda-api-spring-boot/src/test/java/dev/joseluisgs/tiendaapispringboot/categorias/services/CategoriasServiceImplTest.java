@@ -16,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class CategoriasServiceImplTest {
 
-    private final Categoria categoria = new Categoria(1L, "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
+    private final Categoria categoria = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
     private final CategoriaRequest categoriaRequest = new CategoriaRequest("TEST", false);
     @Mock
     private CategoriasRepository categoriasRepository;
@@ -78,10 +79,10 @@ public class CategoriasServiceImplTest {
     @Test
     public void testFindById() {
         // Arrange
-        when(categoriasRepository.findById(any(Long.class))).thenReturn(Optional.of(categoria));
+        when(categoriasRepository.findById(any(UUID.class))).thenReturn(Optional.of(categoria));
 
         // Act
-        var res = categoriasService.findById(1L);
+        var res = categoriasService.findById(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"));
 
         // Assert
         assertAll("findById",
@@ -90,7 +91,7 @@ public class CategoriasServiceImplTest {
         );
 
         // Verify
-        verify(categoriasRepository, times(1)).findById(any(Long.class));
+        verify(categoriasRepository, times(1)).findById(any(UUID.class));
     }
 
     @Test
@@ -136,13 +137,13 @@ public class CategoriasServiceImplTest {
     @Test
     public void testUpdate() {
         // Arrange
-        when(categoriasRepository.findById(any(Long.class))).thenReturn(Optional.of(categoria));
+        when(categoriasRepository.findById(any(UUID.class))).thenReturn(Optional.of(categoria));
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.of(categoria));
         when(categoriasMapper.toCategoria(any(CategoriaRequest.class), any(Categoria.class))).thenReturn(categoria);
         when(categoriasRepository.save(any(Categoria.class))).thenReturn(categoria);
 
         // Act
-        categoriasService.update(1L, categoriaRequest);
+        categoriasService.update(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), categoriaRequest);
 
         // Assert
         assertAll("update",
@@ -152,7 +153,7 @@ public class CategoriasServiceImplTest {
 
 
         // Verify
-        verify(categoriasRepository, times(1)).findById(any(Long.class));
+        verify(categoriasRepository, times(1)).findById(any(UUID.class));
         verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(any(String.class));
         verify(categoriasRepository, times(1)).save(any(Categoria.class));
     }
@@ -160,11 +161,11 @@ public class CategoriasServiceImplTest {
     @Test
     public void testUpdateConflict() {
         // Arrange
-        when(categoriasRepository.findById(any(Long.class))).thenReturn(Optional.of(categoria));
+        when(categoriasRepository.findById(any(UUID.class))).thenReturn(Optional.of(categoria));
         when(categoriasRepository.findByNombreEqualsIgnoreCase(any(String.class))).thenReturn(Optional.of(categoria));
 
         // Act, el id no debe ser igual, no se puede actualizar, porqe ya existe
-        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.update(2L, categoriaRequest));
+        var res = assertThrows(CategoriaConflict.class, () -> categoriasService.update(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7338"), categoriaRequest));
 
         // Assert
         assertAll("updateConflict",
@@ -173,7 +174,7 @@ public class CategoriasServiceImplTest {
         );
 
         // Verify
-        verify(categoriasRepository, times(1)).findById(any(Long.class));
+        verify(categoriasRepository, times(1)).findById(any(UUID.class));
         verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(any(String.class));
         verify(categoriasRepository, times(0)).save(any(Categoria.class));
     }
@@ -181,11 +182,11 @@ public class CategoriasServiceImplTest {
     @Test
     public void testDeleteById() {
         // Arrange
-        when(categoriasRepository.findById(any(Long.class))).thenReturn(Optional.of(categoria));
-        when(categoriasRepository.existsProductoById(any(Long.class))).thenReturn(false);
+        when(categoriasRepository.findById(any(UUID.class))).thenReturn(Optional.of(categoria));
+        when(categoriasRepository.existsProductoById(any(UUID.class))).thenReturn(false);
 
         // Act
-        categoriasService.deleteById(1L);
+        categoriasService.deleteById(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"));
 
         // Assert
         assertAll("deleteById",
@@ -194,8 +195,8 @@ public class CategoriasServiceImplTest {
         );
 
         // Verify
-        verify(categoriasRepository, times(1)).findById(any(Long.class));
-        verify(categoriasRepository, times(1)).existsProductoById(any(Long.class));
-        verify(categoriasRepository, times(1)).deleteById(any(Long.class));
+        verify(categoriasRepository, times(1)).findById(any(UUID.class));
+        verify(categoriasRepository, times(1)).existsProductoById(any(UUID.class));
+        verify(categoriasRepository, times(1)).deleteById(any(UUID.class));
     }
 }

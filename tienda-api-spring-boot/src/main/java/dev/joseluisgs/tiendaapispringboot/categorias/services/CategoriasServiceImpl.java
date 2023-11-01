@@ -19,6 +19,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @Slf4j
@@ -62,7 +63,7 @@ public class CategoriasServiceImpl implements CategoriasService {
 
     @Override
     @Cacheable(key = "#id")
-    public Categoria findById(Long id) {
+    public Categoria findById(UUID id) {
         log.info("Buscando categoría por id: " + id);
         return categoriasRepository.findById(id).orElseThrow(() -> new CategoriaNotFound(id));
     }
@@ -80,7 +81,7 @@ public class CategoriasServiceImpl implements CategoriasService {
 
     @Override
     @CachePut(key = "#result.id")
-    public Categoria update(Long id, CategoriaRequest categoriaRequest) {
+    public Categoria update(UUID id, CategoriaRequest categoriaRequest) {
         log.info("Actualizando categoría: " + categoriaRequest);
         Categoria categoriaActual = findById(id);
         // No debe existir una con el mismo nombre, y si existe soy yo mismo
@@ -96,7 +97,7 @@ public class CategoriasServiceImpl implements CategoriasService {
     @Override
     @CacheEvict(key = "#id")
     @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
-    public void deleteById(Long id) {
+    public void deleteById(UUID id) {
         log.info("Borrando categoría por id: " + id);
         Categoria categoria = findById(id);
         //categoriasRepository.deleteById(id);
@@ -106,9 +107,9 @@ public class CategoriasServiceImpl implements CategoriasService {
         // Otra forma es que comprobaramos si hay productos para borrarlos antes
         if (categoriasRepository.existsProductoById(id)) {
             log.warn("No se puede borrar la categoría con id: " + id + " porque tiene productos asociados");
-            // throw new CategoriaConflict("No se puede borrar la categoría con id " + id + " porque tiene productos asociados");
+            throw new CategoriaConflict("No se puede borrar la categoría con id " + id + " porque tiene productos asociados");
             // Otra forma es hacer el borrado logico
-            categoriasRepository.updateIsDeletedToTrueById(id);
+            // categoriasRepository.updateIsDeletedToTrueById(id);
         } else {
             categoriasRepository.deleteById(id);
         }

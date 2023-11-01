@@ -24,10 +24,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
@@ -37,8 +37,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 class CategoriasRestControllerTest {
     private final String myEndpoint = "/v1/categorias";
 
-    private final Categoria categoria1 = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
-    private final Categoria categoria2 = new Categoria(2L, "ELECTRONICA", LocalDateTime.now(), LocalDateTime.now(), false);
+    private final Categoria categoria1 = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
+    private final Categoria categoria2 = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "ELECTRONICA", LocalDateTime.now(), LocalDateTime.now(), false);
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     MockMvc mockMvc; // Cliente MVC
@@ -114,10 +114,10 @@ class CategoriasRestControllerTest {
 
     @Test
     void getCategoriaById() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
         // Arrange
-        when(categoriasService.findById(anyLong())).thenReturn(categoria1);
+        when(categoriasService.findById(any(UUID.class))).thenReturn(categoria1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -134,15 +134,15 @@ class CategoriasRestControllerTest {
         );
 
         // Verify
-        verify(categoriasService, times(1)).findById(anyLong());
+        verify(categoriasService, times(1)).findById(any(UUID.class));
     }
 
     @Test
     void getCategoriaByIdNotFound() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
         // Arrange
-        when(categoriasService.findById(anyLong())).thenThrow(new CategoriaNotFound(1L));
+        when(categoriasService.findById(any(UUID.class))).thenThrow(new CategoriaNotFound("f58da854-f369-4539-81e3-42451a1f1f15"));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -155,9 +155,9 @@ class CategoriasRestControllerTest {
         assertEquals(404, response.getStatus());
 
         // Verify
-        verify(categoriasService, times(1)).findById(anyLong());
+        verify(categoriasService, times(1)).findById(any(UUID.class));
     }
-
+    
     @Test
     void createCategoria() throws Exception {
         var categoriaDto = new CategoriaRequest("TEST", false);
@@ -237,11 +237,11 @@ class CategoriasRestControllerTest {
 
     @Test
     void updateCategoria() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenReturn(categoria1);
+        when(categoriasService.update(any(UUID.class), any(CategoriaRequest.class))).thenReturn(categoria1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -261,16 +261,16 @@ class CategoriasRestControllerTest {
         );
 
         // Verify
-        verify(categoriasService, times(1)).update(anyLong(), any(CategoriaRequest.class));
+        verify(categoriasService, times(1)).update(any(UUID.class), any(CategoriaRequest.class));
     }
 
     @Test
     void updateCategoriaNotFound() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenThrow(new CategoriaNotFound(1L));
+        when(categoriasService.update(any(UUID.class), any(CategoriaRequest.class))).thenThrow(new CategoriaNotFound("f58da854-f369-4539-81e3-42451a1f1f15"));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -287,7 +287,7 @@ class CategoriasRestControllerTest {
 
     @Test
     void updateProductWithBadRequest() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TE", false);
 
         // Consulto el endpoint
@@ -310,11 +310,11 @@ class CategoriasRestControllerTest {
 
     @Test
     void updateCategoriaWithNombreExists() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
         var categoriaDto = new CategoriaRequest("TEST", false);
 
         // Arrange
-        when(categoriasService.update(anyLong(), any(CategoriaRequest.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
+        when(categoriasService.update(any(UUID.class), any(CategoriaRequest.class))).thenThrow(new CategoriaConflict("Ya existe una categoría con el nombre " + categoriaDto.getNombre()));
 
         // Arrange
         // Consulto el endpoint
@@ -337,10 +337,10 @@ class CategoriasRestControllerTest {
 
     @Test
     void deleteCategoria() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
         // Arrange
-        doNothing().when(categoriasService).deleteById(anyLong());
+        doNothing().when(categoriasService).deleteById(any(UUID.class));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -355,15 +355,15 @@ class CategoriasRestControllerTest {
         );
 
         // Verify
-        verify(categoriasService, times(1)).deleteById(anyLong());
+        verify(categoriasService, times(1)).deleteById(any(UUID.class));
     }
 
     @Test
     void deleteCategoriaNotFound() throws Exception {
-        var myLocalEndpoint = myEndpoint + "/1";
+        var myLocalEndpoint = myEndpoint + "/f58da854-f369-4539-81e3-42451a1f1f15";
 
         // Arrange
-        doThrow(new CategoriaNotFound(1L)).when(categoriasService).deleteById(anyLong());
+        doThrow(new CategoriaNotFound("f58da854-f369-4539-81e3-42451a1f1f15")).when(categoriasService).deleteById(any(UUID.class));
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -376,6 +376,6 @@ class CategoriasRestControllerTest {
         assertEquals(404, response.getStatus());
 
         // Verify
-        verify(categoriasService, times(1)).deleteById(anyLong());
+        verify(categoriasService, times(1)).deleteById(any(UUID.class));
     }
 }

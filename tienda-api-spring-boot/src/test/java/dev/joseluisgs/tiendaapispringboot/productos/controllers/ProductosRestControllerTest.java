@@ -42,7 +42,7 @@ class ProductosRestControllerTest {
     private final String myEndpoint = "/v1/productos";
 
     private final Categoria categoria = Categoria.builder()
-            .id(1L)
+            .id(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"))
             .nombre("DEPORTES")
             .build();
     private final Producto producto1 = Producto.builder()

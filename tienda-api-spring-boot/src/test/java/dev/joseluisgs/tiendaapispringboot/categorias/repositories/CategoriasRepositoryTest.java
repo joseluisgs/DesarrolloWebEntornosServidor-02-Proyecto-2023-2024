@@ -9,13 +9,14 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
 @DataJpaTest
 class CategoriasRepositoryTest {
-    private final Categoria categoria = new Categoria(null, "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
+    private final Categoria categoria = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
 
     @Autowired
     private CategoriasRepository repository;
@@ -58,19 +59,19 @@ class CategoriasRepositoryTest {
     @Test
     void findByID() {
         // Act
-        Categoria categoria = repository.findById(1L).orElse(null);
+        Categoria categoriaRes = repository.findById(categoria.getId()).orElse(null);
 
         // Assert
         assertAll("findById",
-                () -> assertNotNull(categoria),
-                () -> assertEquals("DEPORTES", categoria.getNombre())
+                () -> assertNotNull(categoriaRes),
+                () -> assertEquals("TEST", categoriaRes.getNombre())
         );
     }
 
     @Test
     void findByIdNotFound() {
         // Act
-        Categoria categoria = repository.findById(100L).orElse(null);
+        Categoria categoria = repository.findById(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a733a")).orElse(null);
 
         // Assert
         assertNull(categoria);
@@ -79,7 +80,7 @@ class CategoriasRepositoryTest {
     @Test
     void save() {
         // Act
-        Categoria categoria = repository.save(new Categoria(null, "TEST2", LocalDateTime.now(), LocalDateTime.now(), false));
+        Categoria categoria = repository.save(new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "TEST2", LocalDateTime.now(), LocalDateTime.now(), false));
 
         // Assert
         assertAll("save",
@@ -91,8 +92,8 @@ class CategoriasRepositoryTest {
     @Test
     void update() {
         // Act
-        var categoria = repository.findById(1L).orElse(null);
-        Categoria categoriaActualizada = repository.save(new Categoria(categoria.getId(), "TEST3", LocalDateTime.now(), LocalDateTime.now(), false));
+        var categoriaRes = repository.findById(categoria.getId()).orElse(null);
+        Categoria categoriaActualizada = repository.save(new Categoria(categoriaRes.getId(), "TEST3", LocalDateTime.now(), LocalDateTime.now(), false));
 
         // Assert
         assertAll("update",
@@ -104,9 +105,9 @@ class CategoriasRepositoryTest {
     @Test
     void delete() {
         // Act
-        var categoria = repository.findById(1L).orElse(null);
-        repository.delete(categoria);
-        Categoria categoriaBorrada = repository.findById(1L).orElse(null);
+        var categoriaRes = repository.findById(categoria.getId()).orElse(null);
+        repository.delete(categoriaRes);
+        Categoria categoriaBorrada = repository.findById(categoria.getId()).orElse(null);
 
         // Assert
         assertNull(categoriaBorrada);

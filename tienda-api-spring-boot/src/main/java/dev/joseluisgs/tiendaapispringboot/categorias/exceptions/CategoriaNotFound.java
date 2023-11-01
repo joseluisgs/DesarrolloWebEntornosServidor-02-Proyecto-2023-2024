@@ -3,13 +3,15 @@ package dev.joseluisgs.tiendaapispringboot.categorias.exceptions;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.util.UUID;
+
 /**
  * Excepción de producto no encontrado
  * Status 404
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class CategoriaNotFound extends CategoriaException {
-    public CategoriaNotFound(Long id) {
+    public CategoriaNotFound(UUID id) {
         super("Categoría con id " + id + " no encontrada");
     }
 

@@ -5,12 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,8 +23,9 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class) // Para que sea auditada y se autorellene
 public class Categoria {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @ColumnDefault("random_uuid()") // Para que se genere un UUID por defecto, analizar el SGDB que se usa
+    private UUID id = UUID.randomUUID();
     @Column(unique = true, nullable = false)
     @Length(min = 3, message = "La categoría debe tener al menos 3 caracteres")
     private String nombre;

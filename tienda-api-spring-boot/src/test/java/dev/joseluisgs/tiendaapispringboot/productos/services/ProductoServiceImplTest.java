@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProductoServiceImplTest {
 
-    private final Categoria categoria = new Categoria(1L, "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
+    private final Categoria categoria = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "DEPORTES", LocalDateTime.now(), LocalDateTime.now(), false);
 
     private final Producto producto1 = Producto.builder()
             .id(1L)

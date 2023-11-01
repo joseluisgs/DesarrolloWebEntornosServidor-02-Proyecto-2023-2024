@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Creamos el repositorio extendéndolo de JPA, siguiendo DAO
@@ -16,7 +17,7 @@ import java.util.Optional;
  * extiende de JpaSpecificationExecutor para tener las opciones de Specificación y busqueda con Criteria
  */
 @Repository
-public interface CategoriasRepository extends JpaRepository<Categoria, Long>, JpaSpecificationExecutor<Categoria> {
+public interface CategoriasRepository extends JpaRepository<Categoria, UUID>, JpaSpecificationExecutor<Categoria> {
     // Encontrar por nombre exacto
     Optional<Categoria> findByNombreEqualsIgnoreCase(String nombre);
 
@@ -30,10 +31,10 @@ public interface CategoriasRepository extends JpaRepository<Categoria, Long>, Jp
     @Modifying // Para indicar que es una consulta de actualización
     @Query("UPDATE Categoria p SET p.isDeleted = true WHERE p.id = :id")
     // Consulta de actualización
-    void updateIsDeletedToTrueById(Long id);
+    void updateIsDeletedToTrueById(UUID id);
 
     // Obtienes si existe un producto con el id de la categoría
     @Query("SELECT CASE WHEN COUNT(p) > 0 THEN true ELSE false END FROM Producto p WHERE p.categoria.id = :id")
-    Boolean existsProductoById(Long id);
+    Boolean existsProductoById(UUID id);
 
 }

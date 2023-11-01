@@ -25,6 +25,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("${api.version}/categorias") // Es la ruta del controlador
@@ -77,7 +78,7 @@ public class CategoriasRestController {
      * @throws CategoriaNotFound si no existe la categoría (404)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Categoria> getCategoryById(@PathVariable Long id) {
+    public ResponseEntity<Categoria> getCategoryById(@PathVariable UUID id) {
         log.info("Buscando producto por id: " + id);
         return ResponseEntity.ok(categoriasService.findById(id));
     }
@@ -105,7 +106,7 @@ public class CategoriasRestController {
      * @throws HttpClientErrorException.BadRequest si el producto no es correcto (400)
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Categoria> updateCategory(@PathVariable Long id, @Valid @RequestBody CategoriaRequest categoriaUpdateDto) {
+    public ResponseEntity<Categoria> updateCategory(@PathVariable UUID id, @Valid @RequestBody CategoriaRequest categoriaUpdateDto) {
         log.info("Actualizando categoria por id: " + id + " con categoria: " + categoriaUpdateDto);
         return ResponseEntity.ok(categoriasService.update(id, categoriaUpdateDto));
     }
@@ -120,7 +121,7 @@ public class CategoriasRestController {
      * @throws CategoriaConflict si no se puede borrar porque tiene productos asociados (409)
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCategory(@PathVariable UUID id) {
         log.info("Borrando categoria por id: " + id);
         categoriasService.deleteById(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
