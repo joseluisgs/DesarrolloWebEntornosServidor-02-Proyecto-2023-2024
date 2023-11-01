@@ -38,6 +38,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     // Thyemeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    // Spring Security
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     // Lombok
     compileOnly("org.projectlombok:lombok")
@@ -53,16 +55,22 @@ dependencies {
     // Para pasar a XML los responses, negocacion de contenido
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-xml")
 
+    // Para manejar los JWT tokens
+    // JWT (Json Web Token)
+    implementation("com.auth0:java-jwt:4.4.0")
+
 
     // Dependencias para Test
     testImplementation("org.springframework.boot:spring-boot-starter-test")
+    // Test Spring Security
+    testImplementation("org.springframework.security:spring-security-test")
 
     // MongoDB para test, pero no es necesario, usamos sus repositorios
     // testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo.spring31x:4.9.3")
 
     // Extras para web
     // Bootstrap
-    implementation("org.webjars:bootstrap:4.0.0")
+    implementation("org.webjars:bootstrap:4.6.2")
 
 }
 
