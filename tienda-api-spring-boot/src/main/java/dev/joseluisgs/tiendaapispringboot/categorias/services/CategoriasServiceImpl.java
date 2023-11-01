@@ -83,7 +83,7 @@ public class CategoriasServiceImpl implements CategoriasService {
     @CachePut(key = "#result.id")
     public Categoria update(UUID id, CategoriaRequest categoriaRequest) {
         log.info("Actualizando categoría: " + categoriaRequest);
-        Categoria categoriaActual = findById(id);
+        Categoria categoriaActual = categoriasRepository.findById(id).orElseThrow(() -> new CategoriaNotFound(id));
         // No debe existir una con el mismo nombre, y si existe soy yo mismo
         categoriasRepository.findByNombreEqualsIgnoreCase(categoriaRequest.getNombre()).ifPresent(c -> {
             if (!c.getId().equals(id)) {
@@ -99,7 +99,7 @@ public class CategoriasServiceImpl implements CategoriasService {
     @Transactional // Para que se haga todo o nada y no se quede a medias (por el update)
     public void deleteById(UUID id) {
         log.info("Borrando categoría por id: " + id);
-        Categoria categoria = findById(id);
+        Categoria categoria = categoriasRepository.findById(id).orElseThrow(() -> new CategoriaNotFound(id));
         //categoriasRepository.deleteById(id);
         // O lo marcamos como borrado, para evitar problemas de cascada, no podemos borrar categorías con productos!!!
         // La otra forma es que comprobaramos si hay productos para borrarlos antes

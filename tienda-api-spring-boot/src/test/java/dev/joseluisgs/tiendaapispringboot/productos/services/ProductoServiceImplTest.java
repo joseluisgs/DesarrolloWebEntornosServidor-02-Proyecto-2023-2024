@@ -8,6 +8,7 @@ import dev.joseluisgs.tiendaapispringboot.notifications.mapper.ProductoNotificat
 import dev.joseluisgs.tiendaapispringboot.notifications.models.Notificacion;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoCreateRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.dto.ProductoUpdateRequest;
+import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadRequest;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoBadUuid;
 import dev.joseluisgs.tiendaapispringboot.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.productos.mappers.ProductoMapper;
@@ -294,6 +295,31 @@ class ProductoServiceImplTest {
         verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(productoCreateRequest.getCategoria());
         verify(productosRepository, times(1)).save(productoCaptor.capture());
         verify(productoMapper, times(1)).toProduct(productoCreateRequest, categoria);
+    }
+
+    @Test
+    void save_BadRequestException_CategoriaNotFoundOrIsDeleted() throws IOException {
+        // Arrange
+        ProductoCreateRequest productoCreateRequest = ProductoCreateRequest.builder()
+                .marca("Marca1")
+                .modelo("Categoria1")
+                .descripcion("Descripción1")
+                .precio(100.0)
+                .imagen("http://placeimg.com/640/480/people")
+                .categoria("OTROS")
+                .stock(5)
+                .build();
+
+        when(categoriasRepository.findByNombreEqualsIgnoreCase(productoCreateRequest.getCategoria())).thenReturn(Optional.empty());
+
+        // Act & Assert
+        var res = assertThrows(ProductoBadRequest.class, () -> productoService.save(productoCreateRequest));
+        assertEquals("La categoría " + productoCreateRequest.getCategoria() + " no existe o está borrada", res.getMessage());
+
+        // Verify
+        verify(categoriasRepository, times(1)).findByNombreEqualsIgnoreCase(productoCreateRequest.getCategoria());
+        verify(productosRepository, times(0)).save(any(Producto.class));
+        verify(productoMapper, times(0)).toProduct(productoCreateRequest, categoria);
     }
 
     @Test

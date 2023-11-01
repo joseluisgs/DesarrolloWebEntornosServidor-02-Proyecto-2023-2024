@@ -164,6 +164,7 @@ public class ProductoServiceImpl implements ProductosService {
      * @param nombreCategoria Nombre de la categoría
      */
     private Categoria checkCategoria(String nombreCategoria) {
+        log.info("Buscando categoría por nombre: " + nombreCategoria);
         // Buscamos la categoría por su nombre, debe existir y no estar borrada
         var categoria = categoriasRepository.findByNombreEqualsIgnoreCase(nombreCategoria);
         if (categoria.isEmpty() || categoria.get().getIsDeleted()) {
