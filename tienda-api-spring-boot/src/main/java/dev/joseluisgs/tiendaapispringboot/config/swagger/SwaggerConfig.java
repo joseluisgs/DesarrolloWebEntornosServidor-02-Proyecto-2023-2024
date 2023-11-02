@@ -72,8 +72,8 @@ class SwaggerConfig {
                 .group("https")
                 // Algunas rutas son JWT
                 // .pathsToMatch("/v1/**") // Todas las rutas
-                .pathsToMatch("/" + apiVersion + "/productos") //Solo productos
-                .displayName("HTTP-API Tienda Spring Boot DAW 2023/2024")
+                .pathsToMatch("/" + apiVersion + "/productos/**") //Solo productos
+                .displayName("API Tienda Spring Boot DAW 2023/2024")
                 .build();
     }
 }
