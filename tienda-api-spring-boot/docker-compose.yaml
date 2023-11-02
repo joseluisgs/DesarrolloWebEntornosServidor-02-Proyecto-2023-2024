@@ -14,8 +14,8 @@ services:
     ports:
       - ${POSTGRES_PORT}:5432
     # Si se quiere lanzar un script SQL al iniciar
-    #volumes:
-    #  - ./database:/var/lib/postgresql/data
+    volumes:
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
 
   # MongoDB
   mongo:
