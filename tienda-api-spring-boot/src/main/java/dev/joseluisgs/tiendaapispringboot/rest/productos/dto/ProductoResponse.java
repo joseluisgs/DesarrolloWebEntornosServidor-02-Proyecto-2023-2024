@@ -15,9 +15,6 @@ import java.util.UUID;
 @AllArgsConstructor
 @Schema(description = "Producto a devolver")
 public class ProductoResponse {
-    @Schema(description = "Si el producto está borrado", example = "false")
-    @Builder.Default
-    private final Boolean isDeleted = false;
     @Schema(description = "Identificador del producto", example = "1")
     private Long id;
     @Schema(description = "Marca del producto", example = "Babolat")
@@ -37,8 +34,9 @@ public class ProductoResponse {
     @Schema(description = "Fecha de creación del producto", example = "2021-01-01T00:00:00.000Z")
     private LocalDateTime createdAt;
     @Schema(description = "Fecha de actualización del producto", example = "2021-01-01T00:00:00.000Z")
-    @Builder.Default
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
     @Schema(description = "UUID del producto", example = "123e4567-e89b-12d3-a456-426614174000")
     private UUID uuid;
+    @Schema(description = "Si el producto está borrado", example = "false")
+    private Boolean isDeleted;
 }
