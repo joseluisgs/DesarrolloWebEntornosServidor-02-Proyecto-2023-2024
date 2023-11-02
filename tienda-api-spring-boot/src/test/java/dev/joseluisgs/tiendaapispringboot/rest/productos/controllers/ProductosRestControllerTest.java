@@ -87,6 +87,9 @@ class ProductosRestControllerTest {
             .imagen("http://placeimg.com/640/480/people")
             .stock(5)
             .categoria(categoria.getNombre())
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"))
             .build();
     private final ProductoResponse productoResponse2 = ProductoResponse.builder()
             .id(2L)
@@ -97,6 +100,9 @@ class ProductosRestControllerTest {
             .imagen("http://placeimg.com/640/480/people")
             .stock(5)
             .categoria(categoria.getNombre())
+            .createdAt(LocalDateTime.now())
+            .updatedAt(LocalDateTime.now())
+            .uuid(UUID.fromString("80e559b5-83c5-4555-ba0b-bb9fddb6e96c"))
             .build();
 
 
@@ -127,7 +133,7 @@ class ProductosRestControllerTest {
                         get(myEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        PageResponse<ProductoResponse> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
         });
 
         // Assert
@@ -159,7 +165,7 @@ class ProductosRestControllerTest {
                         get(localEndpoint)
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
-        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        PageResponse<ProductoResponse> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
         });
 
         // Assert
@@ -190,7 +196,7 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        PageResponse<ProductoResponse> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
         });
 
         // Assert
@@ -222,7 +228,7 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        PageResponse<Producto> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
+        PageResponse<ProductoResponse> res = mapper.readValue(response.getContentAsString(), new TypeReference<>() {
         });
 
         // Assert
@@ -253,7 +259,7 @@ class ProductosRestControllerTest {
         // Assert
         assertAll(
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(producto1, res)
+                () -> assertEquals(productoResponse1, res)
         );
 
         // Verify
@@ -310,7 +316,7 @@ class ProductosRestControllerTest {
         // Assert
         assertAll(
                 () -> assertEquals(201, response.getStatus()),
-                () -> assertEquals(producto1, res)
+                () -> assertEquals(productoResponse1, res)
         );
 
         // Verify
@@ -383,7 +389,7 @@ class ProductosRestControllerTest {
         // Assert
         assertAll(
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(producto1, res)
+                () -> assertEquals(productoResponse1, res)
         );
 
         // Verify
@@ -482,7 +488,7 @@ class ProductosRestControllerTest {
         // Assert
         assertAll(
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(producto1, res)
+                () -> assertEquals(productoResponse1, res)
         );
 
         // Verify
