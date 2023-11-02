@@ -52,8 +52,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    // H2 Database
-    runtimeOnly("com.h2database:h2")
+    // H2 Database - Para desarrollo
+    implementation("com.h2database:h2")
+    // PostgreSQL - Para producción
+    implementation("org.postgresql:postgresql")
 
     // Para usar con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
     // Lo podemos usar en el test o en el controlador, si hiciese falta, por eso está aquí
