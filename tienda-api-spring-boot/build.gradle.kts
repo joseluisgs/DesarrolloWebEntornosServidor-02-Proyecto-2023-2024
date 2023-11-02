@@ -26,18 +26,25 @@ configurations {
 dependencies {
     // Dependencias de Spring Web for HTML Apps y Rest
     implementation("org.springframework.boot:spring-boot-starter-web")
+
     // Spring Data JPA par SQL
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
     // Spring Data JPA para MongoDB
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
+
     // Cache
     implementation("org.springframework.boot:spring-boot-starter-cache")
+
     // Validación
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
     // Websocket
     implementation("org.springframework.boot:spring-boot-starter-websocket")
+
     // Thyemeleaf
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+
     // Spring Security
     implementation("org.springframework.boot:spring-boot-starter-security")
 
@@ -58,6 +65,9 @@ dependencies {
     // Para manejar los JWT tokens
     // JWT (Json Web Token)
     implementation("com.auth0:java-jwt:4.4.0")
+
+    // Swagger
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
 
 
     // Dependencias para Test

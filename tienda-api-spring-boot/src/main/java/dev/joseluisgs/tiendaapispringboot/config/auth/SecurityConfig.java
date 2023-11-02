@@ -39,35 +39,49 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                // Podemos decir que forzamos el uso de HTTPS, para algunas rutas de la API o todas
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                // Redirigimos al puerto SSL
+                // Deshabilitamos CSRF
+                .csrf(AbstractHttpConfigurer::disable)
                 // Sesiones
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 // Lo primero es decir a qué URLs queremos dar acceso libre
                 // Lista balanca de comprobación
-                // Permitimos el acceso a los errores
-                .authorizeHttpRequests(request -> request.requestMatchers("/error/**").permitAll())
-                // Permitimos el acceso a los recursos estáticos
-                // recuerda que puedes tener varias carperas
-                .authorizeHttpRequests(request -> request.requestMatchers("/images/**").permitAll())
-                // Permitimos lso accesos a los webjars
-                .authorizeHttpRequests(request -> request.requestMatchers("/webjars/**").permitAll())
-                // Permitimos el acceso a la web de productos
-                .authorizeHttpRequests(request -> request.requestMatchers("/productos/**").permitAll())
-                // Websockets para notificaciones
-                .authorizeHttpRequests(request -> request.requestMatchers("/ws/**").permitAll())
-                // Ahora permito el acceso a todo lo de la API y su versión (luego capo en los controladores!!)
-                // Storage
-                .authorizeHttpRequests(request -> request.requestMatchers("/storage/**").permitAll())
-                // Otras rutas de la API podemos permitiras o no....
-                .authorizeHttpRequests(request -> request.requestMatchers("/" + apiVersion + "/**").permitAll())
-                // El resto de peticiones tienen que estar autenticadas
-                .authorizeHttpRequests(request -> request.requestMatchers("/**").authenticated())
-                // Metodo GET me de /v1/auth/me autenticado y de rorl ADMIN
-                //.authorizeHttpRequests(request -> request.requestMatchers(GET, "/" + apiVersion + "/auth/me").hasRole("ADMIN"))
+
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers("/error/**").permitAll()
+                        // Abrimos a Swagger -- Quitar en producción
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // Permitimos el acceso a los recursos estáticos
+                        .requestMatchers("/static/**").permitAll()
+                        // Permitimos el acceso a las imagenes
+                        .requestMatchers("/images/**").permitAll()
+                        // Permitimos lso accesos a los webjars
+                        .requestMatchers("/webjars/**").permitAll()
+                        // Permitimos el acceso a la web de productos
+                        .requestMatchers("/productos/**").permitAll()
+                        // Websockets para notificaciones
+                        .requestMatchers("/ws/**").permitAll()
+                        // Storage
+                        .requestMatchers("/storage/**").permitAll()
+                        // Otras rutas de la API podemos permitiras o no....
+                        .requestMatchers("/" + apiVersion + "/**").permitAll()
+                        // Podríamos jugar con permismos por ejemplo para una ruta concreta
+                        //.requestMatchers("/" + apiVersion + "/auth/me").hasRole("ADMIN")
+                        // O con un acción HTTP, POST, PUT, DELETE, etc.
+                        //.requestMatchers(GET, "/" + apiVersion + "/auth/me").hasRole("ADMIN")
+                        // O con un patrón de ruta
+                        //.regexMatchers("/" + apiVersion + "/auth/me").hasRole("ADMIN")
+                        // El resto de peticiones tienen que estar autenticadas
+                        .anyRequest().authenticated())
 
                 // Añadimos el filtro de autenticación
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Devolvemos la configuración
         return http.build();
     }
 
