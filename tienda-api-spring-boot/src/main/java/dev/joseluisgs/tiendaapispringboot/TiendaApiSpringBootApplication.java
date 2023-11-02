@@ -25,4 +25,6 @@ public class TiendaApiSpringBootApplication implements CommandLineRunner {
         // no es necesario hacer este método si no lo vas a usar
         System.out.println("🟢 Servidor arrancado 🚀");
     }
+
+
 }

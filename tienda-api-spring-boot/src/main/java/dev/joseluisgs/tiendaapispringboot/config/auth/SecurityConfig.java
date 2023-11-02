@@ -39,7 +39,12 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
+        http
+                // Podemos decir que forzamos el uso de HTTPS, para algunas rutas de la API o todas
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                // Redirigimos al puerto SSL
+                // Deshabilitamos CSRF
+                .csrf(AbstractHttpConfigurer::disable)
                 // Sesiones
                 .sessionManagement(manager -> manager.sessionCreationPolicy(STATELESS))
                 // Lo primero es decir a qué URLs queremos dar acceso libre
@@ -47,6 +52,8 @@ public class SecurityConfig {
 
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/error/**").permitAll()
+                        // Abrimos a Swagger -- Quitar en producción
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         // Permitimos el acceso a los recursos estáticos
                         .requestMatchers("/static/**").permitAll()
                         // Permitimos el acceso a las imagenes
@@ -73,6 +80,8 @@ public class SecurityConfig {
                 // Añadimos el filtro de autenticación
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        // Devolvemos la configuración
         return http.build();
     }
 
