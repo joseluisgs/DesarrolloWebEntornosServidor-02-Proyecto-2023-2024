@@ -3,8 +3,8 @@ package dev.joseluisgs.tiendaapispringboot.web.productos.controllers;
 import dev.joseluisgs.tiendaapispringboot.rest.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.rest.categorias.services.CategoriasService;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoResponse;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoUpdateRequest;
-import dev.joseluisgs.tiendaapispringboot.rest.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.services.ProductosService;
 import dev.joseluisgs.tiendaapispringboot.web.productos.store.UserStore;
 import jakarta.servlet.http.HttpSession;
@@ -131,7 +131,7 @@ public class ProductosWebController {
             return "redirect:/productos/login";
         }
 
-        Producto producto = productosService.findById(id);
+        ProductoResponse producto = productosService.findById(id);
         model.addAttribute("producto", producto);
         return "productos/details";
     }
@@ -187,14 +187,14 @@ public class ProductosWebController {
         var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                 .get()
                 .map(Categoria::getNombre);
-        Producto producto = productosService.findById(id);
+        ProductoResponse producto = productosService.findById(id);
         ProductoUpdateRequest productoUpdateRequest = ProductoUpdateRequest.builder()
                 .marca(producto.getMarca())
                 .modelo(producto.getModelo())
                 .descripcion(producto.getDescripcion())
                 .precio(producto.getPrecio())
                 .imagen(producto.getImagen())
-                .categoria(producto.getCategoria().getNombre())
+                .categoria(producto.getCategoria())
                 .stock(producto.getStock())
                 .isDeleted(producto.getIsDeleted())
                 .build();
@@ -242,7 +242,7 @@ public class ProductosWebController {
             return "redirect:/productos/login";
         }
 
-        Producto producto = productosService.findById(productId);
+        ProductoResponse producto = productosService.findById(productId);
         model.addAttribute("producto", producto);
         return "productos/update-image";
     }

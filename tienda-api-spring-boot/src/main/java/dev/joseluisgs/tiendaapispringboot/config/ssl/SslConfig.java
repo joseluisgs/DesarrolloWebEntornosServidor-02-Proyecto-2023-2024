@@ -5,10 +5,13 @@ package dev.joseluisgs.tiendaapispringboot.config.ssl;
 // Comentar si no usamos SSL para que no de error
 /*
 @Configuration
-public class SSLConfig {
+public class SslConfig {
     // (User-defined Property)
     @Value("${server.http.port}")
     private int httpPort;
+
+    @Value("${server.port}")
+    private int httpsPort;
 
     // Creamos un bean que nos permita configurar el puerto de conexión sin SSL
     @Bean
@@ -19,5 +22,6 @@ public class SSLConfig {
         tomcat.addAdditionalTomcatConnectors(connector);
         return tomcat;
     }
+
 }
 */

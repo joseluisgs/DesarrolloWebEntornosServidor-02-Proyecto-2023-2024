@@ -40,7 +40,7 @@ public class ProductoMapper {
                 .build();
     }
 
-    public ProductoResponse toProductResponseDto(Producto producto) {
+    public ProductoResponse toProductResponse(Producto producto) {
         return ProductoResponse.builder()
                 .id(producto.getId())
                 .marca(producto.getMarca())
@@ -53,6 +53,7 @@ public class ProductoMapper {
                 .createdAt(producto.getCreatedAt())
                 .updatedAt(producto.getUpdatedAt())
                 .uuid(producto.getUuid())
+                .isDeleted(producto.getIsDeleted())
                 .build();
     }
 }
