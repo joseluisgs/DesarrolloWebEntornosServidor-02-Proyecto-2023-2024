@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dev.joseluisgs.tiendaapispringboot.rest.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoResponse;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.exceptions.ProductoNotFound;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.models.Producto;
@@ -77,6 +78,28 @@ class ProductosRestControllerTest {
             .uuid(UUID.fromString("542f0a0b-064b-4022-b528-3b59f8bae821"))
             .build();
 
+    private final ProductoResponse productoResponse1 = ProductoResponse.builder()
+            .id(1L)
+            .marca("Adidas")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .categoria(categoria.getNombre())
+            .build();
+    private final ProductoResponse productoResponse2 = ProductoResponse.builder()
+            .id(2L)
+            .marca("Nike")
+            .modelo("Zapatillas")
+            .descripcion("Zapatillas de deporte")
+            .precio(100.0)
+            .imagen("http://placeimg.com/640/480/people")
+            .stock(5)
+            .categoria(categoria.getNombre())
+            .build();
+
+
     private final ObjectMapper mapper = new ObjectMapper();
     @Autowired
     MockMvc mockMvc; // Cliente MVC
@@ -92,7 +115,7 @@ class ProductosRestControllerTest {
     
     @Test
     void getAllProducts() throws Exception {
-        var productosList = List.of(producto1, producto2);
+        var productosList = List.of(productoResponse1, productoResponse2);
         var pageable = PageRequest.of(0, 10, Sort.by("id").ascending());
         var page = new PageImpl<>(productosList);
 
@@ -121,7 +144,7 @@ class ProductosRestControllerTest {
 
     @Test
     void getAllProductsByMarca() throws Exception {
-        var productosList = List.of(producto2);
+        var productosList = List.of(productoResponse2);
         var localEndpoint = myEndpoint + "?marca=nike";
 
         Optional<String> marca = Optional.of("nike");
@@ -151,7 +174,7 @@ class ProductosRestControllerTest {
 
     @Test
     void getAllProductsByCategoria() throws Exception {
-        var productosList = List.of(producto2);
+        var productosList = List.of(productoResponse2);
         var localEndpoint = myEndpoint + "?categoria=DEPORTES";
 
         Optional<String> categoria = Optional.of("DEPORTES");
@@ -182,7 +205,7 @@ class ProductosRestControllerTest {
 
     @Test
     void getAllProductsByMarcaAndCategoria() throws Exception {
-        var productosList = List.of(producto2);
+        var productosList = List.of(productoResponse2);
         var localEndpoint = myEndpoint + "?marca=nike&categoria=DEPORTES";
 
         Optional<String> marca = Optional.of("nike");
@@ -217,7 +240,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/1";
 
         // Arrange
-        when(productosService.findById(anyLong())).thenReturn(producto1);
+        when(productosService.findById(anyLong())).thenReturn(productoResponse1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -225,7 +248,7 @@ class ProductosRestControllerTest {
                                 .accept(MediaType.APPLICATION_JSON))
                 .andReturn().getResponse();
 
-        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+        ProductoResponse res = mapper.readValue(response.getContentAsString(), ProductoResponse.class);
 
         // Assert
         assertAll(
@@ -271,7 +294,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.save(any(ProductoCreateRequest.class))).thenReturn(producto1);
+        when(productosService.save(any(ProductoCreateRequest.class))).thenReturn(productoResponse1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -282,7 +305,7 @@ class ProductosRestControllerTest {
                                 .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
-        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+        ProductoResponse res = mapper.readValue(response.getContentAsString(), ProductoResponse.class);
 
         // Assert
         assertAll(
@@ -344,7 +367,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(producto1);
+        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(productoResponse1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -355,7 +378,7 @@ class ProductosRestControllerTest {
                                 .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
-        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+        ProductoResponse res = mapper.readValue(response.getContentAsString(), ProductoResponse.class);
 
         // Assert
         assertAll(
@@ -443,7 +466,7 @@ class ProductosRestControllerTest {
                 .build();
 
         // Arrange
-        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(producto1);
+        when(productosService.update(anyLong(), any(ProductoUpdateRequest.class))).thenReturn(productoResponse1);
 
         // Consulto el endpoint
         MockHttpServletResponse response = mockMvc.perform(
@@ -454,7 +477,7 @@ class ProductosRestControllerTest {
                                 .content(mapper.writeValueAsString(productoDto)))
                 .andReturn().getResponse();
 
-        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+        ProductoResponse res = mapper.readValue(response.getContentAsString(), ProductoResponse.class);
 
         // Assert
         assertAll(
@@ -515,7 +538,7 @@ class ProductosRestControllerTest {
         var myLocalEndpoint = myEndpoint + "/imagen/1";
 
         // Arrange
-        when(productosService.updateImage(anyLong(), any(MultipartFile.class), anyBoolean())).thenReturn(producto1);
+        when(productosService.updateImage(anyLong(), any(MultipartFile.class), anyBoolean())).thenReturn(productoResponse1);
 
         // Crear un archivo simulado
         MockMultipartFile file = new MockMultipartFile(
@@ -536,12 +559,12 @@ class ProductosRestControllerTest {
         ).andReturn().getResponse();
 
 
-        Producto res = mapper.readValue(response.getContentAsString(), Producto.class);
+        ProductoResponse res = mapper.readValue(response.getContentAsString(), ProductoResponse.class);
 
         // Assert
         assertAll(
                 () -> assertEquals(200, response.getStatus()),
-                () -> assertEquals(producto1, res)
+                () -> assertEquals(productoResponse1, res)
         );
 
         // Verify
