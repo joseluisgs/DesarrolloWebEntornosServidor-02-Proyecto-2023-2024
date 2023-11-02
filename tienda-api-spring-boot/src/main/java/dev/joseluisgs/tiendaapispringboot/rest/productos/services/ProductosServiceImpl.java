@@ -7,6 +7,7 @@ import dev.joseluisgs.tiendaapispringboot.config.websockets.WebSocketHandler;
 import dev.joseluisgs.tiendaapispringboot.rest.categorias.models.Categoria;
 import dev.joseluisgs.tiendaapispringboot.rest.categorias.repositories.CategoriasRepository;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoResponse;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.exceptions.ProductoBadRequest;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.exceptions.ProductoBadUuid;
@@ -81,7 +82,7 @@ public class ProductosServiceImpl implements ProductosService {
      * @return Lista de productos
      */
     @Override
-    public Page<Producto> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
+    public Page<ProductoResponse> findAll(Optional<String> marca, Optional<String> categoria, Optional<String> modelo, Optional<Boolean> isDeleted, Optional<Double> precioMax, Optional<Double> stockMin, Pageable pageable) {
         // Criterio de búsqueda por marca
         Specification<Producto> specMarcaProducto = (root, query, criteriaBuilder) ->
                 marca.map(m -> criteriaBuilder.like(criteriaBuilder.lower(root.get("marca")), "%" + m.toLowerCase() + "%")) // Buscamos por marca
@@ -121,7 +122,7 @@ public class ProductosServiceImpl implements ProductosService {
                 .and(specModeloProducto)
                 .and(specPrecioMaxProducto)
                 .and(specStockMinProducto);
-        return productosRepository.findAll(criterio, pageable);
+        return productosRepository.findAll(criterio, pageable).map(productosMapper::toProductResponse);
     }
 
     /**
@@ -133,9 +134,9 @@ public class ProductosServiceImpl implements ProductosService {
      */
     @Override
     @Cacheable(key = "#id")
-    public Producto findById(Long id) {
+    public ProductoResponse findById(Long id) {
         log.info("Buscando producto por id: " + id);
-        return productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
+        return productosMapper.toProductResponse(productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id)));
     }
 
     /**
@@ -148,11 +149,11 @@ public class ProductosServiceImpl implements ProductosService {
      */
     @Override
     @Cacheable(key = "#uuid")
-    public Producto findbyUuid(String uuid) {
+    public ProductoResponse findbyUuid(String uuid) {
         log.info("Buscando producto por uuid: " + uuid);
         try {
             var myUUID = UUID.fromString(uuid);
-            return productosRepository.findByUuid(myUUID).orElseThrow(() -> new ProductoNotFound(myUUID));
+            return productosMapper.toProductResponse(productosRepository.findByUuid(myUUID).orElseThrow(() -> new ProductoNotFound(myUUID)));
         } catch (IllegalArgumentException e) {
             throw new ProductoBadUuid(uuid);
         }
@@ -181,7 +182,7 @@ public class ProductosServiceImpl implements ProductosService {
      */
     @Override
     @CachePut(key = "#result.id")
-    public Producto save(ProductoCreateRequest productoCreateRequest) {
+    public ProductoResponse save(ProductoCreateRequest productoCreateRequest) {
         log.info("Guardando producto: " + productoCreateRequest);
         // Comprobamos que la categoría
         var categoria = checkCategoria(productoCreateRequest.getCategoria());
@@ -191,7 +192,7 @@ public class ProductosServiceImpl implements ProductosService {
         // Enviamos la notificación a los clientes ws
         onChange(Notificacion.Tipo.CREATE, productoSaved);
         // Devolvemos el producto guardado
-        return productoSaved;
+        return productosMapper.toProductResponse(productoSaved);
     }
 
     /**
@@ -205,7 +206,7 @@ public class ProductosServiceImpl implements ProductosService {
     @Override
     @CachePut(key = "#result.id")
     @Transactional
-    public Producto update(Long id, ProductoUpdateRequest productoUpdateRequest) {
+    public ProductoResponse update(Long id, ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
         var productoActual = productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
@@ -224,7 +225,7 @@ public class ProductosServiceImpl implements ProductosService {
         // Enviamos la notificación a los clientes ws
         onChange(Notificacion.Tipo.UPDATE, productoUpdated);
         // Devolvemos el producto actualizado
-        return productoUpdated;
+        return productosMapper.toProductResponse(productoUpdated);
     }
 
     /**
@@ -263,10 +264,10 @@ public class ProductosServiceImpl implements ProductosService {
     @Override
     @CachePut(key = "#result.id")
     @Transactional
-    public Producto updateImage(Long id, MultipartFile image, Boolean withUrl) {
+    public ProductoResponse updateImage(Long id, MultipartFile image, Boolean withUrl) {
         log.info("Actualizando imagen de producto por id: " + id);
         // Si no existe lanza excepción, por eso ya llamamos a lo que hemos implementado antes
-        var productoActual = this.findById(id);
+        var productoActual = productosRepository.findById(id).orElseThrow(() -> new ProductoNotFound(id));
         // Borramos la imagen anterior si existe y no es la de por defecto
         if (productoActual.getImagen() != null && !productoActual.getImagen().equals(Producto.IMAGE_DEFAULT)) {
             storageService.delete(productoActual.getImagen());
@@ -296,7 +297,7 @@ public class ProductosServiceImpl implements ProductosService {
         // Enviamos la notificación a los clientes ws
         onChange(Notificacion.Tipo.UPDATE, productoUpdated);
         // Devolvemos el producto actualizado
-        return productoUpdated;
+        return productosMapper.toProductResponse(productoUpdated);
     }
 
     void onChange(Notificacion.Tipo tipo, Producto data) {

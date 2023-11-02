@@ -1,9 +1,9 @@
 package dev.joseluisgs.tiendaapispringboot.rest.productos.controllers;
 
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoCreateRequest;
+import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoResponse;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.dto.ProductoUpdateRequest;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.exceptions.ProductoNotFound;
-import dev.joseluisgs.tiendaapispringboot.rest.productos.models.Producto;
 import dev.joseluisgs.tiendaapispringboot.rest.productos.services.ProductosService;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PageResponse;
 import dev.joseluisgs.tiendaapispringboot.utils.pagination.PaginationLinksUtils;
@@ -66,7 +66,7 @@ public class ProductosRestController {
      * @return Pagina de productos
      */
     @GetMapping()
-    public ResponseEntity<PageResponse<Producto>> getAllProducts(
+    public ResponseEntity<PageResponse<ProductoResponse>> getAllProducts(
             @RequestParam(required = false) Optional<String> marca,
             @RequestParam(required = false) Optional<String> categoria,
             @RequestParam(required = false) Optional<String> modelo,
@@ -84,7 +84,7 @@ public class ProductosRestController {
         Sort sort = direction.equalsIgnoreCase(Sort.Direction.ASC.name()) ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         // Creamos cómo va a ser la paginación
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString());
-        Page<Producto> pageResult = productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, PageRequest.of(page, size, sort));
+        Page<ProductoResponse> pageResult = productosService.findAll(marca, categoria, modelo, isDeleted, precioMax, stockMin, PageRequest.of(page, size, sort));
         return ResponseEntity.ok()
                 .header("link", paginationLinksUtils.createLinkHeader(pageResult, uriBuilder))
                 .body(PageResponse.of(pageResult, sortBy, direction));
@@ -98,7 +98,7 @@ public class ProductosRestController {
      * @throws ProductoNotFound si no existe el producto (404)
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Producto> getProductById(@PathVariable Long id) {
+    public ResponseEntity<ProductoResponse> getProductById(@PathVariable Long id) {
         log.info("Buscando producto por id: " + id);
         return ResponseEntity.ok(productosService.findById(id));
     }
@@ -112,7 +112,7 @@ public class ProductosRestController {
      */
     @PostMapping()
     @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
-    public ResponseEntity<Producto> createProduct(@Valid @RequestBody ProductoCreateRequest productoCreateRequest) {
+    public ResponseEntity<ProductoResponse> createProduct(@Valid @RequestBody ProductoCreateRequest productoCreateRequest) {
         log.info("Creando producto: " + productoCreateRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(productosService.save(productoCreateRequest));
     }
@@ -128,7 +128,7 @@ public class ProductosRestController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
-    public ResponseEntity<Producto> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
+    public ResponseEntity<ProductoResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando producto por id: " + id + " con producto: " + productoUpdateRequest);
         return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
     }
@@ -144,7 +144,7 @@ public class ProductosRestController {
      */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
-    public ResponseEntity<Producto> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
+    public ResponseEntity<ProductoResponse> updatePartialProduct(@PathVariable Long id, @Valid @RequestBody ProductoUpdateRequest productoUpdateRequest) {
         log.info("Actualizando parcialmente producto por id: " + id + " con producto: " + productoUpdateRequest);
         return ResponseEntity.ok(productosService.update(id, productoUpdateRequest));
     }
@@ -199,7 +199,7 @@ public class ProductosRestController {
      */
     @PatchMapping(value = "/imagen/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')") // Solo los administradores pueden acceder
-    public ResponseEntity<Producto> nuevoProducto(
+    public ResponseEntity<ProductoResponse> nuevoProducto(
             @PathVariable Long id,
             @RequestPart("file") MultipartFile file) {
 
