@@ -8,7 +8,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -18,7 +17,7 @@ import java.io.IOException;
 @Slf4j
 // Es la ruta del controlador, no le pongas nada mas para que genere la ruta bien
 @RequestMapping("/storage")
-@PreAuthorize("hasRole('USER')")
+// @PreAuthorize("hasRole('USER')") // OJO, si tenemos la pagina web, no podemos poner esto (no lo vemos!)
 public class StorageController {
     private final StorageService storageService;
 
