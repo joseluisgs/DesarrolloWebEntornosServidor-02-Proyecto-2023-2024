@@ -1,9 +1,10 @@
+# Servicios de almacenamiento de datos
+# Desarrollo
 services:
-
   # PostgreSQL
   postgres-db:
     container_name: tienda-db_postgres
-    image: postgres:12
+    image: postgres:12-alpine
     restart: always
     env_file: .env
     environment:
