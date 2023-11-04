@@ -92,7 +92,10 @@ tasks.withType<Test> {
 }
 
 tasks.test {
-
+    // Ponemos el perfil de test para que cargue el application-test.properties
+    // para ahorranos hacer esto
+    //./gradlew test -Pspring.profiles.active=dev
+    systemProperty("spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev")
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report
