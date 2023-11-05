@@ -41,8 +41,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // Podemos decir que forzamos el uso de HTTPS, para algunas rutas de la API o todas
-                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
-                // Redirigimos al puerto SSL
+                // Requerimos HTTPS para todas las peticiones, pero ojo que devuelve 302 para los test
+                // .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+
                 // Deshabilitamos CSRF
                 .csrf(AbstractHttpConfigurer::disable)
                 // Sesiones

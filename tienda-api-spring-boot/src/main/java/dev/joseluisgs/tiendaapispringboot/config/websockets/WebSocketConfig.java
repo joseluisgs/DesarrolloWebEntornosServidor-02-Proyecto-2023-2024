@@ -25,12 +25,12 @@ public class WebSocketConfig implements WebSocketConfigurer {
     // ws://localhost:3000/ws/v1/productos
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(webSocketRaquetasHandler(), "/ws/" + apiVersion + "/productos");
+        registry.addHandler(webSocketProductosHandler(), "/ws/" + apiVersion + "/productos");
     }
 
     // Cada uno de los handlers como bean para que cada vez que nos atienda
     @Bean
-    public WebSocketHandler webSocketRaquetasHandler() {
+    public WebSocketHandler webSocketProductosHandler() {
         return new WebSocketHandler("Productos");
     }
 

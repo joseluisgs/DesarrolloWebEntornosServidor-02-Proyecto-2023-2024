@@ -52,8 +52,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
-    // H2 Database
-    runtimeOnly("com.h2database:h2")
+    // H2 Database - Para desarrollo
+    implementation("com.h2database:h2")
+    // PostgreSQL - Para producción
+    implementation("org.postgresql:postgresql")
 
     // Para usar con jackson el controlador las fechas: LocalDate, LocalDateTime, etc
     // Lo podemos usar en el test o en el controlador, si hiciese falta, por eso está aquí
@@ -90,7 +92,10 @@ tasks.withType<Test> {
 }
 
 tasks.test {
-
+    // Ponemos el perfil de test para que cargue el application-test.properties
+    // para ahorranos hacer esto
+    //./gradlew test -Pspring.profiles.active=dev
+    systemProperty("spring.profiles.active", project.findProperty("spring.profiles.active") ?: "dev")
 }
 tasks.jacocoTestReport {
     dependsOn(tasks.test) // tests are required to run before generating the report

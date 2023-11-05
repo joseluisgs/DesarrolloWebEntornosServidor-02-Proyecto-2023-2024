@@ -61,7 +61,8 @@ public class FileSystemStorageService implements StorageService {
         String filename = StringUtils.cleanPath(file.getOriginalFilename());
         String extension = StringUtils.getFilenameExtension(filename);
         String justFilename = filename.replace("." + extension, "");
-        String storedFilename = System.currentTimeMillis() + "_" + justFilename + "." + extension;
+        // Nombre del fichero almacenado aleatorio para evitar duplicados y sin espacios
+        String storedFilename = System.currentTimeMillis() + "_" + justFilename.replaceAll("\\s+", "") + "." + extension;
 
         try {
             if (file.isEmpty()) {

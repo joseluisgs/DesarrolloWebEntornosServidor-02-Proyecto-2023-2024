@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 // Vamos a probar el repositorio, pero moqueamos la base de datos JPA
 @DataJpaTest
 class ProductosRepositoryTest {
-
+    //Damos por hecho que funciona bien, ya que es un repositorio de Spring Data JPA
     private final Categoria categoria = new Categoria(null, "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
 
     private final Producto producto1 = Producto.builder()
@@ -84,21 +84,20 @@ class ProductosRepositoryTest {
     @Test
     void findById_existingId_returnsOptionalWithProducto() {
         // Act
-        Long id = 1L;
-        Optional<Producto> optionalProducto = repository.findById(id);
+        Optional<Producto> optionalProducto = repository.findById(producto1.getId());
 
         // Assert
         assertAll("findById_existingId_returnsOptionalWithProducto",
                 () -> assertNotNull(optionalProducto),
                 () -> assertTrue(optionalProducto.isPresent()),
-                () -> assertEquals(id, optionalProducto.get().getId())
+                () -> assertEquals(producto1.getId(), optionalProducto.get().getId())
         );
     }
 
     @Test
     void findById_nonExistingId_returnsEmptyOptional() {
         // Act
-        Long id = 100L;
+        Long id = -999L;
         Optional<Producto> optionalProducto = repository.findById(id);
 
         // Assert
@@ -138,8 +137,7 @@ class ProductosRepositoryTest {
     @Test
     void existsById_existingId_returnsTrue() {
         // Act
-        Long id = 1L;
-        boolean exists = repository.existsById(id);
+        boolean exists = repository.existsById(producto1.getId());
 
         // Assert
         assertTrue(exists);
@@ -148,7 +146,7 @@ class ProductosRepositoryTest {
     @Test
     void existsById_nonExistingId_returnsFalse() {
         // Act
-        Long id = 100L;
+        Long id = -999L;
         boolean exists = repository.existsById(id);
 
         // Assert
@@ -189,7 +187,6 @@ class ProductosRepositoryTest {
     void saveExists() {
         // Arrange
         Producto producto = Producto.builder()
-                .id(1L)
                 .marca("New Brand")
                 .modelo("New Model")
                 .descripcion("New Description")
@@ -210,7 +207,7 @@ class ProductosRepositoryTest {
         // Assert
         assertAll("save",
                 () -> assertNotNull(savedProducto),
-                () -> assertTrue(repository.existsById(1L)),
+                () -> assertTrue(repository.existsById(producto.getId())),
                 () -> assertTrue(all.size() >= 2)
         );
     }
@@ -218,14 +215,14 @@ class ProductosRepositoryTest {
     @Test
     void deleteById_existingId() {
         // Act
-        Long id = 1L;
-        repository.deleteById(id);
+        repository.deleteById(producto1.getId());
         var all = repository.findAll();
 
         // Assert
         assertAll("deleteById_existingId",
-                () -> assertFalse(repository.existsById(id)),
+                () -> assertFalse(repository.existsById(producto1.getId())),
                 () -> assertFalse(all.isEmpty())
         );
     }
+
 }
