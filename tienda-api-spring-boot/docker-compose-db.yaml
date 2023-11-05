@@ -1,7 +1,7 @@
-# Lo necesario para ejecutar la aplicación en local
+# Servicios de almacenamiento de datos
+# Desarrollo
 services:
-
-  # PostgresSQL
+  # PostgreSQL
   postgres-db:
     container_name: tienda-db_postgres
     image: postgres:12-alpine
@@ -35,29 +35,38 @@ services:
     networks:
       - tienda-network
 
-  # Servicio de la API REST
-  tienda-api-rest:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: tienda-api-rest
+  # Adminer para conectarse a la base de datos
+  # Quitar en despliegue final
+  adminer-postgres-db:
+    container_name: tienda-db_adminer-postgres-db
+    image: adminer
     restart: always
     env_file: .env
     ports:
-      - ${API_PORT}:3000
-    volumes:
-      - storage-dir:/app/storage-dir
-    networks:
-      - tienda-network
+      - 8080:8080
     depends_on:
       - postgres-db
+    networks:
+      - tienda-network
+
+  # Mongo Express para conectarse a la base de datos
+  # Quitar en despliegue final
+  mongo-express-db:
+    container_name: tienda-db_mongo-express-db
+    image: mongo-express
+    restart: always
+    env_file: .env
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DATABASE_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DATABASE_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: mongo-db
+    depends_on:
       - mongo-db
+    networks:
+      - tienda-network
 
-# Volume para guardar los datos de la api rest, como las imágenes
-volumes:
-  storage-dir:
-
-# Red para conectar los contenedores (opcional)
 networks:
   tienda-network:
     driver: bridge

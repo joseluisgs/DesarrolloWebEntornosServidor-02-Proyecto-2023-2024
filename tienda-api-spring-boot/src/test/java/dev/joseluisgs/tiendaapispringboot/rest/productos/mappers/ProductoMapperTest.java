@@ -112,7 +112,7 @@ class ProductoMapperTest {
                 .build();
 
         // Act
-        var res = productoMapper.toProductResponseDto(producto);
+        var res = productoMapper.toProductResponse(producto);
 
         // Assert
         assertAll(

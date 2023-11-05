@@ -9,9 +9,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -45,7 +45,7 @@ public class Producto {
     @Schema(description = "Descripción del producto", example = "Raqueta de tenis")
     private String descripcion;
     @Min(value = 0, message = "El precio no puede ser negativo")
-    @Column(columnDefinition = "double default 0.0")
+    @Column(columnDefinition = "double precision default 0.0")
     @Schema(description = "Precio del producto", example = "100.0")
     @Builder.Default
     private Double precio = 0.0;
@@ -62,15 +62,13 @@ public class Producto {
     @Schema(description = "UUID del producto", example = "123e4567-e89b-12d3-a456-426614174000")
     @Builder.Default
     private UUID uuid = UUID.randomUUID();
-    @CreatedDate
-    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
+    @CreationTimestamp
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Schema(description = "Fecha de creación del producto", example = "2021-01-01T00:00:00.000Z")
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
-    @LastModifiedDate
-    @Temporal(TemporalType.TIMESTAMP) // Indicamos que es un campo de tipo fecha y hora
-    @Column(updatable = true, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
+    @UpdateTimestamp
+    @Column(updatable = true, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @Schema(description = "Fecha de actualización del producto", example = "2021-01-01T00:00:00.000Z")
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();

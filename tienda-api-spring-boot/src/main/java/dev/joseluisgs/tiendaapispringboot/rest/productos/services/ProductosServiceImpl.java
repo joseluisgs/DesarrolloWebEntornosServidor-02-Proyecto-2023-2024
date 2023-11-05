@@ -63,7 +63,7 @@ public class ProductosServiceImpl implements ProductosService {
         this.storageService = storageService;
         this.webSocketConfig = webSocketConfig;
         // Para enviar mensajes a los clientes ws normales
-        webSocketService = webSocketConfig.webSocketRaquetasHandler();
+        webSocketService = webSocketConfig.webSocketProductosHandler();
         mapper = new ObjectMapper();
         this.productoNotificationMapper = productoNotificationMapper;
         // mapper.registerModule(new JavaTimeModule()); // Necesario para que funcione LocalDateTime
@@ -305,7 +305,7 @@ public class ProductosServiceImpl implements ProductosService {
 
         if (webSocketService == null) {
             log.warn("No se ha podido enviar la notificación a los clientes ws, no se ha encontrado el servicio");
-            webSocketService = this.webSocketConfig.webSocketRaquetasHandler();
+            webSocketService = this.webSocketConfig.webSocketProductosHandler();
         }
 
         try {

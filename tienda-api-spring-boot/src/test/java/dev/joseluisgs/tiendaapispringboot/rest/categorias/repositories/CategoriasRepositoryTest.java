@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 class CategoriasRepositoryTest {
+    //Damos por hecho que funciona bien, ya que es un repositorio de Spring Data JPA
     private final Categoria categoria = new Categoria(UUID.fromString("b3d4931d-c1c0-468b-a4b6-9814017a7339"), "TEST", LocalDateTime.now(), LocalDateTime.now(), false);
 
     @Autowired
