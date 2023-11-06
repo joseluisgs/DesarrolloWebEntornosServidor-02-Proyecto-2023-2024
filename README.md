@@ -1,5 +1,5 @@
 # DesarrolloWebEntornosServidor-02-Proyecto-2023-2024
-Desarrollo Web en Entornos Servidor - 02 Programación de servicios y apps web en JVM Proyecto. 2DAW. Curso 2023-2024
+Desarrollo Web en Entornos Servidor - 02 Programación de servicios y apps web en Java/JVM Proyecto. 2DAW. Curso 2023-2024
 
 - [DesarrolloWebEntornosServidor-02-Proyecto-2023-2024](#desarrollowebentornosservidor-02-proyecto-2023-2024)
 - [Proyecto](#proyecto)
