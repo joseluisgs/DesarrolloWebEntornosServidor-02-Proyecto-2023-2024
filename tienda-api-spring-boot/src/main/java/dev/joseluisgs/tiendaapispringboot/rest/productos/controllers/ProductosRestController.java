@@ -32,9 +32,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Controlador de productos del tipo RestController
@@ -278,15 +276,23 @@ public class ProductosRestController {
             @PathVariable Long id,
             @RequestPart("file") MultipartFile file) {
 
+        // Lista de extensiones de archivos permitidos.
+        List<String> permittedContentTypes = List.of("image/png", "image/jpg", "image/jpeg", "image/gif");
+
         log.info("Actualizando imagen de producto por id: " + id);
 
-        // Buscamos la raqueta
-        if (!file.isEmpty()) {
-            // Actualizamos el producto
-            return ResponseEntity.ok(productosService.updateImage(id, file, true));
+        try {
+            String contentType = file.getContentType();
+            log.info("Tipo de contenido: " + contentType);
 
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto o esta está vacía");
+            if (!file.isEmpty() && contentType != null && !contentType.isEmpty() && permittedContentTypes.contains(contentType.toLowerCase())) {
+                // Actualizamos el producto
+                return ResponseEntity.ok(productosService.updateImage(id, file, true));
+            } else {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se ha enviado una imagen para el producto válida o esta está vacía");
+            }
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "No se puede saber el tipo de la imagen");
         }
     }
 }
