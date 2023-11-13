@@ -115,7 +115,7 @@ public class PedidosServiceImpl implements PedidosService {
         // Lo primero que tenemos que ver es si existe el pedido
         // Si no existe, lanzamos una excepción
         // Lo haremos luego
-        var pedidoToDelete = this.findById(idPedido);
+        var pedidoToDelete = pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
 
         // Ahora debemos devolver el stock de los productos
         returnStockPedidos(pedidoToDelete);
@@ -146,7 +146,7 @@ public class PedidosServiceImpl implements PedidosService {
         log.info("Actualizando pedido con id: " + idPedido);
 
         // Primero lo buscamos
-        var pedidoToUpdate = this.findById(idPedido);
+        var pedidoToUpdate = pedidosRepository.findById(idPedido).orElseThrow(() -> new PedidoNotFound(idPedido.toHexString()));
 
         // Devolvemos el stock de los productos
         returnStockPedidos(pedido);
@@ -180,7 +180,7 @@ public class PedidosServiceImpl implements PedidosService {
             var producto = productosRepository.findById(lineaPedido.getIdProducto())
                     .orElseThrow(() -> new ProductoNotFound(lineaPedido.getIdProducto()));
             // Si existe, comprobamos si hay stock
-            if (producto.getStock() < lineaPedido.getCantidad()) {
+            if (producto.getStock() < lineaPedido.getCantidad() && lineaPedido.getCantidad() > 0) {
                 throw new ProductoNotStock(lineaPedido.getIdProducto());
             }
             // Podemos comprobar más cosas, como si el precio es el mismo, etc...
