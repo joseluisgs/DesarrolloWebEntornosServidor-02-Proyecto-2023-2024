@@ -204,7 +204,7 @@ public class ProductosWebController {
     }
 
     @PostMapping("/update/{id}")
-    public String updateProduct(@PathVariable("id") Long id, @ModelAttribute ProductoUpdateRequest productoUpdateRequest, BindingResult result, Model model) {
+    public String updateProduct(@PathVariable("id") Long id, @Valid @ModelAttribute("producto") ProductoUpdateRequest productoUpdateRequest, BindingResult result, Model model) {
         if (result.hasErrors()) {
             var categorias = categoriasService.findAll(Optional.empty(), Optional.empty(), PageRequest.of(0, 1000))
                     .get()
