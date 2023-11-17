@@ -124,10 +124,15 @@ Aquí tienes las tablas actualizadas con la columna "Otras Salidas" y ejemplos d
 
 ### Pedidos
 
-| Endpoint                               | URL                            | HTTP Verbo | AUTH                      | Descripción                              | HTTP Status Code | Otras Salidas                                        |
-|----------------------------------------|--------------------------------|------------|---------------------------|------------------------------------------|------------------|-----------------------------------------------------|
-| Obtiene todos los pedidos               | `GET /api.version/pedidos`     | GET        | Requiere autenticación    | Obtiene todos los pedidos disponibles    | 200 OK           | 401 Unauthorized, 403 Forbidden, 404 Not Found         |
-| Obtiene un pedido por su id             | `GET /api.version/pedidos/{id}` | GET        | Requiere autenticación    | Obtiene un pedido por su id               | 200 OK           | 401 Unauthorized, 403 Forbidden, 404 Not Found         |
+| Endpoint                        | URL                                | HTTP Verbo | AUTH                                    | Descripción                              | HTTP Status Code | Otras Salidas                                  |
+| ------------------------------- | ---------------------------------- | ---------- | --------------------------------------- | ---------------------------------------- | ---------------- | ---------------------------------------------- |
+| Obtiene todos los pedidos | `GET /api.version/pedidos` | GET | Requiere autenticación | Obtiene todos los pedidos disponibles | 200 OK | 401 Unauthorized, 403 Forbidden, 404 Not Found |
+| Obtiene un pedido por su id | `GET /api.version/pedidos/{id}` | GET | Requiere autenticación | Obtiene un pedido por su id | 200 OK | 401 Unauthorized, 403 Forbidden, 404 Not Found |
+| Crea un nuevo pedido | `POST /api.version/pedidos` | POST | Requiere ser administrador | Crea un nuevo pedido | 201 Created | 401 Unauthorized, 403 Forbidden, 404 Not Found |
+| Actualiza un pedido | `PUT /api.version/pedidos/{id}` | PUT | Requiere ser administrador | Actualiza un pedido existente | 200 OK | 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict |
+| Elimina un pedido | `DELETE /api.version/pedidos/{id}` | DELETE | Requiere ser administrador | Elimina un pedido existente | 204 No Content | 401 Unauthorized, 403 Forbidden, 404 Not Found |
+
+
 
 ### Productos
 
