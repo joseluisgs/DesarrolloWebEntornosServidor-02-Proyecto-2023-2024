@@ -5,5 +5,5 @@ package dev.joseluisgs.tiendaapispringboot.rest.users.models;
  */
 public enum Role {
     USER, // Por defecto
-    ROLE_USER, ADMIN // Administrador
+    ADMIN // Administrador
 }
