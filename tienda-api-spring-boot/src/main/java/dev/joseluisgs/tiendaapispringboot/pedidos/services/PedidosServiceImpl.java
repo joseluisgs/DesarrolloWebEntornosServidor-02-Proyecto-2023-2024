@@ -47,7 +47,7 @@ public class PedidosServiceImpl implements PedidosService {
     @Override
     public Page<Pedido> findByIdUsuario(Long idUsuario, Pageable pageable) {
         log.info("Obteniendo pedidos del usuario con id: " + idUsuario);
-        return pedidosRepository.findByIdUsuario(idUsuario, pageable);
+        return pedidosRepository.findPedidoByIdUsuario(idUsuario, pageable);
     }
 
     @Override

@@ -1,10 +1,7 @@
 package dev.joseluisgs.tiendaapispringboot.pedidos.models;
 
 import jakarta.validation.constraints.Min;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @AllArgsConstructor
@@ -19,6 +16,7 @@ public class LineaPedido {
     @Builder.Default
     private Double precioProducto = 0.0;
     // No hace falta pasarlo, lo calculamos, pero si lo pasamos lo usamos
+    @Setter
     @Builder.Default
     private Double total = 0.0;
 
@@ -33,7 +31,4 @@ public class LineaPedido {
         this.total = this.cantidad * this.precioProducto;
     }
 
-    public void setTotal(Double total) {
-        this.total = total;
-    }
 }

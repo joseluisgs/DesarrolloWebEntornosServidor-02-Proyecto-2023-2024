@@ -64,5 +64,5 @@ public class Producto {
     @ManyToOne
     @JoinColumn(name = "categoria_id") // Así la vamos a llamar en la BB.DD
     private Categoria categoria;
-    
+
 }
